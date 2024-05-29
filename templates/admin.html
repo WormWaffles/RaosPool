@@ -1,0 +1,11 @@
+{% extends '_layout.html' %}
+
+{% block body %}
+<p>Add members here</p>
+<form action="/addmember" method="post">
+    <input type="email" name="email" placeholder="email">
+    <input type="submit" value="Add">
+</form>
+<!-- logout -->
+<a href="/logout">Logout</a>
+{% endblock %}
