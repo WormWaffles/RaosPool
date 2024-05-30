@@ -1,11 +1,14 @@
 {% extends '_layout.html' %}
 
 {% block body %}
+<p>This is the admin page.</p>
 <p>Add members here</p>
 <form action="/addmember" method="post">
     <input type="email" name="email" placeholder="email">
     <input type="submit" value="Add">
 </form>
+<!-- checkin -->
+<a href="/checkin">Check In</a>
 <!-- logout -->
 <a href="/logout">Logout</a>
 {% endblock %}

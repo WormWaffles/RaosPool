@@ -29,9 +29,21 @@ def contact():
 def gallary():
     return render_template('gallary.html')
 
-@app.route('/member')
+@app.route('/member', methods=['GET', 'POST'])
 def member():
+    if request.method == 'POST':
+        email = request.form['email']
+        code = request.form['code']
+        if email == 'hello' and code == 'world':
+            return redirect(url_for('create'))
+        else:
+            flash('Invalid email or code', 'error') # this does not work, no error shown
     return render_template('member.html')
+
+
+@app.route('/create')
+def create():
+    return render_template('create.html')
 
 @app.route('/admin')
 def admin():
@@ -53,7 +65,7 @@ def login():
             return redirect(url_for('admin'))
         else:
             # if incorrect, show an error message
-            flash('Invalid username or password', 'error')
+            flash('Invalid username or password', 'error') # this also does not work, no error
     return render_template('login.html')
 
 # logout
@@ -62,6 +74,22 @@ def logout():
     # remove the username from the session
     session.pop('username', None)
     return redirect(url_for('index'))
+
+# checkin
+@app.route('/checkin', methods=['GET'])
+def checkin():
+    if 'username' in session:
+        return render_template('checkin.html')
+    return redirect(url_for('login'))
+
+@app.route('/checkin', methods=['POST'])
+def checkin_post():
+    if 'username' in session:
+        search = request.form['search']
+        print(search) # search for member based on search info TODO******
+        members_found = [search]
+        return render_template('checkin.html', members_found=members_found)
+    return redirect(url_for('login'))
 
 # add member
 @app.route('/addmember', methods=['POST'])

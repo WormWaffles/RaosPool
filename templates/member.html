@@ -1,5 +1,12 @@
 {% extends '_layout.html' %}
 
 {% block body %}
-<p>are you a member?</p>
+<p>Just became a member? Check your emails for a one time login code.</p>
+<form action="/member" method="post">
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" required>
+    <label for="code">Code:</label>
+    <input type="text" name="code" id="code" required>
+    <button type="submit">Create Account</button>
+</form>
 {% endblock %}
