@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, g
 import requests
+import os
 
 app = Flask(__name__)
 
@@ -23,7 +24,11 @@ def index():
 
 @app.route('/events')
 def events():
-    return render_template('events.html', events=True)
+    # get all files from static/images/events
+    files = os.listdir('static/images/events')
+    # get the file names
+    images = [f for f in files if os.path.isfile(os.path.join('static/images/events', f))]
+    return render_template('events.html', events=True, images=images)
 
 @app.route('/pricing')
 def pricing():
@@ -60,10 +65,10 @@ def confirmation():
 def create():
     return render_template('create.html')
 
-@app.route('/admin')
-def admin():
-    if 'username' in session:
-        return render_template('admin.html')
+@app.route('/account')
+def account():
+    if 'email' in session:
+        return render_template('account.html')
     return redirect(url_for('login'))
 
 # login to the admin page
@@ -71,13 +76,13 @@ def admin():
 def login():
     if request.method == 'POST':
         # get the username and password
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
         # check if the username and password are correct
-        if username == 'admin' and password == 'admin':
+        if email == 'admin@admin' and password == 'admin':
             # if correct, redirect to the admin page
-            session['username'] = username
-            return redirect(url_for('admin'))
+            session['email'] = email
+            return redirect(url_for('account'))
         else:
             # if incorrect, show an error message
             flash('Invalid username or password', 'error') # this also does not work, no error
