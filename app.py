@@ -19,26 +19,41 @@ def before_request():
 
 @app.route('/')
 def index():
-    return render_template('/index.html')
+    return render_template('/index.html', g=g, home=True)
+
+@app.route('/events')
+def events():
+    return render_template('events.html', events=True)
+
+@app.route('/pricing')
+def pricing():
+    return render_template('pricing.html', pricing=True)
 
 @app.route('/contact')
 def contact():
-    return render_template('contact.html')
+    return render_template('contact.html', contact=True)
 
-@app.route('/gallary')
-def gallary():
-    return render_template('gallary.html')
-
-@app.route('/member', methods=['GET', 'POST'])
-def member():
+@app.route('/join', methods=['GET', 'POST'])
+def join():
     if request.method == 'POST':
+        # get a lot of infor
+        fname = request.form['fname']
+        lname = request.form['lname']
         email = request.form['email']
-        code = request.form['code']
-        if email == 'hello' and code == 'world':
-            return redirect(url_for('create'))
+        phone = request.form['phone']
+        option = request.form.get('option', '')
+        print(fname, lname, email, phone) # save to database [todo] ************
+        print(option)
+        if fname:
+            # send email to the email address [todo] ************
+            return render_template('confirmation.html', name=fname)
         else:
             flash('Invalid email or code', 'error') # this does not work, no error shown
-    return render_template('member.html')
+    return render_template('join.html')
+
+@app.route('/confirmation')
+def confirmation():
+    return render_template('confirmation.html')
 
 
 @app.route('/create')
