@@ -1,25 +1,67 @@
 {% extends '_layout.html' %}
 
 {% block body %}
-{% for member in membership %}
-<div class="space-y-4">
-    <details class="group [&_summary::-webkit-details-marker]:hidden" closed>
-        <summary
-            class="flex cursor-pointer items-center justify-between gap-1.5 rounded-lg bg-gray-50 p-4 text-gray-900">
-            <h2 class="font-medium">{{ member.lname }}, {{ member.fname }}</h2>
 
-            <svg class="size-5 shrink-0 transition duration-300 group-open:-rotate-180"
-                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-        </summary>
+{% if members[0].emp_id %}
 
-        <p class="mt-4 px-4 leading-relaxed text-gray-700">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa in,
-            recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis explicabo
-            consequuntur distinctio corporis earum similique!
-        </p>
-    </details>
+<header class="bg-gray-50">
+    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div class="sm:flex sm:items-center sm:justify-between">
+            <div class="text-center sm:text-left">
+                <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Employee ID: {{ members[0].emp_id }}
+                </h1>
+            </div>
+            {% if members[0].admin or admin %}
+            <div class="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+                <a href="/checkin">
+                    <button
+                        class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-5 py-3 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
+                        type="button">
+                        <span class="text-sm font-medium"> Check in app </span>
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </button>
+                </a>
+
+                <a href="/account/edit/{{ members[0].emp_id }}{{ members[0].member_id }}">
+                    <button
+                        class="block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
+                        type="button">
+                        Edit
+                    </button>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
+    <div class="flow-root rounded-lg border border-blue-500 py-3 shadow-sm">
+        <dl class="-my-3 divide-y divide-gray-100 text-sm">
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">First name</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].first_name }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Last name</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].last_name }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Email</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].email }}</dd>
+            </div>
+        </dl>
+    </div>
 </div>
-{% endfor %}
+
+{% else %}
+{% include '_member_account.html' %}
+{% endif %}
 {% endblock %}

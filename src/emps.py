@@ -10,6 +10,11 @@ class Emps:
         '''Returns employee by id'''
         return Emp.query.get(emp_id)
     
+    def get_emp_by_email(self, email):
+        '''Returns employee by email'''
+        emp = Emp.query.filter_by(email=email).first()
+        return emp
+    
     def create_emp(self, id, first_name, last_name, email, password, admin):
         '''Creates an employee'''
         email = email.lower()

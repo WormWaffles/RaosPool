@@ -1,19 +1,120 @@
 {% extends '_layout.html' %}
 
 {% block body %}
-<a href="/admin">back</a>
-<h1>Check In</h1>
-<!-- search bar for members id or name -->
-<form action="/checkin" method="post">
-    <input type="text" name="search" placeholder="search">
-    <input type="submit" value="Search">
-</form>
+
+<header class="bg-gray-50">
+    <div class="mx-auto max-w-screen-xl px-4 py-4 sm:px-6 sm:py-4 lg:px-8">
+        <div class="sm:flex sm:items-center sm:justify-between">
+            <div class="text-center sm:text-left">
+                <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Check in members</h1>
+
+                <p class="mt-1.5 text-sm text-gray-500">Search who you're looking for.</p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class='max-w-md mx-auto py-4'>
+    <div class="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden">
+        <div class="grid place-items-center h-full w-12 text-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+        </div>
+        <form action="/checkin" method="post" class="w-full">
+            <input class="peer h-full w-full outline-none text-sm text-gray-700 pr-2" type="text" id="search"
+                name="search" placeholder="Search members..." />
+        </form>
+    </div>
+</div>
+
 {% if members_found %}
-    {% for member in members_found %}
-    <p>{{ member }}</p>
-    <!-- check in button TODO********-->
-    {% endfor %}
+{% for member in members_found %}
+
+<div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
+    <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden" closed>
+        <summary
+            class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg bg-gray-50 p-4 text-gray-900">
+            <a href="/account/{{ member.membership_id }}">
+                <h2 class="font-medium">{{ member.last_name }}, {{ member.first_name }}</h2>
+            </a>
+
+            <div class="flex flex-row gap-4 items-center">
+                <button
+                    class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-5 py-3 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
+                    type="button">
+                    <span class="text-sm font-medium"> Check in </span>
+                </button>
+                <svg class="size-5 shrink-0 transition duration-300 group-open:-rotate-180"
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+        </summary>
+
+
+        <div class="flow-root">
+            <dl class="-my-3 divide-y divide-gray-100 text-sm py-2 px-2">
+                <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                    <dt class="font-medium text-gray-900">First name</dt>
+                    <dd class="text-gray-700 sm:col-span-2">{{ member.first_name }}</dd>
+                </div>
+
+                <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                    <dt class="font-medium text-gray-900">Last name</dt>
+                    <dd class="text-gray-700 sm:col-span-2">{{ member.last_name }}</dd>
+                </div>
+
+                <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                    <dt class="font-medium text-gray-900">Birthday</dt>
+                    <dd class="text-gray-700 sm:col-span-2">{{ member.birthday }}</dd>
+                </div>
+            </dl>
+        </div>
+    </details>
+</div>
+{% endfor %}
 {% else %}
-<p>No members found</p>
+<div class="mx-auto max-w-screen-xl px-4 py-4 sm:px-6 sm:py-4 lg:px-8">
+    <p class="text-gray-500">No members found.</p>
+</div>
 {% endif %}
+
+<!-- some details -->
+<section class="bg-white">
+    <div class="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+        <div class="mx-auto max-w-3xl text-center">
+            <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Todays stats</h2>
+
+            <p class="mt-4 text-gray-500 sm:text-xl">
+                Theres a lot of data to look at, but here are some of the most important stats for today.
+            </p>
+        </div>
+
+        <div class="mt-8 sm:mt-12">
+            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div class="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center">
+                    <dt class="order-last text-lg font-medium text-gray-500">Members today</dt>
+
+                    <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">0</dd>
+                </div>
+
+                <div class="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center">
+                    <dt class="order-last text-lg font-medium text-gray-500">Members / week</dt>
+
+                    <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">0</dd>
+                </div>
+
+                <div class="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center">
+                    <dt class="order-last text-lg font-medium text-gray-500">Members / year</dt>
+
+                    <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">0</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+</section>
+
 {% endblock %}

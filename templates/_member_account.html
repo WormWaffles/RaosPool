@@ -1,0 +1,95 @@
+<header class="bg-gray-50">
+    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div class="sm:flex sm:items-center sm:justify-between">
+            <div class="text-center sm:text-left">
+                <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Membership ID: {{ members[0].membership_id }}
+                </h1>
+            </div>
+            {% if members[0].admin or admin %}
+            <div class="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+                <button
+                    class="block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
+                    type="button">
+                    Edit
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
+    <div class="flow-root rounded-lg border border-blue-500 py-3 shadow-sm">
+        <dl class="-my-3 divide-y divide-gray-100 text-sm">
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Email</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].email }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Phone number</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].phone }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Address</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].street }}, {{ members[0].city }} {{
+                    members[0].state }}, {{ members[0].zip_code }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Billing type</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].billing_type }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Membership type</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].membership_type }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Paid as of</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].last_date_paid }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900"># of members</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].size_of_family }}</dd>
+            </div>
+        </dl>
+    </div>
+</div>
+{% for member in members %}
+<div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
+    <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden" closed>
+        <summary
+            class="flex cursor-pointer items-center justify-between gap-1.5 rounded-lg bg-gray-50 p-4 text-gray-900">
+            <h2 class="font-medium">{{ member.last_name }}, {{ member.first_name }}</h2>
+
+            <svg class="size-5 shrink-0 transition duration-300 group-open:-rotate-180"
+                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+        </summary>
+
+        <div class="flow-root">
+            <dl class="-my-3 divide-y divide-gray-100 text-sm py-2 px-2">
+                <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                    <dt class="font-medium text-gray-900">First name</dt>
+                    <dd class="text-gray-700 sm:col-span-2">{{ member.first_name }}</dd>
+                </div>
+
+                <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                    <dt class="font-medium text-gray-900">Last name</dt>
+                    <dd class="text-gray-700 sm:col-span-2">{{ member.last_name }}</dd>
+                </div>
+
+                <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                    <dt class="font-medium text-gray-900">Birthday</dt>
+                    <dd class="text-gray-700 sm:col-span-2">{{ member.birthday }}</dd>
+                </div>
+            </dl>
+        </div>
+    </details>
+</div>
+{% endfor %}

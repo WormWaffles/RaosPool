@@ -5,8 +5,9 @@ db = SQLAlchemy()
 class Member(db.Model):
     member_id = db.Column(db.Integer, primary_key=True)
     membership_id = db.Column(db.Integer, nullable=False)
-    first_name = db.Column(db.String(80), nullable=True)
-    last_name = db.Column(db.String(80), nullable=True)
+    first_name = db.Column(db.String(80), nullable=False)
+    last_name = db.Column(db.String(80), nullable=False)
+    birthday = db.Column(db.Date, nullable=False)
     profile_image_location = db.Column(db.String(255), nullable=True)
 
 class Emp(db.Model):
