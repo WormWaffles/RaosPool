@@ -1,6 +1,38 @@
 from flask_sqlalchemy import SQLAlchemy
+from itsdangerous import URLSafeTimedSerializer as Serializer
+from dotenv import load_dotenv
+import os
 
 db = SQLAlchemy()
+secret_key = os.getenv('SECRET_KEY')
+
+class Membership(db.Model):
+    membership_id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(80), nullable=False)
+    password = db.Column(db.String(80), nullable=False)
+    phone = db.Column(db.String(80), nullable=False)
+    street = db.Column(db.String(80), nullable=False)
+    city = db.Column(db.String(80), nullable=False)
+    state = db.Column(db.String(80), nullable=False)
+    zip_code = db.Column(db.String(80), nullable=False)
+    billing_type = db.Column(db.String(80), nullable=False)
+    membership_type = db.Column(db.String(80), nullable=False)
+    last_date_paid = db.Column(db.Date, nullable=False)
+    size_of_family = db.Column(db.Integer, nullable=False)
+    active = db.Column(db.Boolean, nullable=False)
+
+    def get_email_token(self):
+        s = Serializer(secret_key)
+        return s.dumps({'email': self.email})
+    
+    @staticmethod
+    def verify_email_token(token, expires_sec=1800):
+        s = Serializer(secret_key)
+        try:
+            email = s.loads(token, max_age=expires_sec)['email']
+        except:
+            return None
+        return email
 
 class Member(db.Model):
     member_id = db.Column(db.Integer, primary_key=True)
@@ -17,3 +49,20 @@ class Emp(db.Model):
     email = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(80), nullable=False)
     admin = db.Column(db.Boolean, nullable=False)
+
+class Code(db.Model):
+    code_id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(80), nullable=False)
+
+    def get_email_token(self):
+        s = Serializer(secret_key)
+        return s.dumps({'email': self.email})
+    
+    @staticmethod
+    def verify_email_token(token, expires_sec=1800):
+        s = Serializer(secret_key)
+        try:
+            email = s.loads(token, max_age=expires_sec)['email']
+        except:
+            return None
+        return email

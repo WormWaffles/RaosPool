@@ -1,5 +1,7 @@
 from src.models import db, Emp
 from sqlalchemy import text
+import uuid
+
 
 class Emps:
     def get_all_emps(self):
@@ -17,6 +19,13 @@ class Emps:
     
     def create_emp(self, id, first_name, last_name, email, password, admin):
         '''Creates an employee'''
+        # create uuid for post_id
+        id = uuid.uuid1()
+        id = id.int
+        # make the id 12 digits
+        id = str(id)
+        id = id[:8]
+        id = int(id)
         email = email.lower()
         # create id for member [4 digits i guess]
         if admin:

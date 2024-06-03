@@ -50,6 +50,13 @@ CREATE TABLE emp (
     admin BOOLEAN NOT NULL
 );
 
+CREATE TABLE code (
+    code_id INTEGER NOT NULL,
+    email VARCHAR(80) NOT NULL,
+    verification_code VARCHAR(80) NOT NULL,
+    PRIMARY KEY (code_id)
+);
+
 INSERT INTO emp VALUES (1, 'Colin', 'Brown', 'colin8297@gmail.com', 'admin', TRUE);
 INSERT INTO membership VALUES (6184, 'lori8297@gmail.com', 'test', '9517606370', '1234 Main St', 'Riverside', 'CA', '92507', 'Yearly', 'Family', '2024-06-01', 6);
 INSERT INTO member VALUES (1, 6184, 'Lori', 'Brown', '2000-06-01', '');

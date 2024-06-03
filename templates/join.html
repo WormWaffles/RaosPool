@@ -1,108 +1,44 @@
 {% extends '_layout.html' %}
 
 {% block body %}
-<section class="bg-gray-100">
-    <div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 gap-x-16 gap-y-8 lg:grid-cols-5">
-            <div class="lg:col-span-2 lg:py-12">
-                <div class="sm:flex sm:items-center py-8 sm:justify-between">
-                    <div class="text-center sm:text-left">
-                        <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Become a member today</h1>
-                    </div>
-                </div>
-                <p class="max-w-xl text-lg">
-                    Welcome to Rao's, your premier destination for recreation.
-                    Enjoy our pristine private pool and top-of-the-line pickleball courts,
-                    perfect for both relaxation and spirited games. With state-of-the-art amenities
-                    and a welcoming environment, Rao's is the place for leisure and play.
-                </p>
 
-                <div class="mt-8">
-                    <a href="#" class="text-2xl font-bold text-blue-600"> 0151 475 4450 </a>
+<div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-lg text-center">
+        <h1 class="text-2xl font-bold sm:text-3xl">Welcome!</h1>
 
-                    <address class="mt-2 not-italic">1903 Adams Farm Pkwy, Greensboro, NC 27407</address>
-                </div>
-            </div>
+        <p class="mt-4 text-gray-500">
+            To get started, we need your email to start your form.
+        </p>
+    </div>
 
-            <div class="rounded-lg bg-white p-8 shadow-lg lg:col-span-3 lg:p-12">
-                <form action="/join" method="post" class="space-y-4">
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <form action="/join" method="post" class="mx-auto mb-0 mt-8 max-w-md space-y-4">
+        <div>
+            <label for="email" class="sr-only">Email</label>
 
-                        <div>
-                            <label class="sr-only" for="fname">First name</label>
-                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="First name" type="text"
-                                id="fname" name="fname" />
-                        </div>
+            <div class="relative">
+                <input type="email" class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
+                    placeholder="Enter email" name="email" />
 
-                        <div>
-                            <label class="sr-only" for="lname">Last name</label>
-                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Last name" type="text"
-                                id="lname" name="lname" />
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
-                            <label class="sr-only" for="email">Email</label>
-                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Email address"
-                                type="email" id="email" name="email" />
-                        </div>
-
-                        <div>
-                            <label class="sr-only" for="phone">Phone</label>
-                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Phone Number"
-                                type="tel" id="phone" name="phone" />
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 gap-4 text-center sm:grid-cols-3">
-                        <div>
-                            <label for="Option1"
-                                class="block w-full cursor-pointer rounded-lg border border-gray-200 p-3 text-gray-600 hover:border-black has-[:checked]:border-black has-[:checked]:bg-blue-600 has-[:checked]:text-white"
-                                tabindex="0">
-                                <input class="sr-only" id="Option1" type="radio" tabindex="-1" name="option" value="1" />
-
-                                <span class="text-sm"> Single </span>
-                            </label>
-                        </div>
-
-                        <div>
-                            <label for="Option2"
-                                class="block w-full cursor-pointer rounded-lg border border-gray-200 p-3 text-gray-600 hover:border-black has-[:checked]:border-black has-[:checked]:bg-blue-600 has-[:checked]:text-white"
-                                tabindex="0">
-                                <input class="sr-only" id="Option2" type="radio" tabindex="-1" name="option" value="2" />
-
-                                <span class="text-sm"> Couple </span>
-                            </label>
-                        </div>
-
-                        <div>
-                            <label for="Option3"
-                                class="block w-full cursor-pointer rounded-lg border border-gray-200 p-3 text-gray-600 hover:border-black has-[:checked]:border-black has-[:checked]:bg-blue-600 has-[:checked]:text-white"
-                                tabindex="0">
-                                <input class="sr-only" id="Option3" type="radio" tabindex="-1" name="option" value="3" />
-
-                                <span class="text-sm"> Family </span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="sr-only" for="message">Message</label>
-
-                        <textarea class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Message" rows="8"
-                            id="message"></textarea>
-                    </div>
-
-                    <div class="mt-4">
-                        <button type="submit"
-                            class="inline-block w-full rounded-lg bg-blue-600 px-5 py-3 font-medium text-white sm:w-auto">
-                            Submit application
-                        </button>
-                    </div>
-                </form>
+                <span class="absolute inset-y-0 end-0 grid place-content-center px-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4 text-gray-400" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                    </svg>
+                </span>
             </div>
         </div>
-    </div>
-</section>
+
+        <div class="flex items-center justify-between">
+            <p class="text-sm text-gray-500">
+                Already a member?
+                <a class="underline" href="/login">Login</a>
+            </p>
+
+            <button type="submit" class="inline-block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white">
+                Go
+            </button>
+        </div>
+    </form>
+</div>
 {% endblock %}

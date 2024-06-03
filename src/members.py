@@ -1,5 +1,7 @@
 from src.models import db, Member
 from sqlalchemy import text
+import uuid
+
 
 class Members:
     def get_all_members(self):
@@ -28,6 +30,13 @@ class Members:
     
     def create_member(self, membership_id, first_name, last_name, email, password, profile_image_location=None):
         '''Creates a member'''
+        # create uuid for post_id
+        id = uuid.uuid1()
+        id = id.int
+        # make the id 12 digits
+        id = str(id)
+        id = id[:8]
+        id = int(id)
         email = email.lower()
         # create id for member [4 digits i guess]
         member = Member(member_id=id, membership_id=membership_id, first_name=first_name, last_name=last_name, email=email, password=password, profile_image_location=None)

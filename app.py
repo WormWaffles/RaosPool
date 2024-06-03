@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, g, abort
 import requests
 import os
-from src.models import db, Member, Emp
+from src.models import db, Member, Emp, Code, Membership
 from src.members import members
 from src.emps import emps
+from src.codes import codes
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
-
+from flask_mail import Mail, Message
+import uuid
 
 
 
@@ -31,7 +33,15 @@ db.init_app(app)
 
 
 # variables
-app.secret_key = "secret key"
+app.config['secret_key'] = os.getenv('SECRET_KEY')
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # Use an app-specific password if necessary
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('DEFAULT_SENDER')
+
+mail = Mail(app)
 
 # AWS S3 connection (for member photos)
 
@@ -41,6 +51,18 @@ def before_request():
     g.user = None
     if 'email' in session:
         g.user = session['email']
+
+def send_email(email, subject, body):
+    code = codes.create_code(email=email)
+    token = Code.get_email_token(code)
+    msg = Message("Rao's: Create Membership", sender='colin8297@gmail.com', recipients=[email])
+    msg.body = f'''
+    Click the link to create your membership: 
+    {url_for("create", token=token, _external=True)}
+
+    If you did not make this request, ignore this email.
+    '''
+    mail.send(msg)
 
 @app.route('/')
 def index():
@@ -65,24 +87,36 @@ def contact():
 @app.route('/join', methods=['GET', 'POST'])
 def join():
     if request.method == 'POST':
-        # get a lot of infor
-        fname = request.form['fname']
-        lname = request.form['lname']
+        # get email from user
         email = request.form['email']
-        phone = request.form['phone']
-        option = request.form.get('option', '')
-        print(fname, lname, email, phone) # save to database [todo] ************
-        print(option)
-        if fname:
-            # send email to the email address [todo] ************
-            return render_template('confirmation.html', name=fname)
-        else:
-            flash('Invalid email or code', 'error') # this does not work, no error shown
+        if not email:
+            flash('Email is required', 'error')
+            return render_template('join.html')
+        # check if email is already in use
+        if members.get_membership_by_email(email):
+            flash('Email is already in use', 'error')
+            return render_template('join.html')
+        # add email to codes table
+        if codes.get_code_by_email(email):
+            codes.delete_code(email)
+        # code = codes.create_code(email=email)
+        # token = Code.get_email_token(code)
+        # send email to user
+        send_email(email, 'Join', 'Click the link to join')
+        return render_template('check_email.html', email=email)
     return render_template('join.html')
 
 @app.route('/confirmation')
 def confirmation():
     return render_template('confirmation.html')
+
+@app.route('/create')
+def create():
+    token = request.args.get('token')
+    email = Code.verify_email_token(token)
+    if email:
+        return render_template('create.html', email=email)
+    return redirect(url_for('join'))
 
 @app.route('/account')
 def account():
@@ -156,3 +190,7 @@ def checkin_post():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('error.html'), 404
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
