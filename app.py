@@ -5,10 +5,12 @@ from src.models import db, Member, Emp, Code, Membership
 from src.members import members
 from src.emps import emps
 from src.codes import codes
+from src.memberships import memberships
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
 import uuid
+import re
 
 
 
@@ -33,15 +35,17 @@ db.init_app(app)
 
 
 # variables
-app.config['secret_key'] = os.getenv('SECRET_KEY')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # Use an app-specific password if necessary
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('DEFAULT_SENDER')
-
 mail = Mail(app)
+
+regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+
 
 # AWS S3 connection (for member photos)
 
@@ -53,16 +57,12 @@ def before_request():
         g.user = session['email']
 
 def send_email(email, subject, body):
-    code = codes.create_code(email=email)
-    token = Code.get_email_token(code)
-    msg = Message("Rao's: Create Membership", sender='colin8297@gmail.com', recipients=[email])
-    msg.body = f'''
-    Click the link to create your membership: 
-    {url_for("create", token=token, _external=True)}
-
-    If you did not make this request, ignore this email.
-    '''
+    # code = codes.create_code(email=email)
+    # token = Code.get_email_token(code)
+    msg = Message(subject, sender='colin8297@gmail.com', recipients=[email])
+    msg.body = f'{body}'
     mail.send(msg)
+
 
 @app.route('/')
 def index():
@@ -80,8 +80,23 @@ def events():
 def pricing():
     return render_template('pricing.html', pricing=True)
 
-@app.route('/contact')
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
+    if request.method == 'POST':
+        first_name = request.form.get('fname')
+        last_name = request.form.get('lname')
+        email = request.form.get('email')
+        message = request.form.get('message')
+
+        if first_name == '' or last_name == '' or email == '' or message == '':
+            flash('Please fill out all fields', 'error')
+            return render_template('contact.html', contact=True)
+        
+        message = f'Name: {first_name} {last_name}\nEmail: {email}\n\nInquiry: {message}'
+
+        send_email(os.getenv('CONTACT_RECEIVER'), f'Inquiry from {first_name} {last_name}', message)
+        return render_template('confirmation.html', message='Thanks for your feedback, your message has been sent', sub_message='We will get back to you as soon as possible')
+
     return render_template('contact.html', contact=True)
 
 @app.route('/join', methods=['GET', 'POST'])
@@ -92,6 +107,9 @@ def join():
         if not email:
             flash('Email is required', 'error')
             return render_template('join.html')
+        if not re.fullmatch(regex, email):
+            flash('Invalid email', 'error')
+            return render_template('join.html')
         # check if email is already in use
         if members.get_membership_by_email(email):
             flash('Email is already in use', 'error')
@@ -99,23 +117,82 @@ def join():
         # add email to codes table
         if codes.get_code_by_email(email):
             codes.delete_code(email)
-        # code = codes.create_code(email=email)
-        # token = Code.get_email_token(code)
         # send email to user
-        send_email(email, 'Join', 'Click the link to join')
-        return render_template('check_email.html', email=email)
+        code = codes.create_code(email=email)
+        token = Code.get_email_token(code)
+        message = f'''
+Click the link to create your membership: 
+{url_for("create", token=token, _external=True)}
+
+If you did not make this request, ignore this email.
+        '''
+
+        send_email(email, "Rao's: finish application", message)
+        return render_template('confirmation.html', message = f'Thanks! We sent an email to {email}', sub_message='Please check your email to complete your membership')
     return render_template('join.html')
 
-@app.route('/confirmation')
-def confirmation():
-    return render_template('confirmation.html')
-
-@app.route('/create')
+@app.route('/create', methods=['GET', 'POST'])
 def create():
+    if request.method == 'POST':
+        # get form info
+        inputs = {}
+        try:
+            inputs['fname'] = request.form['fname']
+            inputs['lname'] = request.form['lname']
+            email = request.form['email']
+            inputs['phone'] = request.form['phone']
+            inputs['size_of_family'] = request.form['size_of_family']
+            inputs['password'] = request.form['password']
+            inputs['street'] = request.form['street']
+            inputs['city'] = request.form['city']
+            inputs['state'] = request.form['state']
+            inputs['zip_code'] = request.form['zip']
+            inputs['membership_type'] = int(request.form['option'])
+        except:
+            flash('Please fill out all fields', 'error')
+            return render_template('create.html', email=email, inputs=inputs)
+        for key, value in inputs.items():
+            if value == '':
+                flash('Please fill out all fields', 'error')
+                return render_template('create.html', email=email, inputs=inputs)
+        if inputs['zip_code'].isdigit() == False:
+            flash('Invalid zip code', 'error')
+            return render_template('create.html', email=email, inputs=inputs)
+        if len(inputs['zip_code']) != 5:
+            flash('Invalid zip code', 'error')
+            return render_template('create.html', email=email, inputs=inputs)
+        if len(inputs['phone']) != 10:
+            flash('Invalid phone number.', 'error')
+            return render_template('create.html', email=email, inputs=inputs)
+        if inputs['phone'].isdigit() == False:
+            flash('Invalid phone number, only include numbers.', 'error')
+            return render_template('create.html', email=email, inputs=inputs)
+        if inputs['membership_type'] not in [1, 2, 3]:
+            flash('Invalid membership type, please select a box.', 'error')
+            return render_template('create.html', email=email, inputs=inputs)
+        if not re.fullmatch(regex, email):
+            flash('Invalid email', 'error')
+            return render_template('create.html', email=email, inputs=inputs)
+        if len(inputs['password']) < 8:
+            flash('Password must be at least 8 characters', 'error')
+            return render_template('create.html', email=email, inputs=inputs)
+        
+        for key, value in inputs.items():
+            print(key, value)
+
+        # check if email is already in use
+        if members.get_membership_by_email(email):
+            flash('Email is already in use', 'error')
+            return render_template('create.html', email=email, inputs=inputs)
+        
+        # create membership
+        membership = memberships.create_membership(email, inputs)
+
+        return redirect(url_for('account'))
     token = request.args.get('token')
     email = Code.verify_email_token(token)
     if email:
-        return render_template('create.html', email=email)
+        return render_template('create.html', email=email, inputs={})
     return redirect(url_for('join'))
 
 @app.route('/account')

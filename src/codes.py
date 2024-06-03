@@ -56,7 +56,7 @@ class Codes:
     
     def delete_code(self, code_id):
         '''Deletes a code'''
-        code = self.get_code_by_id(code_id)
+        code = self.get_code_by_email(code_id)
         db.session.delete(code)
         db.session.commit()
         return code
