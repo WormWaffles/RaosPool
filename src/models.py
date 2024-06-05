@@ -17,8 +17,11 @@ class Membership(db.Model):
     zip_code = db.Column(db.String(80), nullable=False)
     billing_type = db.Column(db.String(80), nullable=False)
     membership_type = db.Column(db.String(80), nullable=False)
-    last_date_paid = db.Column(db.Date, nullable=False)
     size_of_family = db.Column(db.Integer, nullable=False)
+    referred_by = db.Column(db.String(80), nullable=True)
+    emergency_contact_name = db.Column(db.String(80), nullable=False)
+    emergency_contact_phone = db.Column(db.String(80), nullable=False)
+    last_date_paid = db.Column(db.Date, nullable=True)
     active = db.Column(db.Boolean, nullable=False)
 
     def get_email_token(self):

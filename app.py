@@ -141,6 +141,7 @@ def create():
             inputs['lname'] = request.form['lname']
             email = request.form['email']
             inputs['phone'] = request.form['phone']
+            inputs['dob'] = request.form['dob']
             inputs['size_of_family'] = request.form['size_of_family']
             inputs['password'] = request.form['password']
             inputs['street'] = request.form['street']
@@ -148,6 +149,12 @@ def create():
             inputs['state'] = request.form['state']
             inputs['zip_code'] = request.form['zip']
             inputs['membership_type'] = int(request.form['option'])
+            inputs['referred_by'] = request.form['referred_by']
+            inputs['emergency_contact_name'] = request.form['emergency_contact_name']
+            inputs['emergency_contact_phone'] = request.form['emergency_contact_phone']
+            if request.form['agree'] != 'on':
+                flash('Please agree to the terms and conditions', 'error')
+                return render_template('create.html', email=email, inputs=inputs)
         except:
             flash('Please fill out all fields', 'error')
             return render_template('create.html', email=email, inputs=inputs)
@@ -161,12 +168,6 @@ def create():
         if len(inputs['zip_code']) != 5:
             flash('Invalid zip code', 'error')
             return render_template('create.html', email=email, inputs=inputs)
-        if len(inputs['phone']) != 10:
-            flash('Invalid phone number.', 'error')
-            return render_template('create.html', email=email, inputs=inputs)
-        if inputs['phone'].isdigit() == False:
-            flash('Invalid phone number, only include numbers.', 'error')
-            return render_template('create.html', email=email, inputs=inputs)
         if inputs['membership_type'] not in [1, 2, 3]:
             flash('Invalid membership type, please select a box.', 'error')
             return render_template('create.html', email=email, inputs=inputs)
@@ -176,6 +177,15 @@ def create():
         if len(inputs['password']) < 8:
             flash('Password must be at least 8 characters', 'error')
             return render_template('create.html', email=email, inputs=inputs)
+        inputs['phone'] = re.sub(r'\D', '', inputs['phone'])
+        inputs['emergency_contact_phone'] = re.sub(r'\D', '', inputs['emergency_contact_phone'])
+        if len(inputs['phone']) != 10:
+            flash('Invalid phone number', 'error')
+            return render_template('create.html', email=email, inputs=inputs)
+        if len(inputs['emergency_contact_phone']) != 10:
+            flash('Invalid emergency contact phone number', 'error')
+            return render_template('create.html', email=email, inputs=inputs)
+        
         
         for key, value in inputs.items():
             print(key, value)
@@ -186,7 +196,9 @@ def create():
             return render_template('create.html', email=email, inputs=inputs)
         
         # create membership
-        membership = memberships.create_membership(email, inputs)
+        memberships.create_membership(email, inputs)
+
+        session['email'] = email
 
         return redirect(url_for('account'))
     token = request.args.get('token')

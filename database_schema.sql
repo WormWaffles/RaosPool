@@ -6,9 +6,16 @@ DROP TABLE IF EXISTS membership CASCADE;
 DROP TABLE IF EXISTS "user" CASCADE;
 
 
+CREATE SEQUENCE member_id_seq
+    START 1000
+    INCREMENT BY 1
+    MINVALUE 1000
+    MAXVALUE 9999
+    CACHE 1;
+
 -- WAIT TO ADD TABLES UNTIL AFTER THE DATABASE IS CREATED
 CREATE TABLE membership (
-    membership_id INTEGER NOT NULL,
+    membership_id INT NOT NULL DEFAULT nextval('member_id_seq'),
     email VARCHAR(80) NOT NULL,
     password VARCHAR(80),
     phone VARCHAR(10),
@@ -16,10 +23,13 @@ CREATE TABLE membership (
     city VARCHAR(80),
     state VARCHAR(2),
     zip_code VARCHAR(5),
-    billing_type VARCHAR(80),
     membership_type VARCHAR(80),
-    last_date_paid DATE,
     size_of_family INTEGER,
+    referred_by VARCHAR(80),
+    emergency_contact_name VARCHAR(80),
+    emergency_contact_phone VARCHAR(10),
+    billing_type VARCHAR(80),
+    last_date_paid DATE,
     active BOOLEAN NOT NULL,
     PRIMARY KEY (membership_id)
 );
@@ -53,7 +63,6 @@ CREATE TABLE emp (
 CREATE TABLE code (
     code_id INTEGER NOT NULL,
     email VARCHAR(80) NOT NULL,
-    verification_code VARCHAR(80) NOT NULL,
     PRIMARY KEY (code_id)
 );
 

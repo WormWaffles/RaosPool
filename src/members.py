@@ -28,18 +28,16 @@ class Members:
         """)).fetchall()
         return member
     
-    def create_member(self, membership_id, first_name, last_name, email, password, profile_image_location=None):
+    def create_member(self, membership_id, first_name, last_name, birthday, profile_image_location=None):
         '''Creates a member'''
-        # create uuid for post_id
+        # create id
         id = uuid.uuid1()
         id = id.int
         # make the id 12 digits
         id = str(id)
         id = id[:8]
         id = int(id)
-        email = email.lower()
-        # create id for member [4 digits i guess]
-        member = Member(member_id=id, membership_id=membership_id, first_name=first_name, last_name=last_name, email=email, password=password, profile_image_location=None)
+        member = Member(member_id=id, membership_id=membership_id, first_name=first_name, last_name=last_name, birthday=birthday, profile_image_location=None)
         db.session.add(member)
         db.session.commit()
         return member
@@ -55,17 +53,16 @@ class Members:
         db.session.commit()
         return member
     
+
     def search_member(self, search):
-        '''Query member names and emails ignore case'''
-        # get members by membership id
-        members = []
-        if search.isdigit():
-            members += db.session.query(Member).filter(Member.membership_id == search).all()
-        members += Member.query.filter(Member.first_name.ilike(f'%{search}%')).all()
-        members += Member.query.filter(Member.last_name.ilike(f'%{search}%')).all()
-        if members:
-            return members
-        return None
+        '''Query member names and membership_id ignoring case'''
+        members = db.session.execute(text(f"""
+            SELECT * FROM member
+            WHERE LOWER(first_name) ILIKE LOWER('%{search}%')
+            OR LOWER(last_name) ILIKE LOWER('%{search}%')
+            OR CAST(membership_id AS TEXT) ILIKE '%{search}%';
+        """)).fetchall()
+        return members if members else None
     
     def delete_member(self, member_id):
         '''Deletes a member'''

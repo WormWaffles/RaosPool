@@ -1,4 +1,5 @@
 from src.models import db, Membership
+from src.members import members
 from sqlalchemy import text
 import uuid
 
@@ -14,17 +15,13 @@ class Memberships:
     
     def create_membership(self, email, inputs):
         '''Creates a member'''
-        # create uuid for post_id
-        id = uuid.uuid1()
-        id = id.int
-        # make the id 12 digits
-        id = str(id)
-        id = id[:8]
-        id = int(id)
         email = email.lower()
-        # create id for member [4 digits i guess]
-        membership = Membership(membership_id=id, first_name=inputs['first_name'], last_name=inputs['last_name'], email=email, password=inputs['password'])
+        membership = Membership(email=email, password=inputs['password'], phone=inputs['phone'], size_of_family=inputs['size_of_family'], street=inputs['street'], city=inputs['city'], state=inputs['state'], zip_code=inputs['zip_code'], membership_type=inputs['membership_type'], referred_by=inputs['referred_by'], emergency_contact_name=inputs['emergency_contact_name'], emergency_contact_phone=inputs['emergency_contact_phone'], last_date_paid=None, active=False)
         db.session.add(membership)
+        db.session.commit()
+        # create member
+        member = members.create_member(membership_id=membership.membership_id, first_name=inputs['fname'], last_name=inputs['lname'], birthday=inputs['dob'], profile_image_location=None)
+        db.session.add(member)
         db.session.commit()
         return membership
 
