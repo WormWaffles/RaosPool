@@ -43,6 +43,7 @@ class Member(db.Model):
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
     birthday = db.Column(db.Date, nullable=False)
+    membership_owner = db.Column(db.Boolean, nullable=False)
     profile_image_location = db.Column(db.String(255), nullable=True)
 
 class Emp(db.Model):
@@ -69,3 +70,8 @@ class Code(db.Model):
         except:
             return None
         return email
+    
+class Chekin(db.Model):
+    checkin_id = db.Column(db.Integer, primary_key=True)
+    member_id = db.Column(db.Integer, primary_key=True)
+    checkin_date = db.Column(db.Date, nullable=False)

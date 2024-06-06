@@ -20,21 +20,29 @@ class Memberships:
         db.session.add(membership)
         db.session.commit()
         # create member
-        member = members.create_member(membership_id=membership.membership_id, first_name=inputs['fname'], last_name=inputs['lname'], birthday=inputs['dob'], profile_image_location=None)
+        member = members.create_member(membership_id=membership.membership_id, first_name=inputs['fname'], last_name=inputs['lname'], birthday=inputs['dob'], membership_owner=True, profile_image_location=None)
         db.session.add(member)
         db.session.commit()
         return membership
 
-    def update_membership(self, membership_id, first_name, last_name, email, password, profile_image_location=None):
+    def update_membership(self, email, inputs, last_date_paid=None):
         '''Updates a member'''
-        membership = self.get_membership_by_id(membership_id)
-        membership.first_name = first_name
-        membership.last_name = last_name
-        membership.email = email.lower()
-        membership.password = password
-        membership.profile_pic = profile_image_location
+        email = email.lower()
+        membership = Membership.query.filter_by(email=email).first()
+        membership.password = inputs['password']
+        membership.phone = inputs['phone']
+        membership.street = inputs['street']
+        membership.city = inputs['city']
+        membership.state = inputs['state']
+        membership.zip_code = inputs['zip_code']
+        membership.emergency_contact_name = inputs['emergency_contact_name']
+        membership.emergency_contact_phone = inputs['emergency_contact_phone']
         db.session.commit()
         return membership
+    
+    def update_membership_admin(self, email, inputs):
+        '''Update all membership fields'''
+        
     
     def delete_membership(self, member_id):
         '''Deletes a membership'''

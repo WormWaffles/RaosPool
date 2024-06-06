@@ -101,6 +101,8 @@ def contact():
 
 @app.route('/join', methods=['GET', 'POST'])
 def join():
+    if 'email' in session:
+        return redirect('/account')
     if request.method == 'POST':
         # get email from user
         email = request.form['email']
@@ -207,14 +209,117 @@ def create():
         return render_template('create.html', email=email, inputs={})
     return redirect(url_for('join'))
 
+@app.route('/create/member', methods=['GET', 'POST'])
+def create_member():
+    if 'email' in session:
+        if request.method == 'POST':
+            # if membership is full
+            account = members.get_membership_by_email(session['email'])
+            if len(account) >= account[0].size_of_family:
+                flash('Membership is full', 'error')
+                return render_template('account.html')
+            # get form info
+            inputs = {}
+            try:
+                inputs['fname'] = request.form['fname']
+                inputs['lname'] = request.form['lname']
+                inputs['dob'] = request.form['dob']
+            except:
+                flash('Please fill out all fields', 'error')
+                return render_template('create_member.html', inputs=inputs)
+            for key, value in inputs.items():
+                if value == '':
+                    flash('Please fill out all fields', 'error')
+                    return render_template('create_member.html', inputs=inputs)
+            # create member
+            member = members.create_member(membership_id=members.get_membership_by_email(session['email'])[0].membership_id, first_name=inputs['fname'], last_name=inputs['lname'], birthday=inputs['dob'], profile_image_location=None)
+            db.session.add(member)
+            db.session.commit()
+            return redirect(url_for('account'))
+        return render_template('create_member.html')
+    return redirect(url_for('login'))
+
 @app.route('/account')
 def account():
     if 'email' in session:
-        account = members.get_membership_by_email(session['email'])
-        if not account:
-            account = [emps.get_emp_by_email(session['email'])]
-        return render_template('account.html', members=account)
+        account = [emps.get_emp_by_email(session['email'])]
+        if not account[0]:
+            can_add_member = False
+            account = members.get_membership_by_email(session['email'])
+            # if number of members in membership is < membership limit
+            if len(account) < account[0].size_of_family:
+                can_add_member = True
+            return render_template('account.html', members=account, can_add_member=can_add_member)
+        return render_template('account.html', members=account, can_add_member=True)
     return redirect(url_for('login'))
+
+@app.route('/account/edit/<membership_id>', methods=['GET', 'POST'])
+def edit_account(membership_id):
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    account = members.get_membership_by_email(session['email'])
+    if not account:
+        return abort(404)
+    if account[0].membership_id != int(membership_id):
+        return abort(404)
+    account = account[0]
+    if request.method == 'POST':
+        # get form info
+        inputs = {}
+        try:
+            email = request.form['email']
+            inputs['phone'] = request.form['phone']
+            inputs['password'] = request.form['password']
+            inputs['street'] = request.form['street']
+            inputs['city'] = request.form['city']
+            inputs['state'] = request.form['state']
+            inputs['zip_code'] = request.form['zip']
+            inputs['emergency_contact_name'] = request.form['emergency_contact_name']
+            inputs['emergency_contact_phone'] = request.form['emergency_contact_phone']
+        except:
+            flash('Please fill out all fields', 'error')
+            return render_template('edit_membership.html', account=account, inputs=inputs)
+        for key, value in inputs.items():
+            if value == '':
+                flash('Please fill out all fields', 'error')
+                return render_template('edit_membership.html', account=account, inputs=inputs)
+        if inputs['zip_code'].isdigit() == False:
+            flash('Invalid zip code', 'error')
+            return render_template('edit_membership.html', account=account, inputs=inputs)
+        if len(inputs['zip_code']) != 5:
+            flash('Invalid zip code', 'error')
+            return render_template('edit_membership.html', account=account, inputs=inputs)
+        if not re.fullmatch(regex, email):
+            flash('Invalid email', 'error')
+            return render_template('edit_membership.html', account=account, inputs=inputs)
+        if len(inputs['password']) < 8:
+            flash('Password must be at least 8 characters', 'error')
+            return render_template('edit_membership.html', account=account, inputs=inputs)
+        inputs['phone'] = re.sub(r'\D', '', inputs['phone'])
+        inputs['emergency_contact_phone'] = re.sub(r'\D', '', inputs['emergency_contact_phone'])
+        if len(inputs['phone']) != 10:
+            flash('Invalid phone number', 'error')
+            return render_template('edit_membership.html', account=account, inputs=inputs)
+        if len(inputs['emergency_contact_phone']) != 10:
+            flash('Invalid emergency contact phone number', 'error')
+            return render_template('edit_membership.html', account=account, inputs=inputs)
+
+        # create membership
+        memberships.update_membership(email, inputs)
+        return redirect(url_for('account'))
+    membership = account
+    inputs = {
+        'email': membership.email,
+        'phone': membership.phone,
+        'street': membership.street,
+        'city': membership.city,
+        'state': membership.state,
+        'zip_code': membership.zip_code,
+        'emergency_contact_name': membership.emergency_contact_name,
+        'emergency_contact_phone': membership.emergency_contact_phone
+    }
+    return render_template('edit_membership.html', account=account, inputs=inputs)
+                
 
 @app.route('/account/<member_id>')
 def account_id(member_id):
@@ -222,9 +327,7 @@ def account_id(member_id):
         logged_in = emps.get_emp_by_email(session['email'])
         if not logged_in:
             return abort(404)
-        account = members.get_membership_by_id(member_id)
-        if not account:
-            account = [emps.get_emp_by_id(member_id)]
+        account = [emps.get_emp_by_id(member_id)]
         return render_template('account.html', members=account, admin=True)
     return abort(404)
 
@@ -250,6 +353,21 @@ def login():
                 # if incorrect, show an error message
                 flash('Invalid username or password', 'error') # this also does not work, no error
     return render_template('login.html')
+
+# delete member
+@app.route('/account/delete/<member_id>')
+def delete_member(member_id):
+    if 'email' in session:
+        logged_in = emps.get_emp_by_email(session['email'])
+        if not logged_in:
+            logged_in = members.get_membership_by_email(session['email'])
+            if not logged_in:
+                return abort(404)
+            members.delete_member(member_id)
+        else:
+            emps.delete_emp(member_id)
+        return redirect(url_for('account'))
+    return abort(404)
 
 # logout
 @app.route('/logout')

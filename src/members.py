@@ -8,10 +8,14 @@ class Members:
         '''Returns all members'''
         return Member.query.all()
     
+    def get_member_by_id(self, member_id):
+        '''Returns member by id'''
+        return Member.query.filter_by(member_id=member_id).first()
+    
     def get_membership_by_id(self, member_id):
         '''Returns membership by id'''
         member = db.session.execute(text(f"""
-            SELECT m.member_id, ms.membership_id, m.first_name, m.last_name, ms.email, m.birthday, m.profile_image_location, ms.password, ms.phone, ms.street, ms.city, ms.state, ms.zip_code, ms.billing_type, ms.membership_type, ms.last_date_paid, ms.size_of_family, ms.active
+            SELECT m.member_id, ms.membership_id, m.first_name, m.last_name, ms.email, m.birthday, m.membership_owner, m.profile_image_location, ms.password, ms.phone, ms.street, ms.city, ms.state, ms.zip_code, ms.billing_type, ms.membership_type, ms.last_date_paid, ms.size_of_family, ms.active, ms.referred_by, ms.emergency_contact_name, ms.emergency_contact_phone
             FROM member m 
             JOIN membership ms on m.membership_id = ms.membership_id
             WHERE ms.membership_id = {member_id}
@@ -21,14 +25,14 @@ class Members:
     def get_membership_by_email(self, email):
         '''Returns membership by email'''
         member = db.session.execute(text(f"""
-            SELECT m.member_id, ms.membership_id, m.first_name, m.last_name, ms.email, m.birthday, m.profile_image_location, ms.password, ms.phone, ms.street, ms.city, ms.state, ms.zip_code, ms.billing_type, ms.membership_type, ms.last_date_paid, ms.size_of_family, ms.active
+            SELECT m.member_id, ms.membership_id, m.first_name, m.last_name, ms.email, m.birthday, m.membership_owner, m.profile_image_location, ms.password, ms.phone, ms.street, ms.city, ms.state, ms.zip_code, ms.billing_type, ms.membership_type, ms.last_date_paid, ms.size_of_family, ms.active, ms.referred_by, ms.emergency_contact_name, ms.emergency_contact_phone
             FROM member m 
             JOIN membership ms on m.membership_id = ms.membership_id
             WHERE email = '{email}'
         """)).fetchall()
         return member
     
-    def create_member(self, membership_id, first_name, last_name, birthday, profile_image_location=None):
+    def create_member(self, membership_id, first_name, last_name, birthday, membership_owner=False, profile_image_location=None):
         '''Creates a member'''
         # create id
         id = uuid.uuid1()
@@ -37,7 +41,7 @@ class Members:
         id = str(id)
         id = id[:8]
         id = int(id)
-        member = Member(member_id=id, membership_id=membership_id, first_name=first_name, last_name=last_name, birthday=birthday, profile_image_location=None)
+        member = Member(member_id=id, membership_id=membership_id, first_name=first_name, last_name=last_name, birthday=birthday, membership_owner=membership_owner, profile_image_location=None)
         db.session.add(member)
         db.session.commit()
         return member
@@ -67,9 +71,7 @@ class Members:
     def delete_member(self, member_id):
         '''Deletes a member'''
         member = self.get_member_by_id(member_id)
-        member.email = "deleted"
-        member.profile_image_location = None
-        member.password = None
+        db.session.delete(member)
         db.session.commit()
         return member
     

@@ -38,15 +38,16 @@
         <summary
             class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg bg-gray-50 p-4 text-gray-900">
             <a href="/account/{{ member.membership_id }}">
-                <h2 class="font-medium">{{ member.last_name }}, {{ member.first_name }}</h2>
+                <h2 class="font-medium">Membership: {{ member.membership_id }} {{ member.last_name }}, {{ member.first_name }}</h2>
             </a>
 
             <div class="flex flex-row gap-4 items-center">
                 <button
                     class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-5 py-3 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
-                    type="button">
+                    type="button" for="checkin" id="{{ member.member_id }}">
                     <span class="text-sm font-medium"> Check in </span>
                 </button>
+
                 <svg class="size-5 shrink-0 transition duration-300 group-open:-rotate-180"
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -116,5 +117,15 @@
         </div>
     </div>
 </section>
+
+<script>
+    // for each checkin button
+    for (let button of document.querySelectorAll('button[for^="checkin"]')) {
+        let member_id = button.getAttribute('id')
+        button.addEventListener('click', event => {
+            console.log('hello')
+        })
+    }
+</script>
 
 {% endblock %}
