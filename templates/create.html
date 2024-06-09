@@ -18,7 +18,7 @@
                 </p>
 
                 <div class="mt-8">
-                    <a href=tel: class="text-2xl font-bold text-blue-600"> 0151 475 4450 </a>
+                    <a href=tel: class="text-2xl font-bold text-blue-600"> (336) 944-5832 </a>
 
                     <address class="mt-2 not-italic">1903 Adams Farm Pkwy, Greensboro, NC 27407</address>
                 </div>
@@ -68,7 +68,7 @@
                             <div class="">
                                 <lable class="mt-2 not-italic">Date of birth</lable> <br>
                                 <input id="datepicker" class="w-full rounded-lg border border-gray-200 p-3 text-sm"
-                                    type="text" placeholder="Select a date" name="dob">
+                                    type="text" placeholder="Select a date" name="dob" value="{{ inputs['dob'] }}">
                             </div>
                             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
                             <script>
@@ -80,7 +80,6 @@
                         </div>
                         <div>
                             <lable class="mt-2 not-italic">Number of members</lable> <br>
-
                             <div
                                 class="flex items-center justify-between rounded border border-gray-200 w-full max-w-xs px-4">
                                 <button type="button"
@@ -107,7 +106,8 @@
                                 class="block w-full cursor-pointer rounded-lg border border-gray-200 p-3 text-gray-600 hover:border-black has-[:checked]:border-black has-[:checked]:bg-blue-600 has-[:checked]:text-white"
                                 tabindex="0">
                                 <input class="sr-only" id="Option1" type="radio" tabindex="-1" name="option" value="1"
-                                    {% if inputs['membership_type']==1 %}checked{% endif %} />
+                                    {% if inputs['membership_type']==1 %}checked{% endif %}{% if not inputs %}checked{%
+                                    endif %} />
 
                                 <span class="text-sm"> Single </span>
                             </label>
@@ -216,8 +216,8 @@
                             <label class="mt-2 not-italic">How did you hear about us?</label> <br>
                         </div>
                         <div>
-                            <select class="w-full rounded-lg border border-gray-200 p-3 text-sm" name="referred_by" id="referred_by"
-                                value="{{inputs['referred_by']}}">
+                            <select class="w-full rounded-lg border border-gray-200 p-3 text-sm" name="referred_by"
+                                id="referred_by">
                                 <option value="">Please select</option>
                                 <option value="mail">Direct Mailing</option>
                                 <option value="agent">Real estate agent</option>
@@ -254,14 +254,15 @@
                             class="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition">
                             <div class="flex items-center">
                                 &#8203;
-                                <input id="agree" type="checkbox" class="size-4 rounded border-gray-300" id="agree" name="agree" />
+                                <input id="agree" type="checkbox" class="size-4 rounded border-gray-300" id="agree"
+                                    name="agree" />
                             </div>
 
                             <div>
                                 <strong class="font-medium text-gray-900"> I agree </strong>
 
                                 <p class="mt-1 text-pretty text-sm text-gray-700">
-                                    to the <a class="text-blue-500" href="policies">terms and conditions</a> of
+                                    to the <a class="text-blue-500" href="/policies">terms and conditions</a> of
                                     membership.
                                 </p>
                             </div>
@@ -281,6 +282,15 @@
 </section>
 
 <script>
+    // JavaScript code to set the initial value dynamically
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get the select element
+        var referredBySelect = document.getElementById("referred_by");
+
+        // Set the initial value
+        var initialValue = "{{ inputs['referred_by'] }}"; // You can set this value dynamically as needed
+        referredBySelect.value = initialValue;
+    });
     document.addEventListener('DOMContentLoaded', (event) => {
         const quantityInput = document.getElementById('Quantity');
         const decreaseButton = document.getElementById('decrease');
@@ -312,9 +322,21 @@
             }
         });
     });
-    // if user presses in space-y-2, check the checkbox
-    document.querySelector('.space-y-2').addEventListener('click', () => {
-        document.getElementById('agree').checked = !document.getElementById('agree').checked;
+    // if user presses in space-y-2 and/or the checkbox input, check the checkbox
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the checkbox container
+        const checkboxContainer = document.getElementById('checkboxContainer');
+
+        // Add event listener to the container
+        checkboxContainer.addEventListener('click', function (event) {
+            // Check if the click event happened on the checkbox or its label
+            const checkbox = event.target.closest('input[type="checkbox"]');
+
+            // If the click event occurred on the checkbox or its label, toggle the checkbox
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+            }
+        });
     });
 </script>
 

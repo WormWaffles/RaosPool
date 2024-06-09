@@ -10,6 +10,15 @@
 
                 <p class="mt-1.5 text-sm text-gray-500">Search who you're looking for.</p>
             </div>
+            <div class="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+                <a href="/checkin/stats">
+                    <button
+                        class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-5 py-3 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
+                        type="button">
+                        <span class="text-sm font-medium"> Checkin Logs </span>
+                    </button>
+                </a>
+            </div>
         </div>
     </div>
 </header>
@@ -30,23 +39,34 @@
     </div>
 </div>
 
-{% if members_found %}
-{% for member in members_found %}
+{% if memberships_found %}
+{% for membership in memberships_found %}
 
 <div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
-    <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden" closed>
+    <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden" {% if loop.first
+        %}open{% else %}closed{% endif %}>
         <summary
             class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg bg-gray-50 p-4 text-gray-900">
-            <a href="/account/{{ member.membership_id }}">
-                <h2 class="font-medium">Membership: {{ member.membership_id }} {{ member.last_name }}, {{ member.first_name }}</h2>
+            <a href="/account?membership_id={{ membership.membership_id }}">
+                <h2 class="font-medium">Membership: {{ membership.membership_id }} {{ membership.members[0].last_name
+                    }}, {{ membership.members[0].first_name }}</h2>
             </a>
 
             <div class="flex flex-row gap-4 items-center">
+                {% if membership.active %}
                 <button
                     class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-5 py-3 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
-                    type="button" for="checkin" id="{{ member.member_id }}">
-                    <span class="text-sm font-medium"> Check in </span>
+                    type="button" for="checkin_all" id="{{ membership.membership_id }}">
+                    <span class="text-sm font-medium"> Checkin all </span>
                 </button>
+                {% else %}
+                <button
+                    class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-5 py-3 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
+                    type="button" title="Membership not active" for="disabled" id="disabled"
+                    style="background-color: #f94449;">
+                    <span class="text-sm font-medium"> Checkin all </span>
+                </button>
+                {% endif %}
 
                 <svg class="size-5 shrink-0 transition duration-300 group-open:-rotate-180"
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,25 +75,46 @@
             </div>
         </summary>
 
-
+        {% for member in membership.members %}
         <div class="flow-root">
             <dl class="-my-3 divide-y divide-gray-100 text-sm py-2 px-2">
-                <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                    <dt class="font-medium text-gray-900">First name</dt>
-                    <dd class="text-gray-700 sm:col-span-2">{{ member.first_name }}</dd>
-                </div>
-
-                <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                    <dt class="font-medium text-gray-900">Last name</dt>
-                    <dd class="text-gray-700 sm:col-span-2">{{ member.last_name }}</dd>
-                </div>
-
-                <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                    <dt class="font-medium text-gray-900">Birthday</dt>
-                    <dd class="text-gray-700 sm:col-span-2">{{ member.birthday }}</dd>
+                <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-4 sm:gap-4">
+                    <div class="flex flex-row justify-between" style="flex-basis: 25%;">
+                        <dd class="inline-flex items-center justify-center text-gray-700">{{ member.first_name }}</dd>
+                    </div>
+                    <div class="flex flex-row justify-between" style="flex-basis: 25%;">
+                        <dd class="inline-flex items-center justify-center text-gray-700">{{ member.last_name }}</dd>
+                    </div>
+                    <div class="flex flex-row justify-between" style="flex-basis: 25%;">
+                        <dd class="inline-flex items-center justify-center text-gray-700">{{ member.birthday }}</dd>
+                    </div>
+                    <div class="flex flex-row justify-between" style="flex-basis: 25%;">
+                        {% if membership.active %}
+                        <button
+                            class="inline-flex items-center justify-center rounded-lg border border-gray-200 px-2 py-1 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
+                            type="button" for="checkin" id="{{ member.member_id }}"
+                            name="{{ membership.membership_id }}">
+                            <span class="text-sm font-medium"> Checkin </span>
+                        </button>
+                        {% if member.has_checked_in_today %}
+                        <script>
+                            document.getElementById('{{ member.member_id }}').querySelector('span').innerText = 'Checked';
+                            document.getElementById('{{ member.member_id }}').disabled = true;
+                            document.getElementById('{{ member.member_id }}').style.backgroundColor = '#34D399';
+                        </script>
+                        {% endif %}
+                        {% else %}
+                        <button
+                            class="inline-flex items-center justify-center rounded-lg border border-gray-200 px-2 py-1 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
+                            type="button" title="Membership not active" for="disabled" id="disabled"
+                            style="background-color: #f94449;" name="disabled">
+                            <span class="text-sm font-medium"> Checkin </span>
+                        </button> {% endif %}
+                    </div>
                 </div>
             </dl>
         </div>
+        {% endfor %}
     </details>
 </div>
 {% endfor %}
@@ -99,19 +140,19 @@
                 <div class="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center">
                     <dt class="order-last text-lg font-medium text-gray-500">Members today</dt>
 
-                    <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">0</dd>
+                    <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{ stats.checkins_today }}</dd>
                 </div>
 
                 <div class="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center">
                     <dt class="order-last text-lg font-medium text-gray-500">Members / week</dt>
 
-                    <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">0</dd>
+                    <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{ stats.checkins_month }}</dd>
                 </div>
 
                 <div class="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center">
                     <dt class="order-last text-lg font-medium text-gray-500">Members / year</dt>
 
-                    <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">0</dd>
+                    <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{ stats.checkins_year }}</dd>
                 </div>
             </dl>
         </div>
@@ -119,11 +160,46 @@
 </section>
 
 <script>
+    // focus on the search input
+    document.getElementById('search').focus()
     // for each checkin button
-    for (let button of document.querySelectorAll('button[for^="checkin"]')) {
+    for (let button of document.querySelectorAll('button[for="checkin"]')) {
         let member_id = button.getAttribute('id')
         button.addEventListener('click', event => {
-            console.log('hello')
+            // change the button text to checked
+            button.querySelector('span').innerText = 'Checked';
+            button.disabled = true
+            // change color to green
+            button.style.backgroundColor = '#34D399'
+            // send a request to the server
+            member_id = button.getAttribute('id')
+            var url = "/checkin/log?member_id=" + member_id;
+            var request = new XMLHttpRequest()
+            request.open("GET", url, true)
+            request.send()
+        })
+    }
+    // for each checkin all members in membership button
+    for (let button of document.querySelectorAll('button[for="checkin_all"]')) {
+        let member_id = button.getAttribute('id')
+        button.addEventListener('click', event => {
+            button.querySelector('span').innerText = 'All Checked';
+            button.disabled = true
+            // change color to green
+            button.style.backgroundColor = '#34D399'
+            membership_id = button.getAttribute('id')
+            // change all checkin buttons with the same membership id
+            for (let button of document.querySelectorAll('button[name="' + member_id + '"]')) {
+                if (button.getAttribute('name') == member_id) {
+                    button.querySelector('span').innerText = 'Checked';
+                    button.disabled = true
+                    button.style.backgroundColor = '#34D399'
+                }
+            }
+            var url = "/checkin/log?membership_id=" + membership_id;
+            var request = new XMLHttpRequest()
+            request.open("GET", url, true)
+            request.send()
         })
     }
 </script>

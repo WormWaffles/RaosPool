@@ -13,6 +13,21 @@ class Memberships:
         '''Returns membership by id'''
         return Membership.query.get(membership_id)
     
+    def get_membership_by_email(self, email):
+        '''Returns membership by email'''
+        email = email.lower()
+        return Membership.query.filter_by(email=email).first()
+    
+    def get_members_by_membership_id(self, membership_id):
+        '''Returns members by membership id'''
+        members = db.session.execute(text(f"""
+            SELECT member_id, first_name, last_name, birthday
+            FROM member
+            WHERE membership_id = {membership_id}
+            ORDER BY birthday ASC
+        """)).fetchall()
+        return members
+    
     def create_membership(self, email, inputs):
         '''Creates a member'''
         email = email.lower()
@@ -25,7 +40,7 @@ class Memberships:
         db.session.commit()
         return membership
 
-    def update_membership(self, email, inputs, last_date_paid=None):
+    def update_membership(self, email, inputs):
         '''Updates a member'''
         email = email.lower()
         membership = Membership.query.filter_by(email=email).first()
@@ -37,12 +52,83 @@ class Memberships:
         membership.zip_code = inputs['zip_code']
         membership.emergency_contact_name = inputs['emergency_contact_name']
         membership.emergency_contact_phone = inputs['emergency_contact_phone']
+        try:
+            membership.active = inputs['active']
+            membership.membership_type = inputs['membership_type']
+            membership.size_of_family = inputs['size_of_family']
+            membership.billing_type = inputs['billing_type']
+            membership.last_date_paid = inputs['last_date_paid']
+        except:
+            pass
         db.session.commit()
         return membership
     
     def update_membership_admin(self, email, inputs):
         '''Update all membership fields'''
-        
+        return True
+
+    def reset_password(self, email, password):
+        '''Resets password'''
+        email = email.lower()
+        membership = Membership.query.filter_by(email=email).first()
+        membership.password = password
+        db.session.commit()
+        return True
+    
+    def search_membership(self, search):
+        '''Searches for membership'''
+        memberships = db.session.execute(text(f"""
+        WITH MemberCheck AS (
+            SELECT
+                member.member_id,
+                member.first_name,
+                member.last_name,
+                member.birthday,
+                member.membership_id,
+                EXISTS (
+                    SELECT 1
+                    FROM checkin
+                    WHERE checkin.member_id::INTEGER = member.member_id
+                    AND checkin.checkin_date::DATE = CURRENT_DATE
+                ) AS has_checked_in_today
+            FROM
+                member
+        )
+        SELECT
+            membership.membership_id,
+            membership.active,
+            json_agg(
+                json_build_object(
+                    'member_id', MemberCheck.member_id,
+                    'first_name', MemberCheck.first_name,
+                    'last_name', MemberCheck.last_name,
+                    'birthday', MemberCheck.birthday,
+                    'has_checked_in_today', MemberCheck.has_checked_in_today
+                )
+            ) AS members
+        FROM
+            membership
+        JOIN
+            MemberCheck ON membership.membership_id = MemberCheck.membership_id
+        WHERE
+            membership.membership_id IN (
+                SELECT member.membership_id
+                FROM member
+                WHERE LOWER(member.first_name) ILIKE LOWER('%{search}%')
+                OR LOWER(member.last_name) ILIKE LOWER('%{search}%')
+                OR CAST(member.membership_id AS TEXT) ILIKE '%{search}%'
+            )
+        GROUP BY
+            membership.membership_id;
+        """)).fetchall()
+        return memberships
+    
+    def get_recent_memberships(self):
+        '''Returns the most recent applications from members and memberships'''
+        recent_apps = db.session.execute(text(f"""
+            SELECT * FROM membership limit 10;
+        """)).fetchall()
+        return recent_apps
     
     def delete_membership(self, member_id):
         '''Deletes a membership'''

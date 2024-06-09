@@ -1,0 +1,250 @@
+{% extends '_layout.html' %}
+
+{% block body %}
+<section class="bg-gray-100">
+    <div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 gap-x-16 gap-y-8 lg:grid-cols-5">
+            <div class="lg:col-span-2 lg:py-12">
+                <div class="sm:flex sm:items-center py-8 sm:justify-between">
+                    <div class="text-center sm:text-left">
+                        <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Join the team today!</h1>
+                    </div>
+                </div>
+                <p class="max-w-xl text-lg">
+                    Welcome to Rao's, we are excited to have you join our team.
+                    Please fill out the form below to apply.
+                </p>
+
+                <div class="mt-8">
+                    <a href=tel: class="text-2xl font-bold text-blue-600"> (336) 944-5832 </a>
+
+                    <address class="mt-2 not-italic">1903 Adams Farm Pkwy, Greensboro, NC 27407</address>
+                </div>
+            </div>
+
+            <div class="rounded-lg bg-white p-8 shadow-lg lg:col-span-3 lg:p-12">
+                <form action="/apply" method="post" class="space-y-4">
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+                        <div>
+                            <label class="sr-only" for="fname">First name</label>
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="First name"
+                                type="text" id="first_name" name="first_name" value="{{ inputs['first_name'] }}" required />
+                        </div>
+
+                        <div>
+                            <label class="sr-only" for="mname">Middle name</label>
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                                placeholder="Middle name" type="text" id="middle_name" name="middle_name"
+                                value="{{ inputs['middle_name'] }}" required />
+                        </div>
+
+                        <div>
+                            <label class="sr-only" for="lname">Last name</label>
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Last name"
+                                type="text" id="last_name" name="last_name" value="{{ inputs['last_name'] }}" required />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <label class="sr-only" for="email">Email</label>
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                                placeholder="Email address" value="{{email}}" type="email" id="email" name="email"
+                                required />
+                        </div>
+
+                        <div>
+                            <label class="sr-only" for="password">Password</label>
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Password"
+                                type="password" id="password" name="password" required />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                        <div>
+                            <label class="sr-only" for="phone">Phone</label>
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                                placeholder="Phone Number" type="tel" id="phone" name="phone"
+                                value="{{ inputs['phone'] }}" required />
+                        </div>
+                        <div>
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+                            <div class="">
+                                <input id="datepicker" class="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                                    type="text" placeholder="Enter birthday" name="dob" value="{{ inputs['dob'] }}">
+                            </div>
+                            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+                            <script>
+                                flatpickr("#datepicker", {
+                                    // Configuration options for Flatpickr
+                                    // You can customize the appearance and behavior here
+                                });
+                            </script>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div class="space-y-2">
+                            <label for="Option1"
+                                class="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 has-[:checked]:bg-blue-50">
+                                <div class="flex items-center">
+                                    &#8203;
+                                    <input type="checkbox" class="size-4 rounded border-gray-300" id="us_eligable" name="us_eligable" {% if inputs['us_eligable'] %}checked{% endif %} />
+                                </div>
+
+                                <div>
+                                    <strong class="font-medium text-gray-900"> Agree </strong>
+
+                                    <p class="mt-1 text-pretty text-sm text-gray-700">
+                                        I am eligable to work in the US
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="space-y-3">
+                            <label for="Option1"
+                                class="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 has-[:checked]:bg-blue-50">
+                                <div class="flex items-center">
+                                    &#8203;
+                                    <input type="checkbox" class="size-4 rounded border-gray-300" id="license" name="license" {% if inputs['license'] %}checked{% endif %} />
+                                </div>
+
+                                <div>
+                                    <strong class="font-medium text-gray-900"> Agree </strong>
+
+                                    <p class="mt-1 text-pretty text-sm text-gray-700">
+                                        I have a currect drivers license
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 text-center sm:grid-cols-3">
+
+                    </div>
+
+                    <div>
+                        <label class="sr-only" for="street">Street</label>
+                        <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Street Address"
+                            type="street" id="street" name="street" value="{{inputs['street']}}" required />
+                    </div>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <label class="sr-only" for="city">City</label>
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="City"
+                                type="city" id="city" name="city" value="{{inputs['city']}}" required />
+                        </div>
+                        <div>
+                            <select class="w-full rounded-lg border border-gray-200 p-3 text-sm" name="state" id="state"
+                                value="{{inputs['state']}}">
+                                <option value="NC">North Carolina</option>
+                                <option value="AL">Alabama</option>
+                                <option value="AK">Alaska</option>
+                                <option value="AZ">Arizona</option>
+                                <option value="AR">Arkansas</option>
+                                <option value="CA">California</option>
+                                <option value="CO">Colorado</option>
+                                <option value="CT">Connecticut</option>
+                                <option value="DE">Delaware</option>
+                                <option value="DC">District Of Columbia</option>
+                                <option value="FL">Florida</option>
+                                <option value="GA">Georgia</option>
+                                <option value="HI">Hawaii</option>
+                                <option value="ID">Idaho</option>
+                                <option value="IL">Illinois</option>
+                                <option value="IN">Indiana</option>
+                                <option value="IA">Iowa</option>
+                                <option value="KS">Kansas</option>
+                                <option value="KY">Kentucky</option>
+                                <option value="LA">Louisiana</option>
+                                <option value="ME">Maine</option>
+                                <option value="MD">Maryland</option>
+                                <option value="MA">Massachusetts</option>
+                                <option value="MI">Michigan</option>
+                                <option value="MN">Minnesota</option>
+                                <option value="MS">Mississippi</option>
+                                <option value="MO">Missouri</option>
+                                <option value="MT">Montana</option>
+                                <option value="NE">Nebraska</option>
+                                <option value="NV">Nevada</option>
+                                <option value="NH">New Hampshire</option>
+                                <option value="NJ">New Jersey</option>
+                                <option value="NM">New Mexico</option>
+                                <option value="NY">New York</option>
+                                <option value="ND">North Dakota</option>
+                                <option value="OH">Ohio</option>
+                                <option value="OK">Oklahoma</option>
+                                <option value="OR">Oregon</option>
+                                <option value="PA">Pennsylvania</option>
+                                <option value="RI">Rhode Island</option>
+                                <option value="SC">South Carolina</option>
+                                <option value="SD">South Dakota</option>
+                                <option value="TN">Tennessee</option>
+                                <option value="TX">Texas</option>
+                                <option value="UT">Utah</option>
+                                <option value="VT">Vermont</option>
+                                <option value="VA">Virginia</option>
+                                <option value="WA">Washington</option>
+                                <option value="WV">West Virginia</option>
+                                <option value="WI">Wisconsin</option>
+                                <option value="WY">Wyoming</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="sr-only" for="zip">Zip</label>
+                        <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Zip code"
+                            type="zip" id="zip_code" name="zip_code" value="{{ inputs['zip_code'] }}" required />
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div style="display: flex; justify-content: center; align-items: flex-start; margin-top: 1px;">
+                            <label class="mt-2 not-italic">Convicted of a felony in the last 7 years?</label> <br>
+                        </div>
+                        <div>
+                            <select class="w-full rounded-lg border border-gray-200 p-3 text-sm" name="felony"
+                                id="felony" value="{{inputs['felony']}}">
+                                <option value="">Please select</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit"
+                            class="inline-block w-full rounded-lg bg-blue-600 px-5 py-3 font-medium text-white sm:w-auto">
+                            Apply now
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // if user presses in space-y-2, check the checkbox
+    document.querySelector('.space-y-3').addEventListener('click', () => {
+        document.getElementById('license').checked = !document.getElementById('license').checked;
+    });
+    document.querySelector('.space-y-2').addEventListener('click', () => {
+        document.getElementById('us_eligable').checked = !document.getElementById('us_eligable').checked;
+    });
+    // JavaScript code to set the initial value dynamically
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get the select element
+        var referredBySelect = document.getElementById("felony");
+
+        // Set the initial value
+        var initialValue = "{{ inputs['felony'] }}"; // You can set this value dynamically as needed
+        referredBySelect.value = initialValue;
+    });
+</script>
+
+{% endblock %}

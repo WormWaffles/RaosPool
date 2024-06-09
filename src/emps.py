@@ -17,7 +17,7 @@ class Emps:
         emp = Emp.query.filter_by(email=email).first()
         return emp
     
-    def create_emp(self, id, first_name, last_name, email, password, admin):
+    def create_emp(self, email, inputs):
         '''Creates an employee'''
         # create uuid for post_id
         id = uuid.uuid1()
@@ -28,26 +28,46 @@ class Emps:
         id = int(id)
         email = email.lower()
         # create id for member [4 digits i guess]
-        if admin:
-            emp = Emp(emp_id=id, first_name=first_name, last_name=last_name, email=email, password=password, admin=True)
-        else:
-            emp = Emp(emp_id=id, first_name=first_name, last_name=last_name, email=email, password=password, admin=False)
+        emp = Emp(emp_id=id, first_name=inputs['first_name'], middle_name=inputs['middle_name'], last_name=inputs['last_name'], email=email, password=inputs['password'], phone=inputs['phone'], birthday=inputs['dob'], us_eligable=inputs['us_eligable'], license=inputs['license'], street=inputs['street'], city=inputs['city'], state=inputs['state'], zip_code=inputs['zip_code'], felony=inputs['felony'], admin=False)
         db.session.add(emp)
         db.session.commit()
         return emp
 
-    def update_emp(self, emp_id, first_name, last_name, email, password, admin=None):
+    def update_emp(self, email, inputs, admin=False):
         '''Updates an employee'''
-        emp = self.get_user_by_id(emp_id)
-        emp.first_name = first_name
-        emp.last_name = last_name
-        emp.email = email.lower()
+        email = email.lower()
+        emp = Emps.get_emp_by_email(email)
+        emp.first_name = inputs['first_name']
+        emp.middle_name = inputs['middle_name']
+        emp.last_name = inputs['last_name']
+        emp.email = email
+        emp.password = inputs['password']
+        emp.phone = inputs['phone']
+        emp.us_eligable = inputs['us_eligable']
+        emp.license = inputs['license']
+        emp.street = inputs['street']
+        emp.city = inputs['city']
+        emp.state = inputs['state']
+        emp.zip_code = inputs['zip_code']
+        emp.felony = inputs['felony']
+        emp.admin = admin
+        db.session.commit()        
+        return emp
+    
+    def reset_password(self, email, password):
+        '''Resets an employee's password'''
+        emp = self.get_emp_by_email(email)
         emp.password = password
-        if admin is not None:
-            emp.admin = admin
         db.session.commit()
         return emp
     
+    def get_recent_emps(self):
+        '''Returns the most recent applications from emps and members'''
+        recent_apps = db.session.execute(text(f"""
+            SELECT * FROM emp limit 10;
+        """)).fetchall()
+        return recent_apps
+
     def search_emp(self, search):
         '''Query employees id and name ignore case'''
         emps = Emp.query.filter(Emp.emp_id.ilike(f'%{search}%')).all()

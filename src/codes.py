@@ -25,7 +25,7 @@ class Codes:
         '''Creates a code'''
         # check if email is already in use
         if self.get_code_by_email(email):
-            return None
+            self.delete_code(email)
         # create uuid for post_id
         id = uuid.uuid1()
         id = id.int

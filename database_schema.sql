@@ -41,6 +41,7 @@ CREATE TABLE member (
     first_name VARCHAR(80),
     last_name VARCHAR(80),
     birthday DATE,
+    membership_owner BOOLEAN NOT NULL,
     -- picture paths (aws)
     profile_image_location VARCHAR(255),
 
@@ -51,9 +52,20 @@ CREATE TABLE member (
 CREATE TABLE emp (
     emp_id INTEGER NOT NULL,
     first_name VARCHAR(80),
+    middle_name VARCHAR(80),
     last_name VARCHAR(80),
     email VARCHAR(80) NOT NULL,
     password VARCHAR(80),
+    phone VARCHAR(10),
+    birthday DATE,
+    us_eligable BOOLEAN NOT NULL,
+    license BOOLEAN NOT NULL,
+    street VARCHAR(80),
+    city VARCHAR(80),
+    state VARCHAR(2),
+    zip_code VARCHAR(5),
+    felony VARCHAR(5),
+    active BOOLEAN NOT NULL,
     PRIMARY KEY (emp_id),
 
     -- admin stuff
@@ -69,11 +81,6 @@ CREATE TABLE code (
 CREATE TABLE checkin (
     checkin_id INTEGER NOT NULL,
     member_id VARCHAR(80) NOT NULL,
-    checkin_date DATE,
+    checkin_date TIMESTAMP NOT NULL,
     PRIMARY KEY (checkin_id)
 );
-
-INSERT INTO emp VALUES (1, 'Colin', 'Brown', 'colin8297@gmail.com', 'admin', TRUE);
-INSERT INTO membership VALUES (6184, 'lori8297@gmail.com', 'test', '9517606370', '1234 Main St', 'Riverside', 'CA', '92507', 'Yearly', 'Family', '2024-06-01', 6);
-INSERT INTO member VALUES (1, 6184, 'Lori', 'Brown', '2000-06-01', '');
-INSERT INTO member VALUES (2, 6184, 'Phi;', 'Brown', '1971-02-24', '');

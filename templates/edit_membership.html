@@ -12,12 +12,14 @@
                     </div>
                 </div>
                 <p class="max-w-xl text-lg">
+                    <strong class="text-red-600">Some membership information can only be changed by an
+                        admin.</strong><br>
                     Make sure all the information is correct before submitting the form.
                     If you have any questions, please contact us.
                 </p>
 
                 <div class="mt-8">
-                    <a href=tel: class="text-2xl font-bold text-blue-600"> 0151 475 4450 </a>
+                    <a href=tel: class="text-2xl font-bold text-blue-600"> (336) 944-5832 </a>
 
                     <address class="mt-2 not-italic">1903 Adams Farm Pkwy, Greensboro, NC 27407</address>
                 </div>
@@ -25,6 +27,94 @@
 
             <div class="rounded-lg bg-white p-8 shadow-lg lg:col-span-3 lg:p-12">
                 <form action="/account/edit/{{ account.membership_id }}" method="post" class="space-y-4">
+
+                    {% if inputs['membership_type'] %}
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <lable class="inline-flex items-center justify-center not-italic">Active:</lable>
+                        <div class="inline-flex items-center justify-center">
+                            <label for="active"
+                                class="relative inline-block h-8 w-14 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500">
+                                <input type="checkbox" id="active" name="active" class="peer sr-only" {% if
+                                    account.active %}checked{% endif %} />
+
+                                <span
+                                    class="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-white transition-all peer-checked:start-6"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+                            <div class="">
+                                <lable class="mt-2 not-italic">Date of birth</lable> <br>
+                                <input id="datepicker" class="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                                    type="text" placeholder="Select a date" name="dob" value="{{ inputs['birthday'] }}">
+                            </div>
+                            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+                            <script>
+                                flatpickr("#datepicker", {
+                                    // Configuration options for Flatpickr
+                                    // You can customize the appearance and behavior here
+                                });
+                            </script>
+                        </div>
+                        <div>
+                            <lable class="mt-2 not-italic">Number of members</lable> <br>
+                            <div
+                                class="flex items-center justify-between rounded border border-gray-200 w-full max-w-xs px-4">
+                                <button type="button"
+                                    class="size-10 leading-10 text-gray-600 transition hover:opacity-75" id="decrease">
+                                    &minus;
+                                </button>
+
+                                <input type="number" id="Quantity"
+                                    value="{% if inputs['size_of_family'] %}{{ inputs['size_of_family'] }}{% else %}1{% endif %}"
+                                    name="size_of_family"
+                                    class="h-10 w-16 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none" />
+
+                                <button type="button"
+                                    class="size-10 leading-10 text-gray-600 transition hover:opacity-75" id="increase">
+                                    &plus;
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <div>
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+                            <div class="">
+                                <!-- <lable class="mt-2 not-italic">Last date paid</lable> <br> -->
+                                <input id="datepicker" class="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                                    type="text" placeholder="Last date paid" name="last_date_paid"
+                                    value="{% if inputs['last_date_paid'] %}{{ inputs['last_date_paid'] }}{% endif %}">
+                            </div>
+                            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+                            <script>
+                                flatpickr("#datepicker", {
+                                    // Configuration options for Flatpickr
+                                    // You can customize the appearance and behavior here
+                                });
+                            </script>
+                        </div>
+                        <div>
+                            <label class="sr-only" for="email">Billing type</label>
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                                placeholder="Billing type ex. annaul"
+                                value="{% if inputs['billing_type'] %}{{ inputs['billing_type'] }}{% endif %}"
+                                type="text" id="billing_type" name="billing_type" required />
+                        </div>
+
+                        <div>
+                            <label class="sr-only" for="password">Membership type</label>
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                                placeholder="Membership type" type="text" id="membership_type" name="membership_type"
+                                value="{% if inputs['membership_type'] %}{{ inputs['membership_type'] }}{% endif %}"
+                                required />
+                        </div>
+                    </div>
+
+                    {% endif %}
 
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
@@ -36,8 +126,8 @@
 
                         <div>
                             <label class="sr-only" for="password">Password</label>
-                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Password"
-                                type="password" id="password" name="password" required />
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="New pass, only enter if updating"
+                                type="password" id="password" name="password" autocomplete="new-password" />
                         </div>
                     </div>
 
@@ -45,7 +135,7 @@
                         <label class="sr-only" for="phone">Phone</label>
                         <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Phone Number"
                             type="tel" id="phone" name="phone" value="{{ inputs['phone'] }}" required />
-                    </div>                        
+                    </div>
 
                     <div>
                         <label class="sr-only" for="street">Street</label>
@@ -154,5 +244,25 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const quantityInput = document.getElementById('Quantity');
+        const decreaseButton = document.getElementById('decrease');
+        const increaseButton = document.getElementById('increase');
+
+        decreaseButton.addEventListener('click', () => {
+            let currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        });
+
+        increaseButton.addEventListener('click', () => {
+            let currentValue = parseInt(quantityInput.value);
+            quantityInput.value = currentValue + 1;
+        });
+    });
+</script>
 
 {% endblock %}

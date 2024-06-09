@@ -15,10 +15,11 @@ class Members:
     def get_membership_by_id(self, member_id):
         '''Returns membership by id'''
         member = db.session.execute(text(f"""
-            SELECT m.member_id, ms.membership_id, m.first_name, m.last_name, ms.email, m.birthday, m.membership_owner, m.profile_image_location, ms.password, ms.phone, ms.street, ms.city, ms.state, ms.zip_code, ms.billing_type, ms.membership_type, ms.last_date_paid, ms.size_of_family, ms.active, ms.referred_by, ms.emergency_contact_name, ms.emergency_contact_phone
+            SELECT m.member_id, ms.membership_id, m.first_name, m.last_name, ms.email, m.birthday, m.membership_owner, m.profile_image_location, ms.password, ms.phone, ms.street, ms.city, ms.state, ms.zip_code, ms.billing_type, ms.membership_type, ms.last_date_paid, ms.size_of_family, ms.billing_type, ms.active, ms.referred_by, ms.emergency_contact_name, ms.emergency_contact_phone
             FROM member m 
             JOIN membership ms on m.membership_id = ms.membership_id
             WHERE ms.membership_id = {member_id}
+            ORDER BY m.birthday ASC
         """)).fetchall()
         return member
     
@@ -29,6 +30,7 @@ class Members:
             FROM member m 
             JOIN membership ms on m.membership_id = ms.membership_id
             WHERE email = '{email}'
+            ORDER BY m.birthday ASC
         """)).fetchall()
         return member
     
@@ -56,17 +58,6 @@ class Members:
         member.profile_pic = profile_image_location
         db.session.commit()
         return member
-    
-
-    def search_member(self, search):
-        '''Query member names and membership_id ignoring case'''
-        members = db.session.execute(text(f"""
-            SELECT * FROM member
-            WHERE LOWER(first_name) ILIKE LOWER('%{search}%')
-            OR LOWER(last_name) ILIKE LOWER('%{search}%')
-            OR CAST(membership_id AS TEXT) ILIKE '%{search}%';
-        """)).fetchall()
-        return members if members else None
     
     def delete_member(self, member_id):
         '''Deletes a member'''

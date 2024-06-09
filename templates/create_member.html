@@ -10,7 +10,7 @@
         </p>
     </div>
 
-    <form action="/create/member" method="post" class="mx-auto mb-0 mt-8 max-w-md space-y-4">
+    <form action="/create/member?membership_id={{ membership_id }}" method="post" class="mx-auto mb-0 mt-8 max-w-md space-y-4">
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
             <div>
@@ -30,7 +30,7 @@
             <div class="">
                 <!-- <lable class="mt-2 not-italic">Select birthday</lable> <br> -->
                 <input id="datepicker" class="w-full rounded-lg border border-gray-200 p-3 text-sm"
-                    type="text" placeholder="Select birthday" name="dob">
+                    type="text" placeholder="Select birthday" name="dob" value="{{ inputs['birthday'] }}">
             </div>
             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
             <script>

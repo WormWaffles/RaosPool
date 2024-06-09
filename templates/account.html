@@ -11,8 +11,18 @@
                 <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Employee ID: {{ members[0].emp_id }}
                 </h1>
             </div>
-            {% if members[0].admin or admin %}
+            {% if emp %}
             <div class="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+                {% if members[0].admin %}
+                <a href="/applications">
+                    <button
+                        class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-5 py-3 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
+                        type="button">
+                        <span class="text-sm font-medium"> Applications </span>
+                    </button>
+                </a>
+                {% endif %}
+
                 <a href="/checkin">
                     <button
                         class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-5 py-3 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
@@ -27,7 +37,7 @@
                     </button>
                 </a>
 
-                <a href="/account/edit/{{ members[0].emp_id }}{{ members[0].member_id }}">
+                <a href="/account/edit?id={{ members[0].emp_id }}{{ members[0].member_id }}">
                     <button
                         class="block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
                         type="button">
@@ -49,13 +59,48 @@
             </div>
 
             <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Middle name</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].middle_name }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
                 <dt class="font-medium text-gray-900">Last name</dt>
                 <dd class="text-gray-700 sm:col-span-2">{{ members[0].last_name }}</dd>
             </div>
 
             <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
-                <dt class="font-medium text-gray-900">Email</dt>
-                <dd class="text-gray-700 sm:col-span-2">{{ members[0].email }}</dd>
+                <dt class="font-medium text-gray-900">Phone number</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].phone }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Birthday</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].birthday }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Eligable to work in US</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].us_eligable }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Has a license</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].license }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Address</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].street }}, {{ members[0].city }} {{ members[0].state }}, {{ members[0].zip_code }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Felony in the last 7 years</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].felony }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Admin</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].admin }}</dd>
             </div>
         </dl>
     </div>

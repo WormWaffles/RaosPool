@@ -24,8 +24,8 @@
             <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
                 <dt class="font-medium text-gray-900">Status</dt>
                 <dd class="text-green-700 {% if not members[0].active %}text-red-700{% endif %} sm:col-span-2">{% if
-                    members[0].active %}Active{% else %}Inactive (Contact management <a class="text-blue-500"
-                        href="/contact">here</a>){% endif %}</dd>
+                    members[0].active %}Active{% else %}Inactive (Likely payment related: <a class="text-blue-500"
+                        href="/contact">contact management</a>){% endif %}</dd>
             </div>
 
             <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
@@ -61,11 +61,6 @@
                 <dd class="text-gray-700 sm:col-span-2">{{ members[0].referred_by }}</dd>
             </div>
 
-            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
-                <dt class="font-medium text-gray-900">Emergency Contact</dt>
-                <dd class="text-gray-700 sm:col-span-2">{{ members[0].emergency_contact_name }}, {{
-                    members[0].emergency_contact_phone }}</dd>
-            </div>
 
             <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
                 <dt class="font-medium text-gray-900">Billing type</dt>
@@ -73,19 +68,25 @@
             </div>
 
             <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
-                <dt class="font-medium text-gray-900">Paid as of</dt>
+                <dt class="font-medium text-gray-900">Last payment date</dt>
                 <dd class="text-gray-700 sm:col-span-2">{{ members[0].last_date_paid }}</dd>
             </div>
 
+            <div class="grid grid-cols-1 gap-1 m-1 p-2 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Emergency Contact</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].emergency_contact_name }}, {{
+                    members[0].emergency_contact_phone }}</dd>
+            </div>
         </dl>
     </div>
 </div>
 {% for member in members %}
 <div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
     <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden" closed>
-        <summary class="flex cursor-pointer items-center justify-between gap-1.5 rounded-lg bg-gray-50 p-4 text-gray-900">
+        <summary
+            class="flex cursor-pointer items-center justify-between gap-1.5 rounded-lg bg-gray-50 p-4 text-gray-900">
             <h2 class="font-medium flex-grow">{{ member.last_name }}, {{ member.first_name }}</h2>
-        
+
             {% if not member.membership_owner %}
             <div class="flex items-center">
                 <a class="text-red-500 hover:text-red-600 hover:underline"
@@ -93,14 +94,17 @@
                     <span class="text-sm font-medium">Delete member</span>
                 </a>
             </div>
+            {% else %}
+            <div class="flex items-center">
+                <span class="text-sm font-medium text-gray-500">Owner</span>
+            </div>
             {% endif %}
-        
+
             <svg class="size-5 shrink-0 transition duration-300 group-open:-rotate-180"
                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
         </summary>
-        
 
         <div class="flow-root">
             <dl class="-my-3 divide-y divide-gray-100 text-sm py-2 px-2">
@@ -128,7 +132,7 @@
 <div class="mx-auto w-full max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
     <div class="flex justify-center">
         <a class="inline-flex items-center gap-2 rounded border border-blue-500 bg-blue-500 px-8 py-3 text-white hover:bg-transparent hover:text-blue-500 focus:outline-none focus:ring active:text-blue-400"
-            href="/create/member">
+            href="/create/member?membership_id={{ members[0].membership_id }}">
             <span class="text-sm font-medium"> Add member </span>
 
             <svg class="size-5 rtl:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

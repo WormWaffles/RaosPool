@@ -19,7 +19,7 @@
 <div id="remove" class="flex items-center justify-between gap-4 bg-blue-500 px-4 py-3 text-white">
     <p class="text-sm font-medium">
         {% for message in messages %}
-        {{ message }}
+        {{ message }}{% if message == 'Invalid username or password.' %}<a class="text-blue-100" href="/reset"> Reset password?</a>{% endif %}
         {% endfor %}
     </p>
 

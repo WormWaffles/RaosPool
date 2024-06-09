@@ -1,0 +1,150 @@
+{% extends '_layout.html' %}
+
+{% block body %}
+
+<header class="bg-gray-50">
+    <div class="mx-auto max-w-screen-xl px-4 py-4 sm:px-6 sm:py-4 lg:px-8">
+        <div class="sm:flex sm:items-center sm:justify-between">
+            <div class="text-center sm:text-left">
+                <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Check in logs</h1>
+
+                <p class="mt-1.5 text-sm text-gray-500">Log off all recent members checked in.</p>
+            </div>
+            <div class="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+                <a href="/checkin">
+                    <button
+                        class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-5 py-3 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
+                        type="button">
+                        <span class="text-sm font-medium"> Back </span>
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+{% if checkin_list != None %}
+<!--
+  Heads up! 👋
+
+  This component comes with some `rtl` classes. Please remove them if they are not needed in your project.
+-->
+
+<div class="overflow-x-auto">
+    <div class="sm:flex sm:justify-between sm:gap-4">
+        <table class="min-w-full table-fixed divide-y divide-gray-200">
+            <thead>
+                <tr>
+                    <th class="w-1/3 whitespace-nowrap px-4 py-2 font-medium text-gray-900">Membership ID</th>
+                    <th class="w-1/3 whitespace-nowrap px-4 py-2 text-gray-700">Member Name</th>
+                    <th class="w-1/3 whitespace-nowrap px-4 py-2 text-gray-700">Date</th>
+                </tr>
+            </thead>
+            <tbody id="checkin-list" class="divide-y divide-gray-200">
+                <!-- Rows will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Check-in data will be populated here -->
+<div class="flex justify-center mt-4">
+    <button
+        class="inline-block rounded border border-indigo-600 px-12 py-3 text-sm font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-500"
+        id="prev-btn">Previous</button>
+    <!-- space -->
+    <span class="mx-4 text-gray-500"></span>
+    <button
+        class="inline-block rounded border border-indigo-600 px-12 py-3 text-sm font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-500"
+        id="next-btn">Next</button>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkinList = document.getElementById('checkin-list');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        let currentPage = 1;
+        const pageSize = 10;
+
+        function fetchCheckins(page) {
+            // Fetch check-in data from Flask backend
+            fetch(`/checkin/get?page=${page}&pageSize=${pageSize}`)
+                .then(response => response.json())
+                .then(data => displayCheckins(data));
+        }
+
+        function displayCheckins(checkins) {
+            // Clear existing check-in list
+            checkinList.innerHTML = '';
+
+            // Display check-in data in the UI
+            checkins.forEach(checkin => {
+                const checkinRow = document.createElement('tr');
+                checkinRow.classList.add('odd:bg-gray-50', 'hover:bg-gray-100', 'cursor-pointer');
+
+                checkinRow.addEventListener('click', function() {
+                    // Add your click functionality here
+                    window.location.href = `/account?membership_id=${checkin.membership_id}`;
+                });
+
+                const memberIdLink = document.createElement('td');
+                memberIdLink.href = `/members/${checkin.membership_id}`; // URL to the member detail page
+                memberIdLink.classList.add('whitespace-nowrap', 'px-6', 'py-4', 'text-center', 'text-sm', 'text-gray-700');
+                memberIdLink.textContent = checkin.membership_id;
+
+                const checkinNameCell = document.createElement('td');
+                checkinNameCell.classList.add('whitespace-nowrap', 'px-6', 'py-4', 'text-center', 'text-sm', 'text-gray-700');
+                checkinNameCell.textContent = checkin.first_name + ' ' + checkin.last_name;
+
+                const checkinDateCell = document.createElement('td');
+                checkinDateCell.classList.add('whitespace-nowrap', 'px-6', 'py-4', 'text-center', 'text-sm', 'text-gray-700');
+                checkinDateCell.textContent = checkin.date;
+
+                // Append cells to the row
+                checkinRow.appendChild(memberIdLink);
+                checkinRow.appendChild(checkinNameCell);
+                checkinRow.appendChild(checkinDateCell);
+
+                // Append the row to the check-in list
+                checkinList.appendChild(checkinRow);
+            });
+        }
+
+
+        function goToPage(page) {
+            currentPage = page;
+            fetchCheckins(currentPage);
+        }
+
+        prevButton.addEventListener('click', () => {
+            if (currentPage > 1) {
+                goToPage(currentPage - 1);
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            // Implement logic to determine if there are more pages
+            goToPage(currentPage + 1);
+        });
+
+        // Fetch initial check-in data when the page loads
+        fetchCheckins(currentPage);
+    });
+</script>
+
+{% else %}
+<div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-lg text-center">
+        <h1 class="text-2xl font-bold sm:text-3xl">No check in logs</h1>
+
+        <p class="mt-4 text-gray-500">
+            No members have checked in yet.
+        </p>
+    </div>
+</div>
+<br>
+<br>
+<br>
+{% endif %}
+
+{% endblock %}

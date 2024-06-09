@@ -49,9 +49,19 @@ class Member(db.Model):
 class Emp(db.Model):
     emp_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(80), nullable=True)
+    middle_name = db.Column(db.String(80), nullable=True)
     last_name = db.Column(db.String(80), nullable=True)
     email = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(80), nullable=False)
+    phone = db.Column(db.String(80), nullable=False)
+    birthday = db.Column(db.Date, nullable=False)
+    us_eligable = db.Column(db.Boolean, nullable=False)
+    license = db.Column(db.Boolean, nullable=False)
+    street = db.Column(db.String(80), nullable=False)
+    city = db.Column(db.String(80), nullable=False)
+    state = db.Column(db.String(80), nullable=False)
+    zip_code = db.Column(db.String(80), nullable=False)
+    felony = db.Column(db.String(5), nullable=False)
     admin = db.Column(db.Boolean, nullable=False)
 
 class Code(db.Model):
@@ -71,7 +81,7 @@ class Code(db.Model):
             return None
         return email
     
-class Chekin(db.Model):
+class Checkin(db.Model):
     checkin_id = db.Column(db.Integer, primary_key=True)
     member_id = db.Column(db.Integer, primary_key=True)
     checkin_date = db.Column(db.Date, nullable=False)
