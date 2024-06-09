@@ -62,6 +62,7 @@ class Emp(db.Model):
     state = db.Column(db.String(80), nullable=False)
     zip_code = db.Column(db.String(80), nullable=False)
     felony = db.Column(db.String(5), nullable=False)
+    active = db.Column(db.Boolean, nullable=False)
     admin = db.Column(db.Boolean, nullable=False)
 
 class Code(db.Model):

@@ -28,15 +28,15 @@ class Emps:
         id = int(id)
         email = email.lower()
         # create id for member [4 digits i guess]
-        emp = Emp(emp_id=id, first_name=inputs['first_name'], middle_name=inputs['middle_name'], last_name=inputs['last_name'], email=email, password=inputs['password'], phone=inputs['phone'], birthday=inputs['dob'], us_eligable=inputs['us_eligable'], license=inputs['license'], street=inputs['street'], city=inputs['city'], state=inputs['state'], zip_code=inputs['zip_code'], felony=inputs['felony'], admin=False)
+        emp = Emp(emp_id=id, first_name=inputs['first_name'], middle_name=inputs['middle_name'], last_name=inputs['last_name'], email=email, password=inputs['password'], phone=inputs['phone'], birthday=inputs['dob'], us_eligable=inputs['us_eligable'], license=inputs['license'], street=inputs['street'], city=inputs['city'], state=inputs['state'], zip_code=inputs['zip_code'], felony=inputs['felony'], admin=False, active=False)
         db.session.add(emp)
         db.session.commit()
         return emp
 
-    def update_emp(self, email, inputs, admin=False):
+    def update_emp(self, email, inputs):
         '''Updates an employee'''
         email = email.lower()
-        emp = Emps.get_emp_by_email(email)
+        emp = Emp.query.filter_by(email=email).first()
         emp.first_name = inputs['first_name']
         emp.middle_name = inputs['middle_name']
         emp.last_name = inputs['last_name']
@@ -50,7 +50,8 @@ class Emps:
         emp.state = inputs['state']
         emp.zip_code = inputs['zip_code']
         emp.felony = inputs['felony']
-        emp.admin = admin
+        emp.active = inputs['active']
+        emp.admin = inputs['admin']
         db.session.commit()        
         return emp
     

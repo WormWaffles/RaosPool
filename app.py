@@ -119,6 +119,9 @@ def join():
         if members.get_membership_by_email(email):
             flash('Email is already in use', 'error')
             return render_template('join.html')
+        if emps.get_emp_by_email(email):
+            flash('Email is already in use', 'error')
+            return render_template('join.html')
         # add email to codes table
         if codes.get_code_by_email(email):
             codes.delete_code(email)
@@ -191,10 +194,6 @@ def create():
         if len(inputs['emergency_contact_phone']) != 10:
             flash('Invalid emergency contact phone number', 'error')
             return render_template('create.html', email=email, inputs=inputs)
-        
-        
-        for key, value in inputs.items():
-            print(key, value)
 
         # check if email is already in use
         if members.get_membership_by_email(email):
@@ -226,6 +225,22 @@ def create():
 def create_member():
     if 'email' in session:
         membership_id = request.args.get('membership_id')
+        try:
+            # Retrieve the logged-in user's employee details
+            employee = emps.get_emp_by_email(session['email'])
+            
+            # If the employee is an admin, allow further actions
+            if employee and employee.admin:
+                pass  # Admins are allowed to proceed
+            # For non-admin users, check if the user_id matches the logged-in user's ID
+            else:
+                membership = members.get_membership_by_email(session['email'])
+                if membership and str(membership[0].membership_id) == str(membership_id):
+                    pass
+                return abort(404)
+        except:
+            # Optionally log the exception or handle specific exception types
+            return abort(404)
         if request.method == 'POST':
             # if membership is full
             account = members.get_membership_by_id(membership_id)
@@ -261,130 +276,240 @@ def account():
     membership_id = request.args.get('membership_id')
     emp_id = request.args.get('employee_id')
 
+    edit = False
+    try:
+        edit = emps.get_emp_by_email(session['email']).admin
+    except:
+        edit = True
+
     try:
         if membership_id:
             account = members.get_membership_by_id(membership_id)
-            print("member")
         elif emp_id:
             account = emps.get_emp_by_id(emp_id)
-            print("emp")
         else:
             account = members.get_membership_by_email(session['email'])
-            print(account[0].email)
-            print("email")
+    except:
+        pass
+
+    try:
+        if membership_id and str(members.get_membership_by_email(session['email'])[0].membership_id) != membership_id:
+            return abort(404)
     except:
         pass
 
     if account.__class__ == list:
-        if len(account) > 1:
+        if len(account) > 0:
             if not account:
                 return redirect(url_for('logout'))
             
             can_add_member = len(account) < account[0].size_of_family
-            return render_template('account.html', members=account, can_add_member=can_add_member)
+            return render_template('account.html', members=account, can_add_member=can_add_member, edit=True)
 
     if account:
-        return render_template('account.html', members=[account], can_add_member=False, emp=True)
+        return render_template('account.html', members=[account], can_add_member=False, emp=True, edit=edit)
 
     account = [emps.get_emp_by_email(session['email'])]
-    return render_template('account.html', members=account, can_add_member=True, emp=True)
+    return render_template('account.html', members=account, can_add_member=True, emp=True, edit=edit)
 
 @app.route('/account/edit', methods=['GET', 'POST'])
 def edit_account():
     if 'email' not in session:
         return redirect(url_for('login'))
-    id = request.args.get('id')
-    if len(id) < 5:
-        membership_id = id
-    logged_in = emps.get_emp_by_email(session['email'])
-    if not logged_in and not members.get_membership_by_email(session['email']):
+    user_id = request.args.get('user_id')
+    try:
+        # Retrieve the logged-in user's employee details
+        employee = emps.get_emp_by_email(session['email'])
+        
+        # If the employee is an admin, allow further actions
+        if employee and employee.admin:
+            pass  # Admins are allowed to proceed
+        # For non-admin users, check if the user_id matches the logged-in user's ID
+        else:
+            membership = members.get_membership_by_email(session['email'])
+            if membership and str(membership[0].membership_id) == str(user_id):
+                pass
+            else:
+                employee = emps.get_emp_by_email(session['email'])
+                if employee and str(employee.emp_id) == str(user_id):
+                    pass
+                else:
+                    return abort(404)
+    except:
+        # Optionally log the exception or handle specific exception types
         return abort(404)
-    account = members.get_membership_by_id(membership_id)
-    if not account:
-        account = emps.get_emp_by_id(id)
-        if not account:
+    if len(user_id) < 5:
+        membership_id = user_id
+        logged_in = emps.get_emp_by_email(session['email'])
+        if not logged_in and not members.get_membership_by_email(session['email']):
             return abort(404)
-    if account[0].membership_id != int(membership_id):
-        return abort(404)
-    account = account[0]
-    if request.method == 'POST':
-        # get form info
-        inputs = {}
-        try:
-            email = request.form['email']
-            inputs['phone'] = request.form['phone']
-            inputs['street'] = request.form['street']
-            inputs['city'] = request.form['city']
-            inputs['state'] = request.form['state']
-            inputs['zip_code'] = request.form['zip']
-            inputs['emergency_contact_name'] = request.form['emergency_contact_name']
-            inputs['emergency_contact_phone'] = request.form['emergency_contact_phone']
-        except:
-            flash('Please fill out all fields', 'error')
-            return redirect(request.referrer)
-        for key, value in inputs.items():
-            if value == '':
+        account = members.get_membership_by_id(membership_id)
+        if not account:
+            account = emps.get_emp_by_id(id)
+            if not account:
+                return abort(404)
+        if account[0].membership_id != int(membership_id):
+            return abort(404)
+        account = account[0]
+        if request.method == 'POST':
+            # get form info
+            inputs = {}
+            try:
+                email = request.form['email']
+                inputs['phone'] = request.form['phone']
+                inputs['street'] = request.form['street']
+                inputs['city'] = request.form['city']
+                inputs['state'] = request.form['state']
+                inputs['zip_code'] = request.form['zip']
+                inputs['emergency_contact_name'] = request.form['emergency_contact_name']
+                inputs['emergency_contact_phone'] = request.form['emergency_contact_phone']
+            except:
                 flash('Please fill out all fields', 'error')
                 return redirect(request.referrer)
-        try:
-            inputs['active'] = request.form.get('active') == 'on'
-            inputs['membership_type'] = request.form['membership_type']
-            inputs['size_of_family'] = request.form['size_of_family']
-            inputs['billing_type'] = request.form['billing_type']
-            inputs['last_date_paid'] = request.form['last_date_paid']
-            inputs['password'] = request.form['password']
-            if not inputs['password']:
+            for key, value in inputs.items():
+                if value == '':
+                    flash('Please fill out all fields', 'error')
+                    return redirect(request.referrer)
+            try:
+                inputs['active'] = request.form.get('active') == 'on'
+                inputs['membership_type'] = request.form['membership_type']
+                inputs['size_of_family'] = request.form['size_of_family']
+                inputs['billing_type'] = request.form['billing_type']
+                inputs['last_date_paid'] = request.form['last_date_paid']
+                inputs['password'] = Bcrypt().generate_password_hash(request.form['password']).decode()
+                if not inputs['password']:
+                    inputs['password'] = account.password
+            except:
                 inputs['password'] = account.password
+            if inputs['zip_code'].isdigit() == False:
+                flash('Invalid zip code', 'error')
+                return redirect(request.referrer)
+            if len(inputs['zip_code']) != 5:
+                flash('Invalid zip code', 'error')
+                return redirect(request.referrer)
+            if not re.fullmatch(regex, email):
+                flash('Invalid email', 'error')
+                return redirect(request.referrer)
+            if len(inputs['password']) < 8:
+                flash('Password must be at least 8 characters', 'error')
+                return redirect(request.referrer)
+            inputs['phone'] = re.sub(r'\D', '', inputs['phone'])
+            inputs['emergency_contact_phone'] = re.sub(r'\D', '', inputs['emergency_contact_phone'])
+            if len(inputs['phone']) != 10:
+                flash('Invalid phone number', 'error')
+                return redirect(request.referrer)
+            if len(inputs['emergency_contact_phone']) != 10:
+                flash('Invalid emergency contact phone number', 'error')
+                return redirect(request.referrer)
+
+            # create membership
+            memberships.update_membership(email, inputs)
+            return redirect(url_for('account', membership_id=membership_id))
+        membership = account
+        inputs = {
+            'phone': membership.phone,
+            'street': membership.street,
+            'city': membership.city,
+            'state': membership.state,
+            'zip_code': membership.zip_code,
+            'emergency_contact_name': membership.emergency_contact_name,
+            'emergency_contact_phone': membership.emergency_contact_phone
+        }
+        try:
+            if logged_in.emp_id:
+                inputs['active'] = membership.active
+                inputs['birthday'] = membership.birthday
+                inputs['size_of_family'] = membership.size_of_family
+                inputs['billing_type'] = membership.billing_type
+                inputs['last_date_paid'] = membership.last_date_paid
+                inputs['membership_type'] = membership.membership_type
+                inputs['last_date_paid'] = membership.last_date_paid
         except:
-            inputs['password'] = account.password
-        if inputs['zip_code'].isdigit() == False:
-            flash('Invalid zip code', 'error')
-            return redirect(request.referrer)
-        if len(inputs['zip_code']) != 5:
-            flash('Invalid zip code', 'error')
-            return redirect(request.referrer)
-        if not re.fullmatch(regex, email):
-            flash('Invalid email', 'error')
-            return redirect(request.referrer)
-        if len(inputs['password']) < 8:
-            flash('Password must be at least 8 characters', 'error')
-            return redirect(request.referrer)
-        inputs['phone'] = re.sub(r'\D', '', inputs['phone'])
-        inputs['emergency_contact_phone'] = re.sub(r'\D', '', inputs['emergency_contact_phone'])
-        if len(inputs['phone']) != 10:
-            flash('Invalid phone number', 'error')
-            return redirect(request.referrer)
-        if len(inputs['emergency_contact_phone']) != 10:
-            flash('Invalid emergency contact phone number', 'error')
-            return redirect(request.referrer)
+            pass
 
-        # create membership
-        memberships.update_membership(email, inputs)
-        return redirect(url_for('account', membership_id=membership_id))
-    membership = account
-    inputs = {
-        'phone': membership.phone,
-        'street': membership.street,
-        'city': membership.city,
-        'state': membership.state,
-        'zip_code': membership.zip_code,
-        'emergency_contact_name': membership.emergency_contact_name,
-        'emergency_contact_phone': membership.emergency_contact_phone
-    }
-    try:
-        if logged_in.emp_id:
-            inputs['active'] = membership.active
-            inputs['birthday'] = membership.birthday
-            inputs['size_of_family'] = membership.size_of_family
-            inputs['billing_type'] = membership.billing_type
-            inputs['last_date_paid'] = membership.last_date_paid
-            inputs['membership_type'] = membership.membership_type
-            inputs['last_date_paid'] = membership.last_date_paid
-    except:
-        pass
+        return render_template('edit_membership.html', account=account, email=membership.email, inputs=inputs)
+    else:
+        emp = emps.get_emp_by_id(user_id)
+        if not emp:
+            return abort(404)
+        
+        if request.method == 'POST':
+            # get form info
+            inputs = {}
+            try:
+                inputs['first_name'] = request.form['first_name']
+                inputs['middle_name'] = request.form['middle_name']
+                inputs['last_name'] = request.form['last_name']
+                email = request.form['email']
+                inputs['phone'] = request.form['phone']
+                inputs['street'] = request.form['street']
+                inputs['city'] = request.form['city']
+                inputs['state'] = request.form['state']
+                inputs['zip_code'] = request.form['zip_code']
+                inputs['dob'] = request.form['dob']
+                inputs['us_eligable'] = request.form.get('us_eligable') == 'on'
+                inputs['license'] = request.form.get('license') == 'on'
+                inputs['felony'] = request.form['felony']
+            except:
+                flash('Please fill out all fields', 'error')
+                return redirect(request.referrer)
+            for key, value in inputs.items():
+                if value == '':
+                    flash('Please fill out all fields', 'error')
+                    return redirect(request.referrer)
+            try:
+                inputs['active'] = request.form.get('active') == 'on'
+                inputs['admin'] = request.form.get('admin') == 'on'
+                inputs['password'] = Bcrypt().generate_password_hash(request.form['password']).decode()
+                if not inputs['password']:
+                    inputs['password'] = emp.password
+            except:
+                inputs['password'] = emp.password
+            if inputs['zip_code'].isdigit() == False:
+                flash('Invalid zip code', 'error')
+                return redirect(request.referrer)
+            if len(inputs['zip_code']) != 5:
+                flash('Invalid zip code', 'error')
+                return redirect(request.referrer)
+            if not re.fullmatch(regex, email):
+                flash('Invalid email', 'error')
+                return redirect(request.referrer)
+            if len(inputs['password']) < 8:
+                flash('Password must be at least 8 characters', 'error')
+                return redirect(request.referrer)
+            inputs['phone'] = re.sub(r'\D', '', inputs['phone'])
+            if len(inputs['phone']) != 10:
+                flash('Invalid phone number', 'error')
+                return redirect(request.referrer)
+            if inputs['felony'] not in ['yes', 'no']:
+                flash('Invalid felony response', 'error')
+                return redirect(request.referrer)
 
-    return render_template('edit_membership.html', account=account, email=membership.email, inputs=inputs)
-                
+            # create membership
+            emps.update_emp(email, inputs)
+            return redirect(url_for('account', employee_id=user_id))
+        inputs = {
+            'first_name': emp.first_name,
+            'middle_name': emp.middle_name,
+            'last_name': emp.last_name,
+            'phone': emp.phone,
+            'street': emp.street,
+            'city': emp.city,
+            'state': emp.state,
+            'zip_code': emp.zip_code,
+            'dob': emp.birthday,
+            'us_eligable': emp.us_eligable,
+            'license': emp.license,
+            'felony': emp.felony
+        }
+        try:
+            inputs['active'] = emp.active
+            inputs['admin'] = emp.admin
+        except:
+            pass
+
+        return render_template('edit_emp.html', account=emp, email=emp.email, inputs=inputs)
+                   
 # login to the admin page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -413,7 +538,6 @@ def login():
 def reset():
     if request.method == 'POST':
         email = request.form['email']
-        print(f'email is {email}')
         account = members.get_membership_by_email(email)
         if account:
             account = account[0]
@@ -485,20 +609,20 @@ def logout():
 # checkin
 @app.route('/checkin', methods=['GET', 'POST'])
 def checkin():
-    if 'email' in session:
-        stats = checkins.get_all_stats()
-        if request.method == 'POST':
-            search = request.form['search']
-            if not search:
-                return render_template('checkin.html')
-            memberships_found = memberships.search_membership(search)
-            return render_template('checkin.html', memberships_found=memberships_found, stats=stats)
-        return render_template('checkin.html', stats=stats)
-    return redirect(url_for('login'))
+    if 'email' in session and emps.get_emp_by_email(session['email']).active == False:
+        return redirect(url_for('login'))
+    stats = checkins.get_all_stats()
+    if request.method == 'POST':
+        search = request.form['search']
+        if not search:
+            return render_template('checkin.html')
+        memberships_found = memberships.search_membership(search)
+        return render_template('checkin.html', memberships_found=memberships_found, stats=stats)
+    return render_template('checkin.html', stats=stats)
 
 @app.route('/checkin/log')
 def checkin_log():
-    if 'email' in session:
+    if 'email' in session and emps.get_emp_by_email(session['email']).active == True:
         membership_id = request.args.get('membership_id')
         date = datetime.datetime.now()
         if membership_id:
@@ -514,7 +638,7 @@ def checkin_log():
 
 @app.route('/checkin/stats')
 def checkin_stats():
-    if 'email' in session:
+    if 'email' in session and emps.get_emp_by_email(session['email']).active == True:
         if not emps.get_emp_by_email(session['email']):
             return abort(404)
         return render_template('checkin_stats.html')

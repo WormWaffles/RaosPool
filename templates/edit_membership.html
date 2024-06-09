@@ -26,7 +26,7 @@
             </div>
 
             <div class="rounded-lg bg-white p-8 shadow-lg lg:col-span-3 lg:p-12">
-                <form action="/account/edit/{{ account.membership_id }}" method="post" class="space-y-4">
+                <form action="/account/edit?user_id={{ account.membership_id }}" method="post" class="space-y-4">
 
                     {% if inputs['membership_type'] %}
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">

@@ -7,29 +7,62 @@
             <div class="lg:col-span-2 lg:py-12">
                 <div class="sm:flex sm:items-center py-8 sm:justify-between">
                     <div class="text-center sm:text-left">
-                        <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Join the team today!</h1>
+                        <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Update employee information</h1>
                     </div>
                 </div>
                 <p class="max-w-xl text-lg">
-                    Welcome to Rao's, we are excited to have you join our team.
-                    Please fill out the form below to apply.
+                    <strong class="text-red-600">Some employee information can only be changed by an
+                        admin.</strong><br>
+                    Make sure all the information is correct before submitting the form.
+                    If you have any questions, please contact us.
                 </p>
 
                 <div class="mt-8">
-                    <a href=tel: class="text-2xl font-bold text-blue-600"> (336) 291-8430 </a>
+                    <a href=tel: class="text-2xl font-bold text-blue-600"> (336) 944-5832 </a>
 
                     <address class="mt-2 not-italic">1903 Adams Farm Pkwy, Greensboro, NC 27407</address>
                 </div>
             </div>
 
             <div class="rounded-lg bg-white p-8 shadow-lg lg:col-span-3 lg:p-12">
-                <form action="/apply" method="post" class="space-y-4">
+                <form action="/account/edit?user_id={{ account.emp_id }}" method="post" class="space-y-4">
+                    {% if account.admin %}
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <lable class="inline-flex items-center justify-center not-italic">Active:</lable>
+                            <div class="inline-flex items-center justify-center">
+                                <label for="active"
+                                    class="relative inline-block h-8 w-14 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500">
+                                    <input type="checkbox" id="active" name="active" class="peer sr-only" {% if
+                                        account.active %}checked{% endif %} />
+
+                                    <span
+                                        class="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-white transition-all peer-checked:start-6"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <lable class="inline-flex items-center justify-center not-italic">Admin:</lable>
+                            <div class="inline-flex items-center justify-center">
+                                <label for="admin"
+                                    class="relative inline-block h-8 w-14 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500">
+                                    <input type="checkbox" id="admin" name="admin" class="peer sr-only" {% if
+                                        account.admin %}checked{% endif %} />
+
+                                    <span
+                                        class="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-white transition-all peer-checked:start-6"></span>
+                                </label>
+                            </div>
+                        </div>
+                        </div>
+                    {% endif %}
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
                         <div>
                             <label class="sr-only" for="fname">First name</label>
                             <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="First name"
-                                type="text" id="first_name" name="first_name" value="{{ inputs['first_name'] }}" required />
+                                type="text" id="first_name" name="first_name" value="{{ inputs['first_name'] }}"
+                                required />
                         </div>
 
                         <div>
@@ -42,7 +75,8 @@
                         <div>
                             <label class="sr-only" for="lname">Last name</label>
                             <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Last name"
-                                type="text" id="last_name" name="last_name" value="{{ inputs['last_name'] }}" required />
+                                type="text" id="last_name" name="last_name" value="{{ inputs['last_name'] }}"
+                                required />
                         </div>
                     </div>
 
@@ -57,7 +91,7 @@
                         <div>
                             <label class="sr-only" for="password">Password</label>
                             <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Password"
-                                type="password" id="password" name="password" autocomplete="new-password" required />
+                                type="password" id="password" name="password" autocomplete="new-password" />
                         </div>
                     </div>
 
@@ -91,7 +125,8 @@
                                 class="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 has-[:checked]:bg-blue-50">
                                 <div class="flex items-center">
                                     &#8203;
-                                    <input type="checkbox" class="size-4 rounded border-gray-300" id="us_eligable" name="us_eligable" {% if inputs['us_eligable'] %}checked{% endif %} />
+                                    <input type="checkbox" class="size-4 rounded border-gray-300" id="us_eligable"
+                                        name="us_eligable" {% if inputs['us_eligable'] %}checked{% endif %} />
                                 </div>
 
                                 <div>
@@ -108,7 +143,8 @@
                                 class="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 has-[:checked]:bg-blue-50">
                                 <div class="flex items-center">
                                     &#8203;
-                                    <input type="checkbox" class="size-4 rounded border-gray-300" id="license" name="license" {% if inputs['license'] %}checked{% endif %} />
+                                    <input type="checkbox" class="size-4 rounded border-gray-300" id="license"
+                                        name="license" {% if inputs['license'] %}checked{% endif %} />
                                 </div>
 
                                 <div>
@@ -219,7 +255,7 @@
                     <div class="mt-4">
                         <button type="submit"
                             class="inline-block w-full rounded-lg bg-blue-600 px-5 py-3 font-medium text-white sm:w-auto">
-                            Apply now
+                            Update
                         </button>
                     </div>
                 </form>

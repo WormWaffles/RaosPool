@@ -5,8 +5,9 @@
                 <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Membership ID: {{ members[0].membership_id }}
                 </h1>
             </div>
+            {% if edit %}
             <div class="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
-                <a href="/account/edit/{{ members[0].emp_id }}{{ members[0].membership_id }}">
+                <a href="/account/edit?user_id={{ members[0].emp_id }}{{ members[0].membership_id }}">
                     <button
                         class="block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
                         type="button" action="/contact">
@@ -14,6 +15,7 @@
                     </button>
                 </a>
             </div>
+            {% endif %}
         </div>
     </div>
 </header>

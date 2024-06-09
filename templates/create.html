@@ -18,7 +18,7 @@
                 </p>
 
                 <div class="mt-8">
-                    <a href=tel: class="text-2xl font-bold text-blue-600"> (336) 944-5832 </a>
+                    <a href=tel: class="text-2xl font-bold text-blue-600"> (336) 291-8430 </a>
 
                     <address class="mt-2 not-italic">1903 Adams Farm Pkwy, Greensboro, NC 27407</address>
                 </div>
@@ -52,7 +52,7 @@
                         <div>
                             <label class="sr-only" for="password">Password</label>
                             <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Password"
-                                type="password" id="password" name="password" required />
+                                type="password" id="password" name="password" autocomplete="new-password" required />
                         </div>
                     </div>
 
@@ -68,7 +68,7 @@
                             <div class="">
                                 <lable class="mt-2 not-italic">Date of birth</lable> <br>
                                 <input id="datepicker" class="w-full rounded-lg border border-gray-200 p-3 text-sm"
-                                    type="text" placeholder="Select a date" name="dob" value="{{ inputs['dob'] }}">
+                                    type="text" placeholder="Select a date" name="dob" value="{{ inputs['dob'] }}" required>
                             </div>
                             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
                             <script>
@@ -255,7 +255,7 @@
                             <div class="flex items-center">
                                 &#8203;
                                 <input id="agree" type="checkbox" class="size-4 rounded border-gray-300" id="agree"
-                                    name="agree" />
+                                    name="agree" required />
                             </div>
 
                             <div>

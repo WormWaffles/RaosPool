@@ -22,7 +22,7 @@
                     </button>
                 </a>
                 {% endif %}
-
+                {% if members[0].active %}
                 <a href="/checkin">
                     <button
                         class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-5 py-3 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
@@ -36,8 +36,9 @@
                         </svg>
                     </button>
                 </a>
+                {% endif %}
 
-                <a href="/account/edit?id={{ members[0].emp_id }}{{ members[0].member_id }}">
+                <a href="/account/edit?user_id={{ members[0].emp_id }}{{ members[0].member_id }}">
                     <button
                         class="block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
                         type="button">
@@ -53,6 +54,12 @@
 <div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
     <div class="flow-root rounded-lg border border-blue-500 py-3 shadow-sm">
         <dl class="-my-3 divide-y divide-gray-100 text-sm">
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Status</dt>
+                <dd class="text-green-700 {% if not members[0].active %}text-red-700{% endif %} sm:col-span-2">{% if
+                    members[0].active %}Active{% else %}Inactive (Awaiting interview){% endif %}</dd>
+            </div>
+
             <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
                 <dt class="font-medium text-gray-900">First name</dt>
                 <dd class="text-gray-700 sm:col-span-2">{{ members[0].first_name }}</dd>
