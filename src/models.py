@@ -5,6 +5,7 @@ import os
 
 db = SQLAlchemy()
 secret_key = os.getenv('SECRET_KEY')
+print(secret_key)
 
 class Membership(db.Model):
     membership_id = db.Column(db.Integer, primary_key=True)

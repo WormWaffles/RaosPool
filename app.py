@@ -756,6 +756,9 @@ def applications():
     recent_emps = emps.get_recent_emps()
     return render_template('applications.html', recent_emps=recent_emps, recent_memberships=recent_memberships)
 
+@app.route('/policies')
+def policies():
+    return render_template('policies.html')
 
 # error page
 @app.errorhandler(404)
@@ -764,4 +767,4 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
