@@ -75,8 +75,8 @@ def index():
 def events():
     # get all files from static/images/events
     files = os.listdir('static/images/events')
-    # get the file names
-    images = [f for f in files if os.path.isfile(os.path.join('static/images/events', f))]
+    # get the file names ordered by name
+    images = sorted(files)
     return render_template('events.html', events=True, images=images)
 
 @app.route('/pricing')
