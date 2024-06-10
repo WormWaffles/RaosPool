@@ -107,6 +107,8 @@ def join():
     if 'email' in session:
         return redirect('/account')
     if request.method == 'POST':
+        flash('Not accepting new members at this time', 'error')
+        return render_template('join.html')
         # get email from user
         email = request.form['email']
         if not email:
@@ -674,6 +676,8 @@ def get_checkin_data():
 # Employee pages *******
 @app.route('/apply', methods=['GET', 'POST'])
 def apply():
+    flash('Not accepting new employees at this time', 'error')
+    return render_template('index.html')
     if request.method == 'POST':
         # get form info
         inputs = {}
