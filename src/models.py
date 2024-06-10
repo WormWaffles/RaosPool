@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 
 db = SQLAlchemy()
-secret_key = os.getenv('SECRET_KEY')
+secret_key = 'this_is_my_key'
 
 class Membership(db.Model):
     membership_id = db.Column(db.Integer, primary_key=True)
