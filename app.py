@@ -517,6 +517,9 @@ def login():
         # get the username and password
         email = request.form['email']
         password = request.form['password']
+        if email == '' or password == '':
+            flash('Please fill out all fields', 'error')
+            return render_template('login.html')
         account = members.get_membership_by_email(email)
         if account:
             account = account[0]
@@ -761,4 +764,4 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
