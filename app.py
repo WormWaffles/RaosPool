@@ -749,7 +749,7 @@ def delete_account():
         return abort(404)
     delete_id = request.args.get('delete_id')
     print(delete_id)
-    to_delete = memberships.get_members_by_membership_id(delete_id)
+    to_delete = memberships.get_membership_by_id(delete_id)
     print(to_delete)
     if to_delete:
         memberships.delete_membership(delete_id)

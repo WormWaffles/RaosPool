@@ -80,7 +80,7 @@ class Emps:
     
     def delete_emp(self, emp_id):
         '''Deletes an employee'''
-        emp = self.get_user_by_id(emp_id)
+        emp = self.get_emp_by_id(emp_id)
         db.session.delete(emp)
         db.session.commit()
         return emp
