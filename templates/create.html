@@ -20,6 +20,10 @@
                 <div class="mt-8">
                     <a href=tel:3362918430 class="text-2xl font-bold text-blue-600"> (336) 291-8430 </a>
 
+                    <br>
+
+                    <a href="mailto: raosppp4@gmail.com" class="text-2xl font-bold text-blue-600"> raosppp4@gmail.com </a>
+
                     <address class="mt-2 not-italic">1903 Adams Farm Pkwy, Greensboro, NC 27407</address>
                 </div>
             </div>
@@ -52,7 +56,7 @@
                         <div>
                             <label class="sr-only" for="password">Password</label>
                             <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Password"
-                                type="password" id="password" name="password" autocomplete="new-password" required />
+                                type="password" id="password" name="password" autocomplete="new-password" value="{{ inputs['password'] }}" required />
                         </div>
                     </div>
 
@@ -337,6 +341,18 @@
                 checkbox.checked = !checkbox.checked;
             }
         });
+    });
+    // on click of option 3, set number to 3 and enable the increase and decrease buttons
+    document.getElementById('Option3').addEventListener('click', () => {
+        document.getElementById('Quantity').value = 3;
+    });
+    // on click of option 1, set number to 1
+    document.getElementById('Option1').addEventListener('click', () => {
+        document.getElementById('Quantity').value = 1;
+    });
+    // on click of option 2, set number to 2
+    document.getElementById('Option2').addEventListener('click', () => {
+        document.getElementById('Quantity').value = 2;
     });
 </script>
 

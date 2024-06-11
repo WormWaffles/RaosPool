@@ -18,6 +18,10 @@
                 <div class="mt-8">
                     <a href=tel:3362918430 class="text-2xl font-bold text-blue-600"> (336) 291-8430 </a>
 
+                    <br>
+
+                    <a href="mailto: raosppp4@gmail.com" class="text-2xl font-bold text-blue-600"> raosppp4@gmail.com </a>
+
                     <address class="mt-2 not-italic">1903 Adams Farm Pkwy, Greensboro, NC 27407</address>
                 </div>
             </div>
@@ -57,7 +61,7 @@
                         <div>
                             <label class="sr-only" for="password">Password</label>
                             <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Password"
-                                type="password" id="password" name="password" autocomplete="new-password" required />
+                                type="password" id="password" name="password" autocomplete="new-password" value="{{ inputs['password'] }}" required />
                         </div>
                     </div>
 
@@ -229,12 +233,21 @@
 </section>
 
 <script>
-    // if user presses in space-y-2, check the checkbox
-    document.querySelector('.space-y-3').addEventListener('click', () => {
-        document.getElementById('license').checked = !document.getElementById('license').checked;
+    // if user presses in space-y-2 or the checkbox, check the checkbox
+    document.querySelector('.space-y-2').addEventListener('click', function (e) {
+        if (e.target.tagName === 'INPUT') {
+            return;
+        }
+        const checkbox = this.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
     });
-    document.querySelector('.space-y-2').addEventListener('click', () => {
-        document.getElementById('us_eligable').checked = !document.getElementById('us_eligable').checked;
+    // same for space-y-3
+    document.querySelector('.space-y-3').addEventListener('click', function (e) {
+        if (e.target.tagName === 'INPUT') {
+            return;
+        }
+        const checkbox = this.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
     });
     // JavaScript code to set the initial value dynamically
     document.addEventListener("DOMContentLoaded", function () {

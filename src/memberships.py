@@ -46,18 +46,18 @@ class Memberships:
         membership = Membership.query.filter_by(email=email).first()
         membership.password = inputs['password']
         membership.phone = inputs['phone']
-        membership.street = inputs['street']
-        membership.city = inputs['city']
-        membership.state = inputs['state']
-        membership.zip_code = inputs['zip_code']
         membership.emergency_contact_name = inputs['emergency_contact_name']
         membership.emergency_contact_phone = inputs['emergency_contact_phone']
         try:
+            membership.street = inputs['street']
+            membership.city = inputs['city']
+            membership.state = inputs['state']
+            membership.zip_code = inputs['zip_code']
             membership.active = inputs['active']
             membership.membership_type = inputs['membership_type']
             membership.size_of_family = inputs['size_of_family']
-            membership.billing_type = inputs['billing_type']
-            membership.last_date_paid = inputs['last_date_paid']
+            membership.billing_type = inputs['billing_type'] or None
+            membership.last_date_paid = inputs['last_date_paid'] or None
         except:
             pass
         db.session.commit()
@@ -132,7 +132,13 @@ class Memberships:
     
     def delete_membership(self, member_id):
         '''Deletes a membership'''
-        membership = self.get_member_by_id(member_id)
+        print('membership deleted')
+        # get all members ids
+        members_to_delete = self.get_members_by_membership_id(member_id)
+        # delete all members
+        for member in members_to_delete:
+            members.delete_member(member.member_id)
+        membership = self.get_membership_by_id(member_id)
         db.session.delete(membership)
         db.session.commit()
     

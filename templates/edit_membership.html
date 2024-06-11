@@ -28,6 +28,8 @@
             <div class="rounded-lg bg-white p-8 shadow-lg lg:col-span-3 lg:p-12">
                 <form action="/account/edit?user_id={{ account.membership_id }}" method="post" class="space-y-4">
 
+                    <lable class="mt-2 not-italic">Enter new information here</lable> <br>
+
                     {% if inputs['membership_type'] %}
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <lable class="inline-flex items-center justify-center not-italic">Active:</lable>
@@ -102,15 +104,14 @@
                             <input class="w-full rounded-lg border border-gray-200 p-3 text-sm"
                                 placeholder="Billing type ex. annaul"
                                 value="{% if inputs['billing_type'] %}{{ inputs['billing_type'] }}{% endif %}"
-                                type="text" id="billing_type" name="billing_type" required />
+                                type="text" id="billing_type" name="billing_type" />
                         </div>
 
                         <div>
                             <label class="sr-only" for="password">Membership type</label>
                             <input class="w-full rounded-lg border border-gray-200 p-3 text-sm"
                                 placeholder="Membership type" type="text" id="membership_type" name="membership_type"
-                                value="{% if inputs['membership_type'] %}{{ inputs['membership_type'] }}{% endif %}"
-                                required />
+                                value="{% if inputs['membership_type'] %}{{ inputs['membership_type'] }}{% endif %}" />
                         </div>
                     </div>
 
@@ -126,8 +127,9 @@
 
                         <div>
                             <label class="sr-only" for="password">Password</label>
-                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="New pass, only enter if updating"
-                                type="password" id="password" name="password" autocomplete="new-password" />
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                                placeholder="New pass, only enter if updating" type="password" id="password"
+                                name="password" autocomplete="new-password" />
                         </div>
                     </div>
 
@@ -136,6 +138,8 @@
                         <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Phone Number"
                             type="tel" id="phone" name="phone" value="{{ inputs['phone'] }}" required />
                     </div>
+
+                    {% if inputs['membership_type'] %}
 
                     <div>
                         <label class="sr-only" for="street">Street</label>
@@ -211,6 +215,8 @@
                         <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Zip code"
                             type="zip" id="zip" name="zip" value="{{ inputs['zip_code'] }}" required />
                     </div>
+
+                    {% endif %}
 
                     <div></div>
 

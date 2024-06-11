@@ -90,7 +90,7 @@
 
                         <div>
                             <label class="sr-only" for="password">Password</label>
-                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Password"
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="New pass, only enter if updating"
                                 type="password" id="password" name="password" autocomplete="new-password" />
                         </div>
                     </div>
@@ -265,12 +265,21 @@
 </section>
 
 <script>
-    // if user presses in space-y-2, check the checkbox
-    document.querySelector('.space-y-3').addEventListener('click', () => {
-        document.getElementById('license').checked = !document.getElementById('license').checked;
+    // if user presses in space-y-2 or the checkbox, check the checkbox
+    document.querySelector('.space-y-2').addEventListener('click', function (e) {
+        if (e.target.tagName === 'INPUT') {
+            return;
+        }
+        const checkbox = this.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
     });
-    document.querySelector('.space-y-2').addEventListener('click', () => {
-        document.getElementById('us_eligable').checked = !document.getElementById('us_eligable').checked;
+    // same for space-y-3
+    document.querySelector('.space-y-3').addEventListener('click', function (e) {
+        if (e.target.tagName === 'INPUT') {
+            return;
+        }
+        const checkbox = this.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
     });
     // JavaScript code to set the initial value dynamically
     document.addEventListener("DOMContentLoaded", function () {
