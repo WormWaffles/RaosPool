@@ -239,7 +239,8 @@ def create_member():
                 membership = members.get_membership_by_email(session['email'])
                 if membership and str(membership[0].membership_id) == str(membership_id):
                     pass
-                return abort(404)
+                else:
+                    return abort(404)
         except:
             # Optionally log the exception or handle specific exception types
             return abort(404)
