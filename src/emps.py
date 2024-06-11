@@ -65,7 +65,7 @@ class Emps:
     def get_recent_emps(self):
         '''Returns the most recent applications from emps and members'''
         recent_apps = db.session.execute(text(f"""
-            SELECT * FROM emp limit 10;
+            SELECT * FROM emp limit 30;
         """)).fetchall()
         return recent_apps
 

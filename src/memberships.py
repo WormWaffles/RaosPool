@@ -126,7 +126,7 @@ class Memberships:
     def get_recent_memberships(self):
         '''Returns the most recent applications from members and memberships'''
         recent_apps = db.session.execute(text(f"""
-            SELECT * FROM membership limit 10;
+            SELECT * FROM membership limit 30;
         """)).fetchall()
         return recent_apps
     
