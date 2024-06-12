@@ -500,7 +500,8 @@ def edit_account():
             inputs['admin'] = emp.admin
         except:
             pass
-
+        if emps.get_emp_by_email(session['email']).admin:
+            return render_template('edit_emp.html', account=emp, email=emp.email, inputs=inputs, admin=True)
         return render_template('edit_emp.html', account=emp, email=emp.email, inputs=inputs)
                    
 # login to the admin page
