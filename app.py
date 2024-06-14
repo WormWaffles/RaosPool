@@ -288,7 +288,7 @@ def account():
                 return render_template('account.html', members=members.get_membership_by_id(membership_id), can_add_member=True, edit=True, emp=True, admin=True)
             if emp_id:
                 return render_template('account.html', members=[emps.get_emp_by_id(emp_id)], can_add_member=False, edit=True, emp=True, admin=True)
-            return render_template('account.html', members=[emps.get_emp_by_email(session['email'])], can_add_member=True, edit=True, emp=True, admin=True)
+            return render_template('account.html', members=[emps.get_emp_by_email(session['email'])], can_add_member=True, edit=True, emp=True, admin=True, my_account=True)
     except:
         pass
     emp = emps.get_emp_by_email(session['email'])
@@ -744,7 +744,7 @@ def applications():
     recent_emps = emps.get_recent_emps()
     return render_template('applications.html', recent_emps=recent_emps, recent_memberships=recent_memberships)
 
-@app.route('/application/delete')
+@app.route('/account/delete')
 def delete_account():
     if not emps.get_emp_by_email(session['email']).admin:
         return abort(404)
@@ -757,6 +757,32 @@ def delete_account():
     to_delete = emps.get_emp_by_id(delete_id)
     if to_delete:
         emps.delete_emp(delete_id)
+    return redirect(request.referrer)
+
+@app.route('/account/activate')
+def activate_account():
+    if not emps.get_emp_by_email(session['email']).admin:
+        return abort(404)
+    activate_id = request.args.get('activate_id')
+    to_activate = memberships.get_membership_by_id(activate_id)
+    if to_activate:
+        memberships.activate_membership(activate_id)
+    to_activate = emps.get_emp_by_id(activate_id)
+    if to_activate:
+        emps.activate_emp(activate_id)
+    return redirect(request.referrer)
+
+@app.route('/account/deactivate')
+def deactivate_account():
+    if not emps.get_emp_by_email(session['email']).admin:
+        return abort(404)
+    deactivate_id = request.args.get('deactivate_id')
+    to_deactivate = memberships.get_membership_by_id(deactivate_id)
+    if to_deactivate:
+        memberships.deactivate_membership(deactivate_id)
+    to_deactivate = emps.get_emp_by_id(deactivate_id)
+    if to_deactivate:
+        emps.deactivate_emp(deactivate_id)
     return redirect(request.referrer)
 
 @app.route('/policies')

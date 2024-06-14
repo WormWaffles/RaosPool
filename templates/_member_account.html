@@ -2,11 +2,12 @@
     <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         <div class="sm:flex sm:items-center sm:justify-between">
             <div class="text-center sm:text-left">
-                <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Membership ID: {{ members[0].membership_id }}
+                <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Membership ID: M{{ members[0].membership_id }}
                 </h1>
             </div>
-            {% if edit %}
+            {% if admin %}
             <div class="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+                {% if edit %}
                 <a href="/account/edit?user_id={{ members[0].emp_id }}{{ members[0].membership_id }}">
                     <button
                         class="block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
@@ -14,6 +15,16 @@
                         Edit
                     </button>
                 </a>
+                {% endif %}
+                {% if admin %}
+                <a href="/account/delete?delete_id={{ members[0].emp_id }}{{ members[0].membership_id }}">
+                    <button
+                        class="block rounded-lg bg-red-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-700 focus:outline-none focus:ring"
+                        type="button">
+                        Delete
+                    </button>
+                </a>
+                {% endif %}
             </div>
             {% endif %}
         </div>
@@ -147,4 +158,14 @@
     </div>
 </div>
 <br>
+
+{% if not members[0].active %}
+<script>
+    // on load
+    document.addEventListener('DOMContentLoaded', function () {
+        // show popup
+        alert('New membership created!\nPlease wait for approval. You will be contacted about payment shortly.');
+    });
+</script>
+{% endif %}
 {% endif %}

@@ -48,4 +48,23 @@
         </div>        
     </form>
 </div>
+
+<script>
+    // if the date enters is less than 3 years ago, alert the user
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
+    const threeYearsAgo = new Date(year - 3, month, day);
+
+    const input = document.getElementById('datepicker');
+    // only alert when form submit
+    document.querySelector('form').addEventListener('submit', (e) => {
+        const dob = new Date(input.value);
+        if (dob > threeYearsAgo) {
+            e.preventDefault();
+            alert('Member must be at least 3 years old to be added to membership. They may still enter the facility with a guardian.');
+        }
+    });
+</script>
 {% endblock %}

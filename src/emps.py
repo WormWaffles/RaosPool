@@ -1,5 +1,6 @@
 from src.models import db, Emp
 from sqlalchemy import text
+import datetime
 import uuid
 
 
@@ -77,6 +78,20 @@ class Emps:
         if emps:
             return emps
         return None
+    
+    def activate_emp(self, emp_id):
+        '''Activates an employee'''
+        emp = self.get_emp_by_id(emp_id)
+        emp.active = True
+        db.session.commit()
+        return emp
+    
+    def deactivate_emp(self, emp_id):
+        '''Deactivates an employee'''
+        emp = self.get_emp_by_id(emp_id)
+        emp.active = False
+        db.session.commit()
+        return emp
     
     def delete_emp(self, emp_id):
         '''Deletes an employee'''

@@ -1,6 +1,7 @@
 from src.models import db, Membership
 from src.members import members
 from sqlalchemy import text
+import datetime
 import uuid
 
 
@@ -129,6 +130,22 @@ class Memberships:
             SELECT * FROM membership WHERE membership.active = False limit 30;
         """)).fetchall()
         return recent_apps
+    
+    def activate_membership(self, membership_id):
+        '''Activates a membership'''
+        membership = Membership.query.get(membership_id)
+        membership.active = True
+        # set paid date to today
+        membership.last_date_paid = datetime.datetime.now()
+        db.session.commit()
+        return membership
+    
+    def deactivate_membership(self, membership_id):
+        '''Deactivates a membership'''
+        membership = Membership.query.get(membership_id)
+        membership.active = False
+        db.session.commit()
+        return membership
     
     def delete_membership(self, member_id):
         '''Deletes a membership'''
