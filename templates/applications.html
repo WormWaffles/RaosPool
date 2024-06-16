@@ -70,7 +70,7 @@
         const prevButton = document.getElementById('prev-button');
         const nextButton = document.getElementById('next-button');
         let currentPage = 1;
-        const pageSize = 10;
+        const pageSize = 8;
 
         function fetchMemApplications(page) {
             // Fetch check-in data from Flask backend
@@ -123,7 +123,7 @@
                     <div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
                         <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden">
                             <summary class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg ${employee.active ? 'bg-gray-50' : 'bg-red-200'} p-4 text-gray-900">
-                                <a href="/account?emp_id=${employee.emp_id}">
+                                <a href="/account?employee_id=${employee.emp_id}">
                                     <h2 class="font-medium">Employee ID: ${employee.emp_id}, ${employee.email}</h2>
                                 </a>
                                 <div class="flex items">

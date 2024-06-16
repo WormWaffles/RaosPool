@@ -767,7 +767,7 @@ def applications():
 def get_applications():
     # Retrieve page number and page size from query parameters
     page = request.args.get('page', type=int)
-    page_size = request.args.get('pageSize', 10, type=int)
+    page_size = request.args.get('pageSize', 8, type=int)
     
     mem_applications = memberships.fetch_membership_data_from_database(page, page_size)
 

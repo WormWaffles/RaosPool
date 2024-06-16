@@ -122,6 +122,7 @@ class Memberships:
                 WHERE LOWER(member.first_name) ILIKE LOWER('%{search}%')
                 OR LOWER(member.last_name) ILIKE LOWER('%{search}%')
                 OR CAST(member.membership_id AS TEXT) ILIKE '%{search}%'
+                OR CAST(membership.phone AS TEXT) ILIKE '%{search}%'
             )
         GROUP BY
             membership.membership_id;
@@ -155,7 +156,8 @@ class Memberships:
                 WHEN membership.active = false THEN 1 
                 WHEN membership.active = true THEN 2 
                 ELSE 3 
-            END 
+            END,
+            membership.membership_id
         LIMIT {page_size}
         OFFSET {offset};
         '''))
