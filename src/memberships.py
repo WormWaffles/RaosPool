@@ -163,7 +163,6 @@ class Memberships:
     
     def delete_membership(self, member_id):
         '''Deletes a membership'''
-        print('membership deleted')
         # get all members ids
         members_to_delete = self.get_members_by_membership_id(member_id)
         # delete all members
