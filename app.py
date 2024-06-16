@@ -375,7 +375,6 @@ def edit_account():
                     return redirect(request.referrer)
             try:
                 inputs['street'] = request.form['street']
-                print(request.form['street'])
                 inputs['city'] = request.form['city']
                 inputs['state'] = request.form['state']
                 inputs['zip_code'] = request.form['zip']
@@ -808,13 +807,10 @@ def get_employee_applications():
 
 @app.route('/account/delete')
 def delete_account():
-    print('hello')
     if not emps.get_emp_by_email(session['email']).admin:
         return abort(404)
     delete_id = request.args.get('delete_id')
-    print(delete_id)
     to_delete = memberships.get_membership_by_id(delete_id)
-    print(to_delete)
     if to_delete:
         memberships.delete_membership(delete_id)
     to_delete = emps.get_emp_by_id(delete_id)
