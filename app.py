@@ -315,7 +315,7 @@ def account():
     if member:
         account = members.get_membership_by_email(session['email'])
         can_add_member = len(account) < account[0].size_of_family
-        return render_template('account.html', members=account, can_add_member=can_add_member, edit=True, admin=False)
+        return render_template('account.html', members=account, can_add_member=can_add_member, edit=False, admin=False)
     return abort(404)
 
 @app.route('/account/edit', methods=['GET', 'POST'])
@@ -394,6 +394,10 @@ def edit_account():
                     return redirect(request.referrer)
             except:
                 inputs['password'] = account.password
+            if new_email != old_email:
+                if members.get_membership_by_email(new_email) or emps.get_emp_by_email(new_email):
+                    flash('Email in use', 'error')
+                    return redirect(request)
             if not re.fullmatch(regex, new_email):
                 flash('Invalid email', 'error')
                 return redirect(request.referrer)
@@ -411,8 +415,10 @@ def edit_account():
             
             inputs['password'] = bcrypt.generate_password_hash(inputs['password']).decode()
 
-            # create membership
+            # update membership
             memberships.update_membership(old_email, new_email, inputs)
+            if session['email'] == old_email:
+                session['email'] = new_email
             return redirect(url_for('account', membership_id=membership_id))
         membership = account
         inputs = {
@@ -481,6 +487,11 @@ def edit_account():
             if len(inputs['zip_code']) != 5:
                 flash('Invalid zip code', 'error')
                 return redirect(request.referrer)
+            # if new email is taken
+            if new_email != old_email:
+                if members.get_membership_by_email(new_email) or emps.get_emp_by_email(new_email):
+                    flash('Email in use', 'error')
+                    return redirect(request.referrer)
             if not re.fullmatch(regex, new_email):
                 flash('Invalid email', 'error')
                 return redirect(request.referrer)
@@ -497,7 +508,8 @@ def edit_account():
 
             # create membership
             emps.update_emp(old_email, new_email, inputs)
-            session['email'] = new_email
+            if session['email'] == old_email:
+                session['email'] = new_email
             return redirect(url_for('account', employee_id=user_id))
         inputs = {
             'first_name': emp.first_name,

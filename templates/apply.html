@@ -58,11 +58,36 @@
                                 required />
                         </div>
 
-                        <div>
+                        <div class="relative inline-block w-full">
+                            <div id="tooltip" class="absolute left-1/2 transform -translate-x-1/2 -translate-y-full mb-2 w-64 bg-black text-white text-center text-sm rounded-lg py-2 px-4 opacity-0 transition-opacity duration-300 pointer-events-none">
+                                Password must be at least 8 characters long
+                            </div>
                             <label class="sr-only" for="password">Password</label>
                             <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Password"
                                 type="password" id="password" name="password" autocomplete="new-password" value="{{ inputs['password'] }}" required />
                         </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', () => {
+                                const passwordInput = document.getElementById('password');
+                                const tooltip = document.getElementById('tooltip');
+                    
+                                passwordInput.addEventListener('input', () => {
+                                    tooltip.classList.add('opacity-80');
+                                    tooltip.classList.remove('opacity-0');
+                                });
+                    
+                                passwordInput.addEventListener('focus', () => {
+                                    tooltip.classList.add('opacity-80');
+                                    tooltip.classList.remove('opacity-0');
+                                });
+                    
+                                passwordInput.addEventListener('blur', () => {
+                                    tooltip.classList.add('opacity-0');
+                                    tooltip.classList.remove('opacity-80');
+                                });
+                            });
+                        </script>
                     </div>
 
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
