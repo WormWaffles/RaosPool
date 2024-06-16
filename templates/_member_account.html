@@ -17,13 +17,11 @@
                 </a>
                 {% endif %}
                 {% if admin %}
-                <a href="/account/delete?delete_id={{ members[0].emp_id }}{{ members[0].membership_id }}">
-                    <button
-                        class="block rounded-lg bg-red-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-700 focus:outline-none focus:ring"
-                        type="button">
-                        Delete
-                    </button>
-                </a>
+                <button
+                    class="block rounded-lg bg-red-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-700 focus:outline-none focus:ring"
+                    type="button" id="delete">
+                    Delete
+                </button>
                 {% endif %}
             </div>
             {% endif %}
@@ -104,7 +102,7 @@
             {% if emp %}
             <div class="flex items-center">
                 <a class="text-red-500 hover:text-red-600 hover:underline"
-                    href="/account/delete/{{ member.member_id }}">
+                    href="/member/delete/{{ member.member_id }}">
                     <span class="text-sm font-medium">Delete member</span>
                 </a>
             </div>
@@ -158,14 +156,4 @@
     </div>
 </div>
 <br>
-
-{% if not members[0].active %}
-<script>
-    // on load
-    document.addEventListener('DOMContentLoaded', function () {
-        // show popup
-        alert('New membership created!\nPlease wait for approval. You will be contacted about payment shortly.');
-    });
-</script>
-{% endif %}
 {% endif %}

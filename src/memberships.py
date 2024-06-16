@@ -32,6 +32,9 @@ class Memberships:
     def create_membership(self, email, inputs):
         '''Creates a member'''
         email = email.lower()
+        # check if email exists
+        if Membership.query.filter_by(email=email).first():
+            return False
         membership = Membership(email=email, password=inputs['password'], phone=inputs['phone'], size_of_family=inputs['size_of_family'], street=inputs['street'], city=inputs['city'], state=inputs['state'], zip_code=inputs['zip_code'], membership_type=inputs['membership_type'], referred_by=inputs['referred_by'], emergency_contact_name=inputs['emergency_contact_name'], emergency_contact_phone=inputs['emergency_contact_phone'], last_date_paid=None, active=False)
         db.session.add(membership)
         db.session.commit()
@@ -41,10 +44,11 @@ class Memberships:
         db.session.commit()
         return membership
 
-    def update_membership(self, email, inputs):
+    def update_membership(self, old_email, new_email, inputs):
         '''Updates a member'''
-        email = email.lower()
-        membership = Membership.query.filter_by(email=email).first()
+        new_email = new_email.lower()
+        membership = Membership.query.filter_by(email=old_email).first()
+        membership.email = new_email
         membership.password = inputs['password']
         membership.phone = inputs['phone']
         membership.emergency_contact_name = inputs['emergency_contact_name']
@@ -124,13 +128,6 @@ class Memberships:
         """)).fetchall()
         return memberships
     
-    def get_recent_memberships(self):
-        '''Returns the most recent applications from members and memberships'''
-        recent_apps = db.session.execute(text(f"""
-            SELECT * FROM membership WHERE membership.active = False limit 30;
-        """)).fetchall()
-        return recent_apps
-    
     def activate_membership(self, membership_id):
         '''Activates a membership'''
         membership = Membership.query.get(membership_id)
@@ -146,6 +143,23 @@ class Memberships:
         membership.active = False
         db.session.commit()
         return membership
+    
+    def fetch_membership_data_from_database(self, page, page_size):
+        '''Fetch membership data from database'''
+        offset = (page - 1) * page_size
+        memberships = db.session.execute(text(f'''
+        SELECT * 
+        FROM membership 
+        ORDER BY 
+            CASE 
+                WHEN membership.active = false THEN 1 
+                WHEN membership.active = true THEN 2 
+                ELSE 3 
+            END 
+        LIMIT {page_size}
+        OFFSET {offset};
+        '''))
+        return memberships
     
     def delete_membership(self, member_id):
         '''Deletes a membership'''

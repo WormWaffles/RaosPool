@@ -94,6 +94,9 @@ def contact():
         if first_name == '' or last_name == '' or email == '' or message == '':
             flash('Please fill out all fields', 'error')
             return render_template('contact.html', contact=True)
+        if not re.fullmatch(regex, email):
+            flash('Invalid email', 'error')
+            return render_template('contact.html', contact=True)
         
         message = f'Name: {first_name} {last_name}\nEmail: {email}\n\nInquiry: {message}'
 
@@ -215,11 +218,22 @@ def create():
         # create membership
         memberships.create_membership(email, inputs)
 
-        session['email'] = email
+        try:
+            logged_in = emps.get_emp_by_email(session['email'])
+            if logged_in.admin:
+                pass
+        except:
+            session['email'] = email
 
         send_email(os.getenv('DEFAULT_SENDER'), "New member has joined!", f'{inputs["fname"]} {inputs["lname"]} has joined Rao\'s!\n\nEmail: {email}\nPhone: {inputs["phone"]}\nDOB: {inputs["dob"]}\nAddress: {inputs["street"]}, {inputs["city"]}, {inputs["state"]} {inputs["zip_code"]}\nMembership type: {inputs["membership_type"]}\nReferred by: {inputs["referred_by"]}\nEmergency contact: {inputs["emergency_contact_name"]}, {inputs["emergency_contact_phone"]}')
 
         return redirect(url_for('account'))
+    try:
+        logged_in = emps.get_emp_by_email(session['email'])
+        if logged_in.admin:
+            return render_template('create.html', email='', inputs={})
+    except:
+        pass
     token = request.args.get('token')
     email = Code.verify_email_token(token)
     if email:
@@ -250,9 +264,12 @@ def create_member():
         if request.method == 'POST':
             # if membership is full
             account = members.get_membership_by_id(membership_id)
-            if len(account) >= account[0].size_of_family:
-                flash('Membership is full', 'error')
-                return redirect(url_for('account', membership_id=membership_id))
+            # check if logged in is admin
+            logged_in = emps.get_emp_by_email(session['email'])
+            if logged_in and logged_in.admin:
+                if len(account) >= account[0].size_of_family:
+                    flash('Membership is full', 'error')
+                    return redirect(url_for('account', membership_id=membership_id))
             # get form info
             inputs = {}
             try:
@@ -344,7 +361,8 @@ def edit_account():
             # get form info
             inputs = {}
             try:
-                email = request.form['email']
+                old_email = request.form['old_email']
+                new_email = request.form['email']
                 inputs['phone'] = request.form['phone']
                 inputs['emergency_contact_name'] = request.form['emergency_contact_name']
                 inputs['emergency_contact_phone'] = request.form['emergency_contact_phone']
@@ -377,7 +395,7 @@ def edit_account():
                     return redirect(request.referrer)
             except:
                 inputs['password'] = account.password
-            if not re.fullmatch(regex, email):
+            if not re.fullmatch(regex, new_email):
                 flash('Invalid email', 'error')
                 return redirect(request.referrer)
             if len(inputs['password']) < 8:
@@ -394,9 +412,8 @@ def edit_account():
             
             inputs['password'] = bcrypt.generate_password_hash(inputs['password']).decode()
 
-            print(inputs)
             # create membership
-            memberships.update_membership(email, inputs)
+            memberships.update_membership(old_email, new_email, inputs)
             return redirect(url_for('account', membership_id=membership_id))
         membership = account
         inputs = {
@@ -433,7 +450,8 @@ def edit_account():
                 inputs['first_name'] = request.form['first_name']
                 inputs['middle_name'] = request.form['middle_name']
                 inputs['last_name'] = request.form['last_name']
-                email = request.form['email']
+                old_email = request.form['old_email']
+                new_email = request.form['email']
                 inputs['phone'] = request.form['phone']
                 inputs['street'] = request.form['street']
                 inputs['city'] = request.form['city']
@@ -464,7 +482,7 @@ def edit_account():
             if len(inputs['zip_code']) != 5:
                 flash('Invalid zip code', 'error')
                 return redirect(request.referrer)
-            if not re.fullmatch(regex, email):
+            if not re.fullmatch(regex, new_email):
                 flash('Invalid email', 'error')
                 return redirect(request.referrer)
             if len(inputs['password']) < 8:
@@ -479,7 +497,8 @@ def edit_account():
                 return redirect(request.referrer)
 
             # create membership
-            emps.update_emp(email, inputs)
+            emps.update_emp(old_email, new_email, inputs)
+            session['email'] = new_email
             return redirect(url_for('account', employee_id=user_id))
         inputs = {
             'first_name': emp.first_name,
@@ -526,8 +545,11 @@ def login():
                 session['email'] = email
                 return redirect(url_for('account'))
             else:
-                # if incorrect, show an error message
-                flash('Invalid username or password.', 'error') # this also does not work, no error
+                flash('Invalid email or password.', 'error')
+                return render_template('login.html')
+        else:
+            flash('Invalid email or password.', 'error')
+            return render_template('login.html')
     return render_template('login.html')
 
 # reset password
@@ -580,7 +602,7 @@ def reset_password():
     return redirect(url_for('reset'))
 
 # delete member
-@app.route('/account/delete/<member_id>')
+@app.route('/member/delete/<member_id>')
 def delete_member(member_id):
     if 'email' in session:
         logged_in = emps.get_emp_by_email(session['email'])
@@ -740,12 +762,53 @@ def applications():
         return redirect(url_for('login'))
     if not emps.get_emp_by_email(session['email']).admin:
         return abort(404)
-    recent_memberships = memberships.get_recent_memberships()
-    recent_emps = emps.get_recent_emps()
-    return render_template('applications.html', recent_emps=recent_emps, recent_memberships=recent_memberships)
+    return render_template('applications.html')
+
+@app.route('/applications/get/memberships')
+def get_applications():
+    # Retrieve page number and page size from query parameters
+    page = request.args.get('page', type=int)
+    page_size = request.args.get('pageSize', 10, type=int)
+    
+    mem_applications = memberships.fetch_membership_data_from_database(page, page_size)
+
+    # Convert check-in data to a list of dictionaries with specific columns
+    mem_data = []
+    for mem in mem_applications:
+        mem_dict = {
+            'membership_id': mem.membership_id,
+            'email': mem.email,
+            'active': mem.active,
+        }
+        mem_data.append(mem_dict)
+    
+    # Return check-in data as JSON
+    return jsonify(mem_data)
+
+@app.route('/applications/get/employees')
+def get_employee_applications():
+    # Retrieve page number and page size from query parameters
+    page = request.args.get('page', type=int)
+    page_size = request.args.get('pageSize', 10, type=int)
+    
+    emp_applications = emps.fetch_emp_data_from_database(page, page_size)
+
+    # Convert check-in data to a list of dictionaries with specific columns
+    emp_data = []
+    for emp in emp_applications:
+        emp_dict = {
+            'emp_id': emp.emp_id,
+            'email': emp.email,
+            'active': emp.active,
+        }
+        emp_data.append(emp_dict)
+    
+    # Return check-in data as JSON
+    return jsonify(emp_data)
 
 @app.route('/account/delete')
 def delete_account():
+    print('hello')
     if not emps.get_emp_by_email(session['email']).admin:
         return abort(404)
     delete_id = request.args.get('delete_id')
@@ -757,7 +820,7 @@ def delete_account():
     to_delete = emps.get_emp_by_id(delete_id)
     if to_delete:
         emps.delete_emp(delete_id)
-    return redirect(request.referrer)
+    return redirect(url_for('applications'))
 
 @app.route('/account/activate')
 def activate_account():

@@ -46,13 +46,11 @@
                     </button>
                 </a>
                 {% if admin and not my_account %}
-                <a href="/account/delete?delete_id={{ members[0].emp_id }}{{ members[0].membership_id }}787878">
-                    <button
-                        class="block rounded-lg bg-red-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-700 focus:outline-none focus:ring"
-                        type="button">
-                        Delete
-                    </button>
-                </a>
+                <button
+                    class="block rounded-lg bg-red-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-700 focus:outline-none focus:ring"
+                    type="button" id="delete">
+                    Delete
+                </button>
                 {% endif %}
             </div>
             {% endif %}
@@ -82,6 +80,11 @@
             <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
                 <dt class="font-medium text-gray-900">Last name</dt>
                 <dd class="text-gray-700 sm:col-span-2">{{ members[0].last_name }}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Email</dt>
+                <dd class="text-gray-700 sm:col-span-2">{{ members[0].email }}</dd>
             </div>
 
             <div class="grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4">
@@ -128,11 +131,13 @@
 {% endif %}
 
 <script>
-    // show popup when user hit delete
-    document.querySelector('[href*="delete"]').addEventListener('click', function (e) {
-        e.preventDefault();
-        if (confirm('Delete user? This action cannot be undone.')) {
-            window.location.href = e.target.href;
+    // show popup oin click of delete button
+    document.getElementById('delete').addEventListener('click', function (e) {
+        console.log('delete');
+        e.preventDefault(); // Prevent the default link behavior
+        var userConfirmed = confirm('Warning: deleting this account will also delete all associated data. This action cannot be undone.');
+        if (userConfirmed) {
+            window.location.href = "/account/delete?delete_id={{ members[0].emp_id }}{{ members[0].membership_id }}"; // Navigate to the href if the user confirms
         }
     });
 </script>

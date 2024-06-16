@@ -28,20 +28,23 @@ class Emps:
         id = id[:8]
         id = int(id)
         email = email.lower()
+        # check if email exists
+        if Emp.query.filter_by(email=email).first():
+            return False
         # create id for member [4 digits i guess]
         emp = Emp(emp_id=id, first_name=inputs['first_name'], middle_name=inputs['middle_name'], last_name=inputs['last_name'], email=email, password=inputs['password'], phone=inputs['phone'], birthday=inputs['dob'], us_eligable=inputs['us_eligable'], license=inputs['license'], street=inputs['street'], city=inputs['city'], state=inputs['state'], zip_code=inputs['zip_code'], felony=inputs['felony'], admin=False, active=False)
         db.session.add(emp)
         db.session.commit()
         return emp
 
-    def update_emp(self, email, inputs):
+    def update_emp(self, old_email, new_email, inputs):
         '''Updates an employee'''
-        email = email.lower()
-        emp = Emp.query.filter_by(email=email).first()
+        new_email = new_email.lower()
+        emp = Emp.query.filter_by(email=old_email).first()
         emp.first_name = inputs['first_name']
         emp.middle_name = inputs['middle_name']
         emp.last_name = inputs['last_name']
-        emp.email = email
+        emp.email = new_email
         emp.password = inputs['password']
         emp.phone = inputs['phone']
         emp.us_eligable = inputs['us_eligable']
@@ -62,13 +65,6 @@ class Emps:
         emp.password = password
         db.session.commit()
         return emp
-    
-    def get_recent_emps(self):
-        '''Returns the most recent applications from emps and members'''
-        recent_apps = db.session.execute(text(f"""
-            SELECT * FROM emp limit 30;
-        """)).fetchall()
-        return recent_apps
 
     def search_emp(self, search):
         '''Query employees id and name ignore case'''
@@ -92,6 +88,36 @@ class Emps:
         emp.active = False
         db.session.commit()
         return emp
+    
+    def fetch_emp_data_from_database(self, page, page_size):
+        '''Fetch emp data from database'''
+        offset = (page - 1) * page_size
+        emps = db.session.execute(text(f'''
+        SELECT
+            emp.emp_id,
+            emp.first_name,
+            emp.middle_name,
+            emp.last_name,
+            emp.email,
+            emp.phone,
+            emp.birthday,
+            emp.us_eligable,
+            emp.license,
+            emp.street,
+            emp.city,
+            emp.state,
+            emp.zip_code,
+            emp.felony,
+            emp.active,
+            emp.admin
+        FROM
+            emp
+        ORDER BY
+            emp.first_name
+        LIMIT 10
+        OFFSET {offset};
+        '''))
+        return emps
     
     def delete_emp(self, emp_id):
         '''Deletes an employee'''

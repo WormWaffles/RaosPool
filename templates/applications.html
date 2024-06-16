@@ -10,77 +10,152 @@
 
                 <p class="mt-1.5 text-sm text-gray-500">Take a look who's ready to join</p>
             </div>
+            <div class="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+                <a href="/create">
+                    <button
+                        class="block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
+                        type="button">
+                        Add new member
+                    </button>
+                </a>
+            </div>
         </div>
     </div>
 </header>
 
-<div class="px-5 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
-    <div class="h-full rounded-lg bg-gray-200">
-        <div class="flex justify-center py-4">
-            <h1 class="text-2xl text-gray-900 sm:text-3xl">Memberships</h1>
-        </div>
-        {% for membership in recent_memberships %}
-        <div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
-            <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden">
-                <summary
-                    class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg {% if not membership.active %}bg-red-200{% else %}bg-gray-50{% endif %} p-4 text-gray-900">
-                    <a href="/account?membership_id={{ membership.membership_id }}">
-                        <h2 class="font-medium">Membership ID: {{ membership.membership_id }}, {{ membership.email }}
-                        </h2>
-                    </a>
-                    {% if membership.active %}
-                    <div class="flex items-center">
-                        <a class="text-red-500 hover:text-red-600 hover:underline"
-                            href="/account/deactivate?deactivate_id={{ membership.membership_id }}">
-                            <span class="text-sm font-medium">Deactivate</span>
-                        </a>
-                    </div>
-                    {% else %}
-                    <div class="flex items-center">
-                        <a class="text-green-600 hover:text-green-700 hover:underline"
-                            href="/account/activate?activate_id={{ membership.membership_id }}">
-                            <span class="text-sm font-medium">Activate</span>
-                        </a>
-                    </div>
-                    {% endif %}
-                </summary>
-            </details>
-        </div>
-        {% endfor %}
-    </div>
-    <div class="h-full rounded-lg bg-gray-200">
-        <div class="flex justify-center py-4">
-            <h1 class="text-2xl text-gray-900 sm:text-3xl">Employees</h1>
-        </div>
-        {% for emp in recent_emps %}
-        <div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
-            <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden">
-                <summary
-                    class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg {% if not emp.active %}bg-red-200{% else %}bg-gray-50{% endif %} p-4 text-gray-900">
-                    <a href="/account?employee_id={{ emp.emp_id }}">
-                        <h2 class="font-medium">Employee ID: {{ emp.emp_id }}, {{ emp.email }}</h2>
-                    </a>
-                    {% if emp.active %}
-                    <div class="flex items-center">
-                        <a class="text-red-500 hover:text-red-600 hover:underline"
-                            href="/account/deactivate?deactivate_id={{ emp.emp_id }}">
-                            <span class="text-sm font-medium">Deactivate</span>
-                        </a>
-                    </div>
-                    {% else %}
-                    <div class="flex items-center">
-                        <a class="text-green-600 hover:text-green-700 hover:underline"
-                            href="/account/activate?activate_id={{ emp.emp_id }}">
-                            <span class="text-sm font-medium">Activate</span>
-                        </a>
-                    </div>
-                    {% endif %}
-                </summary>
-            </details>
-        </div>
-        {% endfor %}
+
+<div class="overflow-x-auto">
+    <div class="sm:flex sm:justify-between sm:gap-4">
+        <table class="min-w-full table-fixed divide-y divide-gray-200">
+            <thead>
+                <tr>
+                    <th class="w-1/3 whitespace-nowrap px-4 py-2 font-medium text-gray-900">Memberships</th>
+                    <th class="w-1/3 whitespace-nowrap px-4 py-2 font-medium text-gray-900">Employees</th>
+                </tr>
+            </thead>
+            <tbody id="checkin-list" class="divide-y divide-gray-200">
+                <!-- Rows will be dynamically inserted here -->
+            </tbody>
+        </table>
     </div>
 </div>
 
+<!-- Check-in data will be populated here -->
+<div class="px-5 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
+    <div class="h-full rounded-lg bg-gray-200" id="membership-container">
+        <!-- fill in mems here -->
+    </div>
+    <div class="h-full rounded-lg bg-gray-200" id="employee-container">
+        <!-- fill in emps here -->
+    </div>
+</div>
 
+<div class="flex justify-center mt-4">
+    <button
+        class="inline-block rounded border border-indigo-600 px-12 py-3 text-sm font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-500"
+        id="prev-button">Prev</button>
+    <!-- space -->
+    <span class="mx-4 text-gray-500"></span>
+    <button
+        class="inline-block rounded border border-indigo-600 px-12 py-3 text-sm font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-500"
+        id="next-button">Next</button>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const membershipList = document.getElementById('membership-container');
+        const employeeList = document.getElementById('employee-container');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        let currentPage = 1;
+        const pageSize = 10;
+
+        function fetchMemApplications(page) {
+            // Fetch check-in data from Flask backend
+            fetch(`/applications/get/memberships?page=${page}&pageSize=${pageSize}`)
+                .then(response => response.json())
+                .then(data => displayMembership(data));
+        }
+
+        function fetchEmpApplications(page) {
+            // Fetch check-in data from Flask backend
+            fetch(`/applications/get/employees?page=${page}&pageSize=${pageSize}`)
+                .then(response => response.json())
+                .then(data => displayEmployee(data));
+        }
+
+        function displayMembership(memberships) {
+            console.log(memberships);
+            membershipList.innerHTML = '';
+            // const membership = memberships[index];
+            for (let i = 0; i < memberships.length; i++) {
+                const membership = memberships[i];
+                const membershipContainer = document.getElementById('membership-container');
+                membershipContainer.innerHTML += `
+                    <div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
+                        <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden">
+                            <summary class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg ${membership.active ? 'bg-gray-50' : 'bg-red-200'} p-4 text-gray-900">
+                                <a href="/account?membership_id=${membership.membership_id}">
+                                    <h2 class="font-medium">Membership ID: ${membership.membership_id}, ${membership.email}</h2>
+                                </a>
+                                <div class="flex items">
+                                    <a class="text-${membership.active ? 'red-500 hover:text-red-600' : 'green-600 hover:text-green-700'} hover:underline" href="/account/${membership.active ? 'deactivate' : 'activate'}?${membership.active ? 'deactivate_id' : 'activate_id'}=${membership.membership_id}">
+                                        <span class="text-sm font-medium">${membership.active ? 'Deactivate' : 'Activate'}</span>
+                                    </a>
+                                </div>
+                            </summary>
+                        </details>
+                    </div>
+                `;
+            }
+        }
+
+        function displayEmployee(employees) {
+            console.log(employees);
+            employeeList.innerHTML = '';
+            // const membership = memberships[index];
+            for (let i = 0; i < employees.length; i++) {
+                const employee = employees[i];
+                const employeeContainer = document.getElementById('employee-container');
+                employeeContainer.innerHTML += `
+                    <div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
+                        <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden">
+                            <summary class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg ${employee.active ? 'bg-gray-50' : 'bg-red-200'} p-4 text-gray-900">
+                                <a href="/account?emp_id=${employee.emp_id}">
+                                    <h2 class="font-medium">Employee ID: ${employee.emp_id}, ${employee.email}</h2>
+                                </a>
+                                <div class="flex items">
+                                    <a class="text-${employee.active ? 'red-500 hover:text-red-600' : 'green-600 hover:text-green-700'} hover:underline" href="/account/${employee.active ? 'deactivate' : 'activate'}?${employee.active ? 'deactivate_id' : 'activate_id'}=${employee.emp_id}">
+                                        <span class="text-sm font-medium">${employee.active ? 'Deactivate' : 'Activate'}</span>
+                                    </a>
+                                </div>
+                            </summary>
+                        </details>
+                    </div>
+                `;
+            }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            fetchMemApplications(currentPage);
+            fetchEmpApplications(currentPage);
+        }
+
+        prevButton.addEventListener('click', () => {
+            if (currentPage > 1) {
+                goToPage(currentPage - 1);
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            // Implement logic to determine if there are more pages
+            goToPage(currentPage + 1);
+        });
+
+        // Fetch initial check-in data when the page loads
+        fetchMemApplications(currentPage);
+        fetchEmpApplications(currentPage);
+    });
+</script>
 {% endblock %}
