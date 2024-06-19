@@ -135,6 +135,8 @@ def join():
 Click the link to create your membership: 
 {url_for("create", token=token, _external=True)}
 
+NOTE: This link expires in 30 minutes.
+
 If you did not make this request, ignore this email.
         '''
 
@@ -238,6 +240,7 @@ def create():
     email = Code.verify_email_token(token)
     if email:
         return render_template('create.html', email=email, inputs={})
+    flash('Link expired, enter email to receive a new link.', 'error')
     return redirect(url_for('join'))
 
 @app.route('/create/member', methods=['GET', 'POST'])
@@ -580,6 +583,8 @@ def reset():
 Click the link to reset your password:
 {url_for("reset_password", token=token, _external=True)}
 
+NOTE: This link expires in 30 minutes.
+
 If you did not make this request, ignore this email.
             '''
             send_email(email, "Rao's: reset password", message)
@@ -639,7 +644,7 @@ def checkin():
     if request.method == 'POST':
         search = request.form['search']
         if not search:
-            return render_template('checkin.html')
+            return render_template('checkin.html', stats=stats)
         memberships_found = memberships.search_membership(search)
         return render_template('checkin.html', memberships_found=memberships_found, stats=stats)
     return render_template('checkin.html', stats=stats)

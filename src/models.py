@@ -23,6 +23,7 @@ class Membership(db.Model):
     emergency_contact_phone = db.Column(db.String(80), nullable=False)
     last_date_paid = db.Column(db.Date, nullable=True)
     active = db.Column(db.Boolean, nullable=False)
+    date_joined = db.Column(db.Date, nullable=True)
 
     def get_email_token(self):
         s = Serializer(secret_key)
