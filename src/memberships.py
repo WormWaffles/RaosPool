@@ -152,11 +152,6 @@ class Memberships:
         SELECT * 
         FROM membership 
         ORDER BY 
-            CASE 
-                WHEN membership.active = false THEN 1 
-                WHEN membership.active = true THEN 2 
-                ELSE 3 
-            END,
             membership.membership_id
         LIMIT {page_size}
         OFFSET {offset};
