@@ -101,6 +101,7 @@ class Memberships:
         )
         SELECT
             membership.membership_id,
+            membership.date_joined,
             membership.active,
             json_agg(
                 json_build_object(

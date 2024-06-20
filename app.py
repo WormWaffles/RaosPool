@@ -793,7 +793,7 @@ def get_applications():
     for mem in mem_applications:
         mem_dict = {
             'membership_id': mem.membership_id,
-            'joined_date': mem.joined_date,
+            'joined_date': mem.date_joined,
             'email': mem.email,
             'active': mem.active,
         }
