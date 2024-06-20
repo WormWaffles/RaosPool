@@ -98,7 +98,7 @@
                         <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden">
                             <summary class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg ${membership.active ? 'bg-gray-50' : 'bg-red-200'} p-4 text-gray-900">
                                 <a href="/account?membership_id=${membership.membership_id}">
-                                    <h2 class="font-medium">Membership ID: M${membership.joined_date.year}:${membership.membership_id}, ${membership.email}</h2>
+                                    <h2 class="font-medium">Membership ID: M${new Date(membership.joined_date).getFullYear()}:${membership.membership_id}, ${membership.email}</h2>
                                 </a>
                                 <div class="flex items">
                                     <a class="text-${membership.active ? 'red-500 hover:text-red-600' : 'green-600 hover:text-green-700'} hover:underline" href="/account/${membership.active ? 'deactivate' : 'activate'}?${membership.active ? 'deactivate_id' : 'activate_id'}=${membership.membership_id}">
