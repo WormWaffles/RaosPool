@@ -15,7 +15,7 @@ class Members:
     def get_membership_by_id(self, member_id):
         '''Returns membership by id'''
         member = db.session.execute(text(f"""
-            SELECT m.member_id, ms.membership_id, m.first_name, m.last_name, ms.email, m.birthday, m.membership_owner, m.profile_image_location, ms.password, ms.phone, ms.street, ms.city, ms.state, ms.zip_code, ms.billing_type, ms.membership_type, ms.last_date_paid, ms.size_of_family, ms.billing_type, ms.active, ms.referred_by, ms.emergency_contact_name, ms.emergency_contact_phone
+            SELECT m.member_id, ms.membership_id, m.first_name, m.last_name, ms.email, m.birthday, m.membership_owner, m.profile_image_location, ms.password, ms.phone, ms.street, ms.city, ms.state, ms.zip_code, ms.billing_type, ms.membership_type, ms.last_date_paid, ms.size_of_family, ms.billing_type, ms.active, ms.referred_by, ms.emergency_contact_name, ms.emergency_contact_phone, ms.date_joined
             FROM member m 
             JOIN membership ms on m.membership_id = ms.membership_id
             WHERE ms.membership_id = {member_id}
@@ -26,7 +26,7 @@ class Members:
     def get_membership_by_email(self, email):
         '''Returns membership by email'''
         member = db.session.execute(text(f"""
-            SELECT m.member_id, ms.membership_id, m.first_name, m.last_name, ms.email, m.birthday, m.membership_owner, m.profile_image_location, ms.password, ms.phone, ms.street, ms.city, ms.state, ms.zip_code, ms.billing_type, ms.membership_type, ms.last_date_paid, ms.size_of_family, ms.active, ms.referred_by, ms.emergency_contact_name, ms.emergency_contact_phone
+            SELECT m.member_id, ms.membership_id, m.first_name, m.last_name, ms.email, m.birthday, m.membership_owner, m.profile_image_location, ms.password, ms.phone, ms.street, ms.city, ms.state, ms.zip_code, ms.billing_type, ms.membership_type, ms.last_date_paid, ms.size_of_family, ms.active, ms.referred_by, ms.emergency_contact_name, ms.emergency_contact_phone, ms.date_joined
             FROM member m 
             JOIN membership ms on m.membership_id = ms.membership_id
             WHERE email = '{email}'
