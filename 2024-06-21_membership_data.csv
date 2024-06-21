@@ -1,2 +1,0 @@
-ID,Email,Phone,Street,City,State,Zip,Type,Size,Ref,EmerName,EmerPhone,BillType,LastPaid,Active,Members
-1026,colin8297@gmail.com,1234567890,1234 Bob St,Greensboro,NC,27455,2,2,commAsso,Bob Jones,1234567890,,,True,"[{""member_id"": 22311678, ""first_name"": ""Colin"", ""last_name"": ""Brown"", ""birthday"": ""2003-06-18"", ""membership_owner"": true}, {""member_id"": 25007025, ""first_name"": ""Kid"", ""last_name"": ""1"", ""birthday"": ""2018-06-01"", ""membership_owner"": false}]"
