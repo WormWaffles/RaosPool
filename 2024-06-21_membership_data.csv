@@ -1,0 +1,2 @@
+ID,Email,Phone,Street,City,State,Zip,Type,Size,Ref,EmerName,EmerPhone,BillType,LastPaid,Active,Members
+1025,colin8297@gmail.com,1234567890,efrgrbfds,ergfvd,NC,12345,2,2,friend,ergfv,1234567890,,2024-06-21,True,"[{""member_id"": 84078133, ""first_name"": ""test"", ""last_name"": ""this is a test"", ""birthday"": ""2003-06-12"", ""membership_owner"": true, ""profile_image_location"": null}]"

@@ -1,20 +1,27 @@
 {% extends '_layout.html' %}
 
 {% block body %}
-<header class="bg-gray-50">
-    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-        <div class="sm:flex sm:items-center sm:justify-between">
-            <div class="text-center sm:text-left">
-                <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Pricing information</h1>
+<header class="bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-screen-xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-900 leading-tight sm:text-4xl">Pricing Information</h1>
 
-                <p class="mt-1.5 text-sm text-gray-500">What plan best suites you or your family?</p>
-                <p class="mt-1.5 text-sm text-red-500">Notice: persons age 3 and under do not count towards total.</p>
-                <p class="mt-1.5 text-sm text-red-500">Notice: Listed prices only apply for the 2024 season and are subject to
-                    change.</p>
-            </div>
+        <div class="mt-6 text-sm text-gray-700">
+            <p>Choose the best plan for you or your family.</p>
+            <p class="text-red-600">Note: Children age 3 and under do not count towards total.</p>
         </div>
+
+
+        <div class="mt-4 bg-yellow-100 border-l-4 border-yellow-400 p-4">
+            <p class="text-yellow-800 text-lg font-bold">Seniors aged 60 and older get a couple memberships for <bold id="seniorCurrectPrice">$400</bold>!
+            </p>
+        </div>
+
     </div>
 </header>
+
+
+
+
 
 <div class="max-w-screen-xl px-4 py-4 sm:px-6 sm:py-4 lg:px-8 lg:py-4">
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:items-stretch md:grid-cols-3 md:gap-8">
@@ -28,7 +35,7 @@
                 <p class="mt-2 text-gray-700">Single person membership.</p>
 
                 <p class="mt-2 sm:mt-4">
-                    <strong class="text-3xl font-bold text-gray-900 sm:text-4xl"> $400 </strong>
+                    <strong id="singleCurrectPrice" class="text-3xl font-bold text-gray-900 sm:text-4xl"> $400 </strong>
 
                     <span class="text-sm font-medium text-gray-700">/season</span>
                 </p>
@@ -102,7 +109,7 @@
                 <p class="mt-2 text-gray-700">Two person membership.</p>
 
                 <p class="mt-2 sm:mt-4">
-                    <strong class="text-3xl font-bold text-gray-900 sm:text-4xl"> $500 </strong>
+                    <strong id="coupleCurrentPrice" class="text-3xl font-bold text-gray-900 sm:text-4xl"> $500 </strong>
 
                     <span class="text-sm font-medium text-gray-700">/season</span>
                 </p>
@@ -176,7 +183,7 @@
                 <p class="mt-2 text-gray-700">Full family membership.</p>
 
                 <p class="mt-2 sm:mt-4">
-                    <strong class="text-3xl font-bold text-gray-900 sm:text-4xl"> $700 </strong>
+                    <strong id="familyCurrentPrice" class="text-3xl font-bold text-gray-900 sm:text-4xl"> $700 </strong>
 
                     <span class="text-sm font-medium text-gray-700">/season</span>
                 </p>
@@ -290,4 +297,27 @@
         </div>
     </div>
 </div>
+
+<footer class="bg-gray-100 py-4">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+        <p class="text-sm text-gray-600 text-center">Prices listed apply for the 2024 season and may change.</p>
+    </div>
+</footer>
+
+<script>
+    // get how many week there have been since June 15th
+    const week = Math.floor((Date.now() - new Date('2024-06-15').getTime()) / (1000 * 60 * 60 * 24 * 7));
+    console.log(week);
+    if (week >= 7) {
+        week = 7;
+    }
+    const singlePrice = 400 - (week * 25);
+    const couplePrice = 500 - (week * 35);
+    const familyPrice = 700 - (week * 50);
+
+    document.getElementById('singleCurrectPrice').innerText = `$${singlePrice}`;
+    document.getElementById('seniorCurrectPrice').innerText = `$${singlePrice}`;
+    document.getElementById('coupleCurrentPrice').innerText = `$${couplePrice}`;
+    document.getElementById('familyCurrentPrice').innerText = `$${familyPrice}`;
+</script>
 {% endblock %}

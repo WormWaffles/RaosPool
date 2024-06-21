@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, g, abort
+from flask import Flask, render_template, request, redirect, url_for, flash, session, g, abort, send_file
 import requests
 import os
 from src.models import db, Member, Emp, Code, Membership
@@ -15,6 +15,9 @@ from flask import jsonify
 import datetime
 import uuid
 import re
+import csv
+import json
+
 
 
 
@@ -51,6 +54,13 @@ mail = Mail(app)
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 bcrypt = Bcrypt(app)
 
+# images for events
+files = os.listdir('static/images/events')
+# get the file names ordered by name
+images = sorted(files)
+# remove files that start with .
+images = [image for image in images if not image.startswith('.')]
+
 
 # AWS S3 connection (for member photos)
 
@@ -73,10 +83,6 @@ def index():
 
 @app.route('/events')
 def events():
-    # get all files from static/images/events
-    files = os.listdir('static/images/events')
-    # get the file names ordered by name
-    images = sorted(files)
     return render_template('events.html', events=True, images=images)
 
 @app.route('/pricing')
@@ -98,7 +104,10 @@ def contact():
             flash('Invalid email', 'error')
             return render_template('contact.html', contact=True)
         
-        message = f'Name: {first_name} {last_name}\nEmail: {email}\n\nInquiry: {message}'
+        message = f'''Name: {first_name} {last_name}
+Email: {email}
+
+Inquiry: {message}'''
 
         send_email(os.getenv('CONTACT_RECEIVER'), f'Inquiry from {first_name} {last_name}', message)
         return render_template('confirmation.html', message='Thanks for your feedback, your message has been sent', sub_message='We will get back to you as soon as possible')
@@ -865,6 +874,51 @@ def deactivate_account():
 @app.route('/policies')
 def policies():
     return render_template('policies.html')
+
+@app.route('/download_data', methods=['GET'])
+def download_data():
+    if not 'email' in session and emps.get_emp_by_email(session['email']).admin:
+        abort(404)
+
+    mem_data = memberships.get_data()
+    csv_filename = f'{datetime.datetime.now().strftime("%Y-%m-%d")}_membership_data.csv'
+
+    with open(csv_filename, 'w', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(['ID', 'Email', 'Phone', 'Street', 'City', 'State', 'Zip', 'Type', 'Size', 'Ref', 'EmerName', 'EmerPhone', 'BillType', 'LastPaid', 'Active', 'Members'])  # Write headers
+
+        for membership in mem_data:
+            members_json = json.dumps(membership.members)
+            csv_writer.writerow([
+                membership.membership_id, membership.email, membership.phone, membership.street,
+                membership.city, membership.state, membership.zip_code, membership.membership_type,
+                membership.size_of_family, membership.referred_by, membership.emergency_contact_name,
+                membership.emergency_contact_phone, membership.billing_type, membership.last_date_paid,
+                membership.active, members_json
+            ])    
+    return send_file(csv_filename, as_attachment=True)
+
+@app.route('/applications/search', methods=['GET'])
+def search_application():
+    if not 'email' in session and emps.get_emp_by_email(session['email']).admin:
+        abort(404)
+    search = request.args.get('search')
+    if not search:
+        return redirect(url_for('applications'))
+    memberships_found = memberships.search_membership(search)
+
+    # make the data json friendly
+    data = []
+    for member in memberships_found:
+        members_dict = {
+            'membership_id': member.membership_id,
+            'joined_date': member.date_joined,
+            'email': member.email,
+            'active': member.active,
+        }
+        data.append(members_dict)
+
+    return jsonify(data)
 
 # error page
 @app.errorhandler(404)

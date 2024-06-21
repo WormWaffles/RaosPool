@@ -101,6 +101,7 @@ class Memberships:
         )
         SELECT
             membership.membership_id,
+            membership.email,
             membership.date_joined,
             membership.active,
             json_agg(
@@ -124,6 +125,7 @@ class Memberships:
                 OR LOWER(member.last_name) ILIKE LOWER('%{search}%')
                 OR CAST(member.membership_id AS TEXT) ILIKE '%{search}%'
                 OR CAST(membership.phone AS TEXT) ILIKE '%{search}%'
+                OR CAST(membership.email AS TEXT) ILIKE '%{search}%'
             )
         GROUP BY
             membership.membership_id;
@@ -158,6 +160,42 @@ class Memberships:
         OFFSET {offset};
         '''))
         return memberships
+    
+    def get_data(self):
+        data = db.session.execute(text('''
+        SELECT 
+            mb.membership_id,
+            mb.email,
+            mb.phone,
+            mb.street,
+            mb.city,
+            mb.state,
+            mb.zip_code,
+            mb.membership_type,
+            mb.size_of_family,
+            mb.referred_by,
+            mb.emergency_contact_name,
+            mb.emergency_contact_phone,
+            mb.billing_type,
+            mb.last_date_paid,
+            mb.active,
+            json_agg(json_build_object(
+                'member_id', m.member_id,
+                'first_name', m.first_name,
+                'last_name', m.last_name,
+                'birthday', m.birthday,
+                'membership_owner', m.membership_owner,
+            )) AS members
+        FROM 
+            membership mb
+        LEFT JOIN 
+            member m ON mb.membership_id = m.membership_id
+        GROUP BY 
+            mb.membership_id, mb.email, mb.password, mb.phone, mb.street, mb.city, mb.state, mb.zip_code,
+            mb.membership_type, mb.size_of_family, mb.referred_by, mb.emergency_contact_name, mb.emergency_contact_phone,
+            mb.billing_type, mb.last_date_paid, mb.active;
+        '''))
+        return data
     
     def delete_membership(self, member_id):
         '''Deletes a membership'''
