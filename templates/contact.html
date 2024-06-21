@@ -38,27 +38,27 @@
                         <div>
                             <label class="sr-only" for="fname">First name</label>
                             <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="First name"
-                                type="text" id="fname" name="fname" />
+                                type="text" id="fname" name="fname" required/>
                         </div>
 
                         <div>
                             <label class="sr-only" for="lname">Last name</label>
                             <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Last name"
-                                type="text" id="lname" name="lname" />
+                                type="text" id="lname" name="lname" required/>
                         </div>
                     </div>
 
                     <div>
                         <label class="sr-only" for="email">Email</label>
                         <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Email address"
-                            type="email" id="email" name="email" />
+                            type="email" id="email" name="email" required/>
                     </div>
 
                     <div>
                         <label class="sr-only" for="message">Message</label>
 
                         <textarea class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Message"
-                            rows="8" id="message" name="message"></textarea>
+                            rows="8" id="message" name="message" minlength="10" maxlength="500" required></textarea>
                     </div>
 
                     <div class="mt-4">
