@@ -184,7 +184,7 @@ class Memberships:
                 'first_name', m.first_name,
                 'last_name', m.last_name,
                 'birthday', m.birthday,
-                'membership_owner', m.membership_owner,
+                'membership_owner', m.membership_owner
             )) AS members
         FROM 
             membership mb

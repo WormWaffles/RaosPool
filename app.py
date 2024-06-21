@@ -312,6 +312,11 @@ def account():
 
     logged_in = emps.get_emp_by_email(session['email'])
     try:
+        if str(emp_id) == str(logged_in.emp_id):
+            return redirect(url_for('account'))
+    except:
+        pass
+    try:
         if logged_in.admin:
             if membership_id:
                 return render_template('account.html', members=members.get_membership_by_id(membership_id), can_add_member=True, edit=True, emp=True, admin=True)
