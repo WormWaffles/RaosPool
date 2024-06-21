@@ -102,7 +102,7 @@
                             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
                             <div class="">
                                 <input id="datepicker" class="w-full rounded-lg border border-gray-200 p-3 text-sm"
-                                    type="text" placeholder="Enter birthday" name="dob" value="{{ inputs['dob'] }}">
+                                    type="text" placeholder="Birthday" name="dob" value="{{ inputs['dob'] }}" style="input::placeholder {overflow: visible;}" required>
                             </div>
                             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
                             <script>
