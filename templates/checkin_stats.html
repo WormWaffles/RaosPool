@@ -95,8 +95,8 @@
                 checkinDateCell.classList.add('whitespace-nowrap', 'px-6', 'py-4', 'text-center', 'text-sm', 'text-gray-700');
                 // convert date time to local time
                 const date = new Date(checkin.date);
-                checkinDateCell.textContent = date.toLocaleString();
-
+                // time then date
+                checkinDateCell.textContent = date.toLocaleTimeString() + ' ' + date.toLocaleDateString();
 
                 // Append cells to the row
                 checkinRow.appendChild(memberIdLink);
