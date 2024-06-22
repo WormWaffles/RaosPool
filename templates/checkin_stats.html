@@ -93,13 +93,10 @@
 
                 const checkinDateCell = document.createElement('td');
                 checkinDateCell.classList.add('whitespace-nowrap', 'px-6', 'py-4', 'text-center', 'text-sm', 'text-gray-700');
-                // convert date from military ET time to standard time
-                const time = checkin.date.split(' ')[4];
-                const hour = time.split(':')[0];
-                const minute = time.split(':')[1];
-                const standardTime = hour > 12 ? `${hour - 12}:${minute} PM` : `${hour}:${minute} AM`;
-                const date = new Date(checkin.date.split(' ')[0]);
-                checkinDateCell.textContent = standardTime + ' ' + checkin.date.split(' ')[0] + ' ' + checkin.date.split(' ')[1] + ' ' + checkin.date.split(' ')[2] + ' ' + checkin.date.split(' ')[3];
+                // convert date time to local time
+                const date = new Date(checkin.date);
+                checkinDateCell.textContent = date.toLocaleString();
+
 
                 // Append cells to the row
                 checkinRow.appendChild(memberIdLink);
