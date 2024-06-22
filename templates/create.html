@@ -22,7 +22,8 @@
 
                     <br>
 
-                    <a href="mailto: raosppp4@gmail.com" class="text-2xl font-bold text-blue-600"> raosppp4@gmail.com </a>
+                    <a href="mailto: raosppp4@gmail.com" class="text-2xl font-bold text-blue-600"> raosppp4@gmail.com
+                    </a>
 
                     <address class="mt-2 not-italic">1903 Adams Farm Pkwy, Greensboro, NC 27407</address>
                 </div>
@@ -54,29 +55,31 @@
                         </div>
 
                         <div class="relative inline-block w-full">
-                            <div id="tooltip" class="absolute left-1/2 transform -translate-x-1/2 -translate-y-full mb-2 w-64 bg-black text-white text-center text-sm rounded-lg py-2 px-4 opacity-0 transition-opacity duration-300 pointer-events-none">
+                            <div id="tooltip"
+                                class="absolute left-1/2 transform -translate-x-1/2 -translate-y-full mb-2 w-64 bg-black text-white text-center text-sm rounded-lg py-2 px-4 opacity-0 transition-opacity duration-300 pointer-events-none">
                                 Password must be at least 8 characters long
                             </div>
                             <label class="sr-only" for="password">Password</label>
                             <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="Password"
-                                type="password" id="password" name="password" autocomplete="new-password" value="{{ inputs['password'] }}" required />
+                                type="password" id="password" name="password" autocomplete="new-password"
+                                value="{{ inputs['password'] }}" required />
                         </div>
 
                         <script>
                             document.addEventListener('DOMContentLoaded', () => {
                                 const passwordInput = document.getElementById('password');
                                 const tooltip = document.getElementById('tooltip');
-                    
+
                                 passwordInput.addEventListener('input', () => {
                                     tooltip.classList.add('opacity-80');
                                     tooltip.classList.remove('opacity-0');
                                 });
-                    
+
                                 passwordInput.addEventListener('focus', () => {
                                     tooltip.classList.add('opacity-80');
                                     tooltip.classList.remove('opacity-0');
                                 });
-                    
+
                                 passwordInput.addEventListener('blur', () => {
                                     tooltip.classList.add('opacity-0');
                                     tooltip.classList.remove('opacity-80');
@@ -97,8 +100,14 @@
                             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
                             <div class="">
                                 <lable class="mt-2 not-italic">Date of birth</lable> <br>
+                                <style>
+                                    input::placeholder {
+                                        overflow: visible;
+                                    }
+                                </style>
                                 <input id="datepicker" class="w-full rounded-lg border border-gray-200 p-3 text-sm"
-                                    type="text" placeholder="Select a date" name="dob" value="{{ inputs['dob'] }}" style="input::placeholder {overflow: visible;}" required>
+                                    type="text" placeholder="Select a date" name="dob" value="{{ inputs['dob'] }}"
+                                    required>
                             </div>
                             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
                             <script>
