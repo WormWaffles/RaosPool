@@ -1,7 +1,7 @@
 from src.models import db, Checkin
 from sqlalchemy import func, extract, cast, Date, text
 import uuid
-from datetime import datetime, timedelta
+import datetime
 
 
 class Checkins:
@@ -62,33 +62,19 @@ class Checkins:
     def get_all_stats(self):
         '''Returns all stats'''
         # Get today's date
-        today_date = datetime.now().date()
-        start_of_today = datetime.combine(today_date, datetime.min.time())
-        end_of_today = start_of_today + timedelta(days=1)
-
+        today_date = datetime.date.today()
+        # Get all checkins with today's date
         checkins_today = Checkin.query.filter(
-            Checkin.checkin_date >= start_of_today,
-            Checkin.checkin_date < end_of_today
+            cast(Checkin.checkin_date, Date) == today_date
         ).all()
         # Get all checkins for this month (without time)
-        start_of_month = datetime(today_date.year, today_date.month, 1)
-        if today_date.month == 12:
-            end_of_month = datetime(today_date.year + 1, 1, 1)
-        else:
-            end_of_month = datetime(today_date.year, today_date.month + 1, 1)
-
         checkins_month = Checkin.query.filter(
-            Checkin.checkin_date >= start_of_month,
-            Checkin.checkin_date < end_of_month
+            extract('month', cast(Checkin.checkin_date, Date)) == today_date.month
         ).all()
 
         # Get all checkins for this year (without time)
-        start_of_year = datetime(today_date.year, 1, 1)
-        end_of_year = datetime(today_date.year + 1, 1, 1)
-
         checkins_year = Checkin.query.filter(
-            Checkin.checkin_date >= start_of_year,
-            Checkin.checkin_date < end_of_year
+            extract('year', cast(Checkin.checkin_date, Date)) == today_date.year
         ).all()
         stats = {
             'checkins_today': len(checkins_today),
