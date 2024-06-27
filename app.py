@@ -237,8 +237,8 @@ def create():
             session['email'] = email
 
         send_email(os.getenv('DEFAULT_SENDER'), "New member has joined!", f'{inputs["fname"]} {inputs["lname"]} has joined Rao\'s!\n\nEmail: {email}\nPhone: {inputs["phone"]}\nDOB: {inputs["dob"]}\nAddress: {inputs["street"]}, {inputs["city"]}, {inputs["state"]} {inputs["zip_code"]}\nMembership type: {inputs["membership_type"]}\nReferred by: {inputs["referred_by"]}\nEmergency contact: {inputs["emergency_contact_name"]}, {inputs["emergency_contact_phone"]}')
-
-        return redirect(url_for('account'))
+        member_id = members.get_membership_by_email(email)[0].membership_id
+        return render_template('confirmation.html', message = f'Your membership has been created!', sub_message=f'Member # {member_id}. Click below to finish your account.', button='account')
     try:
         logged_in = emps.get_emp_by_email(session['email'])
         if logged_in.admin:
@@ -603,7 +603,7 @@ If you did not make this request, ignore this email.
             '''
             send_email(email, "Rao's: reset password", message)
             return render_template('confirmation.html', message = f'Thanks! We sent an email to {email}', sub_message='Please check your email to reset your password')
-        flash('Invalid email', 'error')
+        flash('Email not associated with an account.', 'error')
     return render_template('reset.html')
 
 @app.route('/reset/password', methods=['GET', 'POST'])
@@ -792,7 +792,7 @@ def applications():
         return redirect(url_for('login'))
     if not emps.get_emp_by_email(session['email']).admin:
         return abort(404)
-    return render_template('applications.html')
+    return render_template('applications.html', mem_len=len(memberships.get_all_memberships()), emp_len=len(emps.get_all_emps()))
 
 @app.route('/applications/get/memberships')
 def get_applications():

@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/output.css') }}">
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 {% with messages = get_flashed_messages() %}
@@ -21,8 +21,7 @@
 <div id="remove" class="flex items-center justify-between gap-4 bg-blue-500 px-4 py-3 text-white">
     <p class="text-sm font-medium">
         {% for message in messages %}
-        {{ message }}{% if message == 'Invalid email or password.' %}<a class="text-blue-100" href="/reset"> Reset
-            password?</a>{% endif %}
+        {{ message }}{% if message == 'Invalid email or password.' %} <a class="text-yellow-300 hover:underline font-bold" href="/reset">Click here to reset.</a>{% endif %}
         {% endfor %}
     </p>
 

@@ -113,8 +113,8 @@ class Emps:
         FROM
             emp
         ORDER BY
-            emp.first_name
-        LIMIT 10
+            emp.active DESC
+        LIMIT 8
         OFFSET {offset};
         '''))
         return emps

@@ -7,10 +7,17 @@
 
         <p class="mt-4 text-gray-500">{{ sub_message }}</p>
 
+        {% if button %}
+        <a href="/account"
+            class="mt-6 inline-block rounded bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring">
+            My account
+        </a>
+        {% else %}
         <a href="/events"
             class="mt-6 inline-block rounded bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring">
             Checkout events
         </a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
