@@ -238,7 +238,7 @@ def create():
 
         send_email(os.getenv('DEFAULT_SENDER'), "New member has joined!", f'{inputs["fname"]} {inputs["lname"]} has joined Rao\'s!\n\nEmail: {email}\nPhone: {inputs["phone"]}\nDOB: {inputs["dob"]}\nAddress: {inputs["street"]}, {inputs["city"]}, {inputs["state"]} {inputs["zip_code"]}\nMembership type: {inputs["membership_type"]}\nReferred by: {inputs["referred_by"]}\nEmergency contact: {inputs["emergency_contact_name"]}, {inputs["emergency_contact_phone"]}')
         member_id = members.get_membership_by_email(email)[0].membership_id
-        return render_template('confirmation.html', message = f'Your membership has been created!', sub_message=f'Member # {member_id}. Click below to finish your account.', button='account')
+        return render_template('confirmation.html', message = f'Your membership has been created!', sub_message=f'Member # {member_id}. Click below to finish your account.', button='account', link='/account?user_id=' + str(member_id))
     try:
         logged_in = emps.get_emp_by_email(session['email'])
         if logged_in.admin:
@@ -329,6 +329,11 @@ def account():
     if emp:
         return render_template('account.html', members=[emps.get_emp_by_email(session['email'])], can_add_member=False, edit=True, emp=True, admin=False)
     member = members.get_membership_by_email(session['email'])
+    try:
+        if str(membership_id) == str(member[0].membership_id):
+                return redirect(url_for('account'))
+    except:
+        pass
     if member:
         account = members.get_membership_by_email(session['email'])
         can_add_member = len(account) < account[0].size_of_family
