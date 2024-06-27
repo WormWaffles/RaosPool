@@ -61,13 +61,11 @@ class Checkins:
     
     def get_all_stats(self):
         '''Returns all stats'''
+        # get checkins with a date withing the last 24 hours
+        last_24_hours = datetime.datetime.now() - datetime.timedelta(days=1)
+        checkins_today = Checkin.query.filter(Checkin.checkin_date > last_24_hours).all()
         # Get today's date
         today_date = datetime.date.today()
-        # Get all checkins with today's date
-        checkins_today = Checkin.query.filter(
-            cast(Checkin.checkin_date, Date) == today_date
-        ).all()
-        # Get all checkins for this month (without time)
         checkins_month = Checkin.query.filter(
             extract('month', cast(Checkin.checkin_date, Date)) == today_date.month
         ).all()
