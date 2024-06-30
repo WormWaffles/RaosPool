@@ -898,6 +898,10 @@ def download_data():
     if not 'email' in session and emps.get_emp_by_email(session['email']).admin:
         abort(404)
 
+    # delete existing csv file
+    for file in os.listdir():
+        if file.endswith('.csv'):
+            os.remove(file)
     mem_data = memberships.get_data()
     csv_filename = f'{datetime.datetime.now().strftime("%Y-%m-%d")}_membership_data.csv'
 
