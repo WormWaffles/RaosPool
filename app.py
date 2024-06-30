@@ -54,12 +54,17 @@ mail = Mail(app)
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 bcrypt = Bcrypt(app)
 
-# images for events
-files = os.listdir('static/images/events')
-# get the file names ordered by name
-images = sorted(files)
-# remove files that start with .
-images = [image for image in images if not image.startswith('.')]
+images = []
+def get_images():
+    global images
+    files = os.listdir('static/images/events')
+    images = [image for image in files if not image.startswith('.')]
+    image_paths = [os.path.join('static/images/events', image) for image in images]
+    sorted_image_paths = sorted(image_paths, key=os.path.getmtime, reverse=True)
+    sorted_images = [os.path.basename(image) for image in sorted_image_paths]
+    images = sorted_images
+
+get_images()
 
 
 # AWS S3 connection (for member photos)
@@ -83,7 +88,10 @@ def index():
 
 @app.route('/events')
 def events():
-    return render_template('events.html', events=True, images=images)
+    if 'email' in session:
+        if emps.get_emp_by_email(session['email']).admin:
+            return render_template('events.html', events=True, images=images, admin=True)
+    return render_template('events.html', events=True, images=images, admin=False)
 
 @app.route('/pricing')
 def pricing():
@@ -929,6 +937,43 @@ def search_application():
         data.append(members_dict)
 
     return jsonify(data)
+
+# add event photo route
+@app.route('/event/add', methods=['GET', 'POST'])
+def add_event_photo():
+    if 'email' in session and emps.get_emp_by_email(session['email']).admin:
+        if request.method == 'GET':
+            return render_template('add_event_photo.html')
+        if request.method == 'POST':
+            file = request.files['file']
+            print(file)
+            # add file to events folder
+            if file:
+                # Generate a unique filename (e.g., using UUID)
+                file_extension = os.path.splitext(file.filename)[1]
+                unique_filename = str(uuid.uuid4())[:8] + file_extension
+                upload_folder = 'static/images/events'
+                os.makedirs(upload_folder, exist_ok=True)  # Ensure the directory exists
+                # Save the file to the specified directory
+                file.save(os.path.join(upload_folder, unique_filename))
+                get_images()
+                return redirect(url_for('events'))
+            flash('No file selected', 'error')
+            return render_template('add_event_photo.html')
+    return abort(404)
+
+# delete event photo route
+@app.route('/event/delete', methods=['PUT'])
+def delete_event_photo():
+    if 'email' in session and emps.get_emp_by_email(session['email']).admin:
+        image_id = request.args.get('image_id')
+        if not image_id:
+            return abort(404)
+        # delete the photo from the events folder
+        os.remove(f'static/images/events/{image_id}')
+        get_images()        
+        return 'nothing'
+    return abort(404)
 
 # error page
 @app.errorhandler(404)

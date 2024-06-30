@@ -1,0 +1,40 @@
+{% extends '_layout.html' %}
+
+{% block body %}
+<!-- upload photo page -->
+<div class="container mx-auto text-center">
+    <h1 class="text-3xl font-bold text-blue-600 mt-4 mb-1">Add Event Photo</h1>
+    <form action="/event/add" method="post" enctype="multipart/form-data">
+        <div class="mb-4">
+            <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Upload an image or event flyer</label>
+        </div>
+        <div class="file-div mb-4">
+            <input name="file" type="file" id="myFileInput" accept="image/png, image/jpg, image/jpeg" class="hidden">
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg" onclick="document.getElementById('myFileInput').click(); return false;">
+                Upload Image
+            </button>
+        </div>
+        <div class="flex justify-center mb-4">
+            <img class="rounded-lg w-1/2 h-auto object-cover" id="myFile" src="{{url_for('static', filename='images/default_event_img.jpeg')}}" alt="your image">
+        </div>
+        <div class="file-div mb-4">
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg">
+                Post
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Display the selected image
+    document.getElementById('myFileInput').addEventListener('change', function() {
+        var file = this.files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('myFile').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+</script>
+
+{% endblock %}

@@ -5,6 +5,7 @@ package-lock.json
 /venv
 .DS_Store
 *.csv
+/static/images/events
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
