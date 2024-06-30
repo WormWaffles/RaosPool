@@ -84,7 +84,7 @@ def send_email(email, subject, body):
 
 @app.route('/')
 def index():
-    return render_template('/index.html', g=g, home=True)
+    return render_template('/index.html', g=g, home=True, image=images[0])
 
 @app.route('/events')
 def events():
