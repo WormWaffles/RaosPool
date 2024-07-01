@@ -669,8 +669,6 @@ def checkin():
     if 'email' in session and emps.get_emp_by_email(session['email']).active == False:
         return redirect(url_for('login'))
     stats = checkins.get_all_stats()
-    print(stats)
-    print('uhjcdsnmbjkwmfnhdsijk')
     if request.method == 'POST':
         search = request.form['search']
         if not search:
