@@ -68,10 +68,10 @@ class Checkins:
         today_date = datetime.date.today()
         # Get checkins for the week
         checkins_week = Checkin.query.filter(
-            extract('week', cast(Checkin.checkin_date, Date)) == today_date.isocalendar()[1]
+            func.date_part('week', Checkin.checkin_date) == today_date.isocalendar()[1]
         ).all()
         checkins_month = Checkin.query.filter(
-            extract('month', cast(Checkin.checkin_date, Date)) == today_date.month
+            func.date_part('month', Checkin.checkin_date) == today_date.month
         ).all()
         stats = {
             'checkins_today': len(checkins_today),

@@ -951,7 +951,6 @@ def add_event_photo():
             return render_template('add_event_photo.html')
         if request.method == 'POST':
             file = request.files['file']
-            print(file)
             # add file to events folder
             if file:
                 # Generate a unique filename (e.g., using UUID)
