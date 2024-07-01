@@ -78,6 +78,7 @@ class Checkins:
             'checkins_week': len(checkins_week),
             'checkins_month': len(checkins_month)
         }
+        print(stats)
         return stats
     
     def delete_emp(self, checkin_id):
