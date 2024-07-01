@@ -72,6 +72,7 @@ get_images()
 # check if the user is logged in
 @app.before_request
 def before_request():
+    get_images()
     g.user = None
     if 'email' in session:
         g.user = session['email']
