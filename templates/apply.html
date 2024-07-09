@@ -29,6 +29,14 @@
 
             <div class="rounded-lg bg-white p-8 shadow-lg lg:col-span-3 lg:p-12">
                 <form action="/apply" method="post" class="space-y-4">
+                    <div>
+                        <select class="w-full rounded-lg border border-gray-200 p-3 text-sm" name="position" required
+                            id="position" value="{{inputs['position']}}">
+                            <option value="">Position of Interest</option>
+                            <option value="Lifeguard">Lifeguard</option>
+                            <option value="Manager">Manager</option>
+                        </select>
+                    </div>
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
                         <div>
@@ -247,7 +255,7 @@
                             <label class="mt-2 not-italic">Convicted of a felony in the last 7 years?</label> <br>
                         </div>
                         <div>
-                            <select class="w-full rounded-lg border border-gray-200 p-3 text-sm" name="felony"
+                            <select class="w-full rounded-lg border border-gray-200 p-3 text-sm" name="felony" required
                                 id="felony" value="{{inputs['felony']}}">
                                 <option value="">Please select</option>
                                 <option value="yes">Yes</option>
@@ -293,6 +301,11 @@
         // Set the initial value
         var initialValue = "{{ inputs['felony'] }}"; // You can set this value dynamically as needed
         referredBySelect.value = initialValue;
+
+        // same for position
+        var positionSelect = document.getElementById("position");
+        var positionValue = "{{ inputs['position'] }}";
+        positionSelect.value = positionValue;
     });
 </script>
 

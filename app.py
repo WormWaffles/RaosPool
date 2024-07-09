@@ -483,6 +483,7 @@ def edit_account():
             # get form info
             inputs = {}
             try:
+                inputs['position'] = request.form['position']
                 inputs['first_name'] = request.form['first_name']
                 inputs['middle_name'] = request.form['middle_name']
                 inputs['last_name'] = request.form['last_name']
@@ -543,6 +544,7 @@ def edit_account():
                 session['email'] = new_email
             return redirect(url_for('account', employee_id=user_id))
         inputs = {
+            'position': emp.position,
             'first_name': emp.first_name,
             'middle_name': emp.middle_name,
             'last_name': emp.last_name,
@@ -732,6 +734,7 @@ def apply():
         # get form info
         inputs = {}
         try:
+            inputs['position'] = request.form['position']
             inputs['first_name'] = request.form['first_name']
             inputs['middle_name'] = request.form['middle_name']
             inputs['last_name'] = request.form['last_name']
