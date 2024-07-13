@@ -41,7 +41,7 @@
                     <p class="mt-2 text-gray-700">Single Person Membership</p>
 
                     <p class="mt-2 sm:mt-4">
-                        <strong id="singleCurrectPrice" class="text-3xl font-bold text-gray-900 sm:text-4xl"> $400
+                        <strong id="singleCurrectPrice" class="text-3xl font-bold text-gray-900 sm:text-4xl"> $300
                         </strong>
 
                         <span class="text-sm font-medium text-gray-700">/season</span>
@@ -125,7 +125,7 @@
                     <p class="mt-2 text-gray-700">Two Person Membership</p>
 
                     <p class="mt-2 sm:mt-4">
-                        <strong id="coupleCurrentPrice" class="text-3xl font-bold text-gray-900 sm:text-4xl"> $500
+                        <strong id="coupleCurrentPrice" class="text-3xl font-bold text-gray-900 sm:text-4xl"> $395
                         </strong>
 
                         <span class="text-sm font-medium text-gray-700">/season</span>
@@ -209,7 +209,7 @@
                     <p class="mt-2 text-gray-700">Full Family Membership</p>
 
                     <p class="mt-2 sm:mt-4">
-                        <strong id="familyCurrentPrice" class="text-3xl font-bold text-gray-900 sm:text-4xl"> $700
+                        <strong id="familyCurrentPrice" class="text-3xl font-bold text-gray-900 sm:text-4xl"> $500
                         </strong>
 
                         <span class="text-sm font-medium text-gray-700">/season</span>
@@ -343,28 +343,4 @@
         <p class="text-sm text-gray-600 text-center">Prices listed apply for the 2024 season and may change.</p>
     </div>
 </footer>
-
-<script>
-    // get how many week there have been since June 15th at 12:00am
-    // Define the date from which to calculate the weeks
-    const startDate = new Date('2024-06-15T00:00:00');
-    const currentDate = new Date();
-    const diffInMilliseconds = currentDate - startDate;
-    const millisecondsInAWeek = 7 * 24 * 60 * 60 * 1000;
-    const weeksSinceStartDate = diffInMilliseconds / millisecondsInAWeek;
-    let week = Math.floor(weeksSinceStartDate);
-
-    // Log the result
-    if (week >= 7) {
-        week = 7;
-    }
-    const singlePrice = 400 - (week * 25);
-    const couplePrice = 500 - (week * 35);
-    const familyPrice = 700 - (week * 50);
-
-    document.getElementById('singleCurrectPrice').innerText = `$${singlePrice}`;
-    document.getElementById('seniorCurrectPrice').innerText = `$${singlePrice}`;
-    document.getElementById('coupleCurrentPrice').innerText = `$${couplePrice}`;
-    document.getElementById('familyCurrentPrice').innerText = `$${familyPrice}`;
-</script>
 {% endblock %}
