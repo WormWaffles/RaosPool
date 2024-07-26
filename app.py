@@ -483,6 +483,7 @@ def edit_account():
             # get form info
             inputs = {}
             try:
+                inputs['position'] = request.form['position']
                 inputs['first_name'] = request.form['first_name']
                 inputs['middle_name'] = request.form['middle_name']
                 inputs['last_name'] = request.form['last_name']
@@ -536,6 +537,9 @@ def edit_account():
             if inputs['felony'] not in ['yes', 'no']:
                 flash('Invalid felony response', 'error')
                 return redirect(request.referrer)
+            if inputs['position'] not in ['Management', 'Lifeguard', 'Snack Bar']:
+                flash('Invalid position', 'error')
+                return redirect(request.referrer)
 
             # create membership
             emps.update_emp(old_email, new_email, inputs)
@@ -543,6 +547,7 @@ def edit_account():
                 session['email'] = new_email
             return redirect(url_for('account', employee_id=user_id))
         inputs = {
+            'position': emp.position,
             'first_name': emp.first_name,
             'middle_name': emp.middle_name,
             'last_name': emp.last_name,
@@ -732,6 +737,7 @@ def apply():
         # get form info
         inputs = {}
         try:
+            inputs['position'] = request.form['position']
             inputs['first_name'] = request.form['first_name']
             inputs['middle_name'] = request.form['middle_name']
             inputs['last_name'] = request.form['last_name']
@@ -778,6 +784,9 @@ def apply():
         if inputs['felony'] not in ['yes', 'no']:
             flash('Invalid felony response', 'error')
             return render_template('apply.html', email=email, inputs=inputs)
+        if inputs['position'] not in ['Management', 'Lifeguard', 'Snack Bar']:
+                flash('Invalid position', 'error')
+                return redirect(request.referrer)
         
         # check if email is already in use
         if members.get_membership_by_email(email):

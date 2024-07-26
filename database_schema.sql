@@ -51,6 +51,7 @@ CREATE TABLE member (
 
 CREATE TABLE emp (
     emp_id INTEGER NOT NULL,
+    position VARCHAR(80),
     first_name VARCHAR(80),
     middle_name VARCHAR(80),
     last_name VARCHAR(80),

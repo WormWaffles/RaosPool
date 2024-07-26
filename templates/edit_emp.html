@@ -54,7 +54,16 @@
                                 </label>
                             </div>
                         </div>
-                        </div>
+                    </div>
+                    <div>
+                        <select class="w-full rounded-lg border border-gray-200 p-3 text-sm" name="position"
+                            id="position" value="{{inputs['position']}}">
+                            <option value="">Please select</option>
+                            <option value="Snack Bar">Snack Bar</option>
+                            <option value="Lifeguard">Lifeguard</option>
+                            <option value="Management">Management</option>
+                        </select>
+                    </div>
                     {% endif %}
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
@@ -87,14 +96,15 @@
                                 placeholder="Email address" value="{{email}}" type="email" id="email" name="email"
                                 required />
                         </div>
-                        
+
                         <!-- hidden old email value -->
                         <input type="hidden" name="old_email" value="{{email}}" />
 
                         <div>
                             <label class="sr-only" for="password">Password</label>
-                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm" placeholder="New pass, only enter if updating"
-                                type="password" id="password" name="password" autocomplete="new-password" />
+                            <input class="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                                placeholder="New pass, only enter if updating" type="password" id="password"
+                                name="password" autocomplete="new-password" />
                         </div>
                     </div>
 
@@ -250,7 +260,6 @@
                                 <option value="">Please select</option>
                                 <option value="yes">Yes</option>
                                 <option value="no">No</option>
-                                <option value="other">Other</option>
                             </select>
                         </div>
                     </div>
@@ -292,6 +301,11 @@
         // Set the initial value
         var initialValue = "{{ inputs['felony'] }}"; // You can set this value dynamically as needed
         referredBySelect.value = initialValue;
+
+        // same for position
+        var positionSelect = document.getElementById("position");
+        var positionValue = "{{ inputs['position'] }}";
+        positionSelect.value = positionValue;
     });
 </script>
 
