@@ -537,6 +537,9 @@ def edit_account():
             if inputs['felony'] not in ['yes', 'no']:
                 flash('Invalid felony response', 'error')
                 return redirect(request.referrer)
+            if inputs['position'] not in ['Management', 'Lifeguard', 'Snack Bar']:
+                flash('Invalid position', 'error')
+                return redirect(request.referrer)
 
             # create membership
             emps.update_emp(old_email, new_email, inputs)
@@ -781,6 +784,9 @@ def apply():
         if inputs['felony'] not in ['yes', 'no']:
             flash('Invalid felony response', 'error')
             return render_template('apply.html', email=email, inputs=inputs)
+        if inputs['position'] not in ['Management', 'Lifeguard', 'Snack Bar']:
+                flash('Invalid position', 'error')
+                return redirect(request.referrer)
         
         # check if email is already in use
         if members.get_membership_by_email(email):
