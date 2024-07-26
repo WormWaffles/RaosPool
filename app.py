@@ -90,8 +90,11 @@ def index():
 @app.route('/events')
 def events():
     if 'email' in session:
-        if emps.get_emp_by_email(session['email']).admin:
-            return render_template('events.html', events=True, images=images, admin=True)
+        try:
+            if emps.get_emp_by_email(session['email']).admin:
+                return render_template('events.html', events=True, images=images, admin=True)
+        except:
+            pass
     return render_template('events.html', events=True, images=images, admin=False)
 
 @app.route('/pricing')
