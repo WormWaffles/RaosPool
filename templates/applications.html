@@ -50,8 +50,10 @@
         <table class="min-w-full table-fixed divide-y divide-gray-200">
             <thead>
                 <tr>
-                    <th class="w-1/3 whitespace-nowrap px-4 py-2 font-medium text-gray-900">Memberships ({{ mem_len }})</th>
-                    <th class="w-1/3 whitespace-nowrap px-4 py-2 font-medium text-gray-900">Employees ({{ emp_len }})</th>
+                    <th class="w-1/3 whitespace-nowrap px-4 py-2 font-medium text-gray-900">Memberships ({{ mem_len }})
+                    </th>
+                    <th class="w-1/3 whitespace-nowrap px-4 py-2 font-medium text-gray-900">Employees ({{ emp_len }})
+                    </th>
                 </tr>
             </thead>
             <tbody id="checkin-list" class="divide-y divide-gray-200">
@@ -116,11 +118,11 @@
                 membershipContainer.innerHTML += `
                     <div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
                         <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden">
-                            <summary class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg ${membership.active ? 'bg-gray-50' : 'bg-red-200'} p-4 text-gray-900">
-                                <a href="/account?membership_id=${membership.membership_id}">
-                                    <h2 class="font-medium">Membership ID: M${new Date(membership.joined_date).getFullYear()}:${membership.membership_id}, ${membership.email}</h2>
+                            <summary class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg ${membership.active ? 'bg-gray-50' : 'bg-red-200'} p-4 text-gray-900 overflow-hidden whitespace-nowrap">
+                                <a href="/account?membership_id=${membership.membership_id}" class="flex-1 overflow-hidden">
+                                    <h2 class="font-medium text-ellipsis overflow-hidden">ID: M${new Date(membership.joined_date).getFullYear()}:${membership.membership_id}, ${membership.email}</h2>
                                 </a>
-                                <div class="flex items">
+                                <div class="flex items-center">
                                     <a class="text-${membership.active ? 'red-500 hover:text-red-600' : 'green-600 hover:text-green-700'} hover:underline" href="/account/${membership.active ? 'deactivate' : 'activate'}?${membership.active ? 'deactivate_id' : 'activate_id'}=${membership.membership_id}" onclick="return confirm('Are you sure you want to ${membership.active ? 'deactivate' : 'activate'} this membership?');">
                                         <span class="text-sm font-medium">${membership.active ? 'Deactivate' : 'Activate'}</span>
                                     </a>
@@ -141,11 +143,11 @@
                 employeeContainer.innerHTML += `
                     <div class="mx-auto max-w-screen-xl px-4 py-2 sm:px-6 sm:py-2 lg:px-8">
                         <details class="border border-blue-500 rounded-lg group [&_summary::-webkit-details-marker]:hidden">
-                            <summary class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg ${employee.active ? 'bg-gray-50' : 'bg-red-200'} p-4 text-gray-900">
-                                <a href="/account?employee_id=${employee.emp_id}">
-                                    <h2 class="font-medium">Employee ID: E${employee.emp_id}, ${employee.email}</h2>
+                            <summary class="flex flex-row cursor-pointer items-center justify-between gap-1.5 rounded-lg ${employee.active ? 'bg-gray-50' : 'bg-red-200'} p-4 text-gray-900 overflow-hidden whitespace-nowrap">
+                                <a href="/account?employee_id=${employee.emp_id}" class="flex-1 overflow-hidden">
+                                    <h2 class="font-medium text-ellipsis overflow-hidden">ID: E${employee.emp_id}, ${employee.email}</h2>
                                 </a>
-                                <div class="flex items">
+                                <div class="flex items-center">
                                     <a class="text-${employee.active ? 'red-500 hover:text-red-600' : 'green-600 hover:text-green-700'} hover:underline" href="/account/${employee.active ? 'deactivate' : 'activate'}?${employee.active ? 'deactivate_id' : 'activate_id'}=${employee.emp_id}" onclick="return confirm('Are you sure you want to ${employee.active ? 'deactivate' : 'activate'} this employee?');">
                                         <span class="text-sm font-medium">${employee.active ? 'Deactivate' : 'Activate'}</span>
                                     </a>
@@ -197,6 +199,6 @@
         });
     });
 
-    
+
 </script>
 {% endblock %}
