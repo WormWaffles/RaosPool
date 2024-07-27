@@ -1,0 +1,25 @@
+{% extends '_layout.html' %}
+
+{% block body %}
+
+<div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-lg text-center">
+        <h1 class="text-2xl font-bold sm:text-3xl">Reserve a court</h1>
+
+        <p class="mt-4 text-gray-500">
+            Chose a date and time to reserve a pickleball court
+        </p>
+    </div>
+
+    <!-- todo: select date and time and calculate guest cost -->
+
+    <form action="/pickleball/reserve" method="post" class="mx-auto mb-0 mt-8 max-w-md space-y-4 flex justify-center">
+        <div>
+            <button type="submit" class="inline-block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white">
+                Confirm reservation
+            </button>
+        </div>
+    </form>
+    
+</div>
+{% endblock %}

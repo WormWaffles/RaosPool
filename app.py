@@ -97,6 +97,39 @@ def events():
             pass
     return render_template('events.html', events=True, images=images, admin=False)
 
+@app.route('/pickleball')
+def pickleball():
+    return render_template('pickleball.html', pickleball=True)
+
+@app.route('/pickleball/reserve', methods=['GET', 'POST'])
+def reserve():
+    if request.method == 'POST':
+        date = request.form['date']
+        time = request.form['time']
+        court = request.form['court']
+        name = request.form['name']
+        phone = request.form['phone']
+        email = request.form['email']
+        if date == '' or time == '' or court == '' or name == '' or phone == '' or email == '':
+            flash('Please fill out all fields', 'error')
+            return render_template('reserve.html')
+        if not re.fullmatch(regex, email):
+            flash('Invalid email', 'error')
+            return render_template('reserve.html')
+        message = f'''
+Date: {date}
+Time: {time}
+Court: {court}
+Name: {name}
+Phone: {phone}
+Email: {email}
+
+This is a reservation request. We will contact you to confirm your reservation.
+        '''
+        send_email(os.getenv('DEFAULT_SENDER'), 'Pickleball Reservation Request', message)
+        return render_template('confirmation.html', message='Thanks for your reservation request!', sub_message='We will contact you to confirm your reservation')
+    return render_template('reserve.html')
+
 @app.route('/pricing')
 def pricing():
     return render_template('pricing.html', pricing=True)
