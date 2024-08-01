@@ -30,7 +30,7 @@
 
                     <lable class="mt-2 not-italic">Enter new information here</lable> <br>
 
-                    {% if inputs['membership_type'] %}
+                    {% if inputs['active'] or if != inputs['active'] %}
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <lable class="inline-flex items-center justify-center not-italic">Active:</lable>
                         <div class="inline-flex items-center justify-center">
@@ -141,7 +141,7 @@
                             type="tel" id="phone" name="phone" value="{{ inputs['phone'] }}" required />
                     </div>
 
-                    {% if inputs['membership_type'] %}
+                    {% if inputs['active'] or if != inputs['active'] %}
 
                     <div>
                         <label class="sr-only" for="street">Street</label>
