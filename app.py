@@ -450,7 +450,6 @@ def edit_account():
             inputs['password'] = bcrypt.generate_password_hash(inputs['password']).decode()
 
             # update membership
-            print(inputs)
             memberships.update_membership(old_email, new_email, inputs)
             if session['email'] == old_email:
                 session['email'] = new_email
