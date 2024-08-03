@@ -1,25 +1,91 @@
 {% extends '_layout.html' %}
 
 {% block body %}
-
 <div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
     <div class="mx-auto max-w-lg text-center">
-        <h1 class="text-2xl font-bold sm:text-3xl">Reserve a court</h1>
+        <h1 class="text-2xl font-bold sm:text-3xl">Reserve a Court</h1>
 
         <p class="mt-4 text-gray-500">
-            Chose a date and time to reserve a pickleball court
+            Complete the form below to reserve a court. You will receive a confirmation email with the details of your reservation.
         </p>
     </div>
 
-    <!-- todo: select date and time and calculate guest cost -->
-
-    <form action="/pickleball/reserve" method="post" class="mx-auto mb-0 mt-8 max-w-md space-y-4 flex justify-center">
-        <div>
-            <button type="submit" class="inline-block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white">
-                Confirm reservation
-            </button>
+    <!-- Date and Time section -->
+    <div class="mt-8 mx-auto max-w-lg">
+        <div class="flex justify-between items-center mt-8 mx-auto max-w-screen-lg">
+            <div class="text-center">
+                <p class="text-sm font-medium text-gray-500">Member #</p>
+                <p id="member-number" class="text-lg font-bold">1030</p>
+            </div>
+            <div class="text-center flex-1">
+                <p class="text-sm font-medium text-gray-500">Date</p>
+                <p class="text-lg font-bold">2021-09-01</p>
+            </div>
+            <div class="text-center">
+                <p class="text-sm font-medium text-gray-500">Time</p>
+                <p class="text-lg font-bold">10:00 AM</p>
+            </div>
         </div>
-    </form>
+    </div>
+
+    <!-- Add Members Section -->
+    <form id="reservation-form" class="mt-8 mx-auto max-w-md space-y-4">
+        <div>
+            <p class="text-sm font-medium text-gray-500">Add Other Members</p>
+            <div class="relative flex items-center">
+                <input type="text" id="member-input" class="w-full rounded-lg border-gray-200 p-4 text-sm shadow-sm"
+                    placeholder="Enter member number" aria-label="Member number" />
+                <button type="button" id="add-member-btn" class="inline-block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white"
+                    onclick="addMember()">
+                    Add
+                </button>
+            </div>
+        </div>
     
+        <div id="member-list" class="mt-4">
+            <!-- Member list will be populated here -->
+        </div>
+    
+        <div class="mt-8">
+            <p class="text-sm font-medium text-gray-500">Add Guest</p>
+            <div class="flex space-x-4">
+                <input type="text" id="guest-first-name" class="w-full rounded-lg border-gray-200 p-4 text-sm shadow-sm"
+                    placeholder="First Name" aria-label="Guest first name" />
+                <input type="text" id="guest-last-name" class="w-full rounded-lg border-gray-200 p-4 text-sm shadow-sm"
+                    placeholder="Last Name" aria-label="Guest last name" />
+            </div>
+        </div>
+    
+        <button type="submit" class="mt-8 inline-block rounded-lg bg-green-500 px-5 py-3 text-sm font-medium text-white">
+            Confirm Reservation
+        </button>
+    </form>    
 </div>
+
+<script>
+    function addMember() {
+        const memberNumber = document.getElementById('member-input').value;
+        if (memberNumber) {
+            fetch(`/api/members/${memberNumber}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const memberList = document.getElementById('member-list');
+                        const memberItem = document.createElement('p');
+                        memberItem.textContent = `${data.member.firstName} ${data.member.lastName} (Member Number: ${memberNumber})`;
+                        memberList.appendChild(memberItem);
+                        document.getElementById('member-input').value = ''; // Clear input
+                    } else {
+                        alert('Member not found');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching member data:', error);
+                    alert('An error occurred. Please try again.');
+                });
+        } else {
+            alert('Please enter a member number.');
+        }
+    }
+</script>
 {% endblock %}
