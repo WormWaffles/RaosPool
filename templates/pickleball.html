@@ -14,184 +14,169 @@
     </div>
 </div>
 
-
-<button type="button" data-modal-target="timepicker-modal" data-modal-toggle="timepicker-modal"
-    class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700">
-    <svg class="w4 h-4 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-        fill="currentColor" viewBox="0 0 24 24">
-        <path fill-rule="evenodd"
-            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z"
-            clip-rule="evenodd" />
-    </svg>
-    Schedule appointment
-</button>
-
-<!-- Main modal -->
-<div id="timepicker-modal" tabindex="-1" aria-hidden="true"
-    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-[23rem] max-h-full">
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-800">
-            <!-- Modal header -->
-            <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                    Schedule an appointment
-                </h3>
-                <button type="button"
-                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                    data-modal-toggle="timepicker-modal">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                    </svg>
-                    <span class="sr-only">Close modal</span>
-                </button>
-            </div>
-            <!-- Modal body -->
-            <div class="p-4 pt-0">
-                <div inline-datepicker datepicker-autoselect-today
-                    class="mx-auto sm:mx-0 flex justify-center my-5 [&>div>div]:shadow-none [&>div>div]:bg-gray-50 [&_div>button]:bg-gray-50">
-                </div>
-                <label class="text-sm font-medium text-gray-900 dark:text-white mb-2 block">
-                    Pick your time
-                </label>
-                <ul id="timetable" class="grid w-full grid-cols-3 gap-2 mb-5">
-                    <li>
-                        <input type="radio" id="10-am" value="" class="hidden peer" name="timetable">
-                        <label for="10-am"
-                            class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
-                            10:00 AM
+<div class="w-full bg-gray-100 py-4">
+    <div class="flex justify-center items-center text-center">
+        <button type="button" data-modal-target="timepicker-modal" data-modal-toggle="timepicker-modal"
+            class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700">
+            <svg class="w4 h-4 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                fill="currentColor" viewBox="0 0 24 24">
+                <path fill-rule="evenodd"
+                    d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z"
+                    clip-rule="evenodd" />
+            </svg>
+            Reserve Court
+        </button>
+        <!-- Main modal -->
+        <div id="timepicker-modal" tabindex="-1" aria-hidden="true"
+            class="fixed inset-0 z-50 flex items-center justify-center hidden w-full h-full overflow-hidden">
+            <div class="relative p-4 w-full max-w-[23rem] max-h-[90vh] overflow-y-auto">
+                <!-- Modal content -->
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-800">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                            Reserve a court
+                        </h3>
+                        <button type="button"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                            data-modal-toggle="timepicker-modal">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="p-4 pt-0 overflow-y-auto">
+                        {% if True %}
+                        <div id="datepicker" class="datepicker relative bg-white border rounded shadow-lg p-4">
+                            <div id="calendar-container">
+                                <!-- Calendar will be inserted here -->
+                            </div>
+                        </div>
+                        {% endif %}
+                        <label class="text-sm font-medium text-gray-900 dark:text-white mb-2 block">
+                            Pick your time
                         </label>
-                    </li>
-                    <li>
-                        <input type="radio" id="10-30-am" value="" class="hidden peer" name="timetable">
-                        <label for="10-30-am"
-                            class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
-                            10:30 AM
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio" id="11-am" value="" class="hidden peer" name="timetable">
-                        <label for="11-am"
-                            class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
-                            11:00 AM
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio" id="11-30-am" value="" class="hidden peer" name="timetable">
-                        <label for="11-30-am"
-                            class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
-                            11:30 AM
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio" id="12-am" value="" class="hidden peer" name="timetable" checked>
-                        <label for="12-am"
-                            class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
-                            12:00 AM
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio" id="12-30-pm" value="" class="hidden peer" name="timetable">
-                        <label for="12-30-pm"
-                            class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
-                            12:30 PM
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio" id="1-pm" value="" class="hidden peer" name="timetable">
-                        <label for="1-pm"
-                            class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
-                            01:00 PM
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio" id="1-30-pm" value="" class="hidden peer" name="timetable">
-                        <label for="1-30-pm"
-                            class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
-                            01:30 PM
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio" id="2-pm" value="" class="hidden peer" name="timetable">
-                        <label for="2-pm"
-                            class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
-                            02:00 PM
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio" id="2-30-pm" value="" class="hidden peer" name="timetable">
-                        <label for="2-30-pm"
-                            class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
-                            02:30 PM
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio" id="3-pm" value="" class="hidden peer" name="timetable">
-                        <label for="3-pm"
-                            class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
-                            03:00 PM
-                        </label>
-                    </li>
-                    <li>
-                        <input type="radio" id="3-30-pm" value="" class="hidden peer" name="timetable">
-                        <label for="3-30-pm"
-                            class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
-                            03:30 PM
-                        </label>
-                    </li>
-                </ul>
-                <div class="grid grid-cols-2 gap-2">
-                    <button type="button"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>
-                    <button type="button" data-modal-hide="timepicker-modal"
-                        class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Discard</button>
+                        <ul id="timetable" class="grid w-full grid-cols-3 gap-2 mb-5">
+                            <li>
+                                <input type="radio" id="6-am" value="" class="hidden peer" name="timetable">
+                                <label for="6-am"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    6:00 AM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="7-am" value="" class="hidden peer" name="timetable">
+                                <label for="7-am"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    7:00 AM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="8-am" value="" class="hidden peer" name="timetable">
+                                <label for="8-am"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    8:00 AM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="9-am" value="" class="hidden peer" name="timetable">
+                                <label for="9-am"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    9:00 AM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="10-am" value="" class="hidden peer" name="timetable" checked>
+                                <label for="10-am"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    10:00 AM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="11-am" value="" class="hidden peer" name="timetable">
+                                <label for="11-am"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    11:00 AM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="12-pm" value="" class="hidden peer" name="timetable">
+                                <label for="12-pm"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    12:00 PM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="1-pm" value="" class="hidden peer" name="timetable">
+                                <label for="1-pm"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    01:00 PM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="2-pm" value="" class="hidden peer" name="timetable">
+                                <label for="2-pm"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    02:00 PM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="3-pm" value="" class="hidden peer" name="timetable">
+                                <label for="3-pm"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    03:00 PM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="4-pm" value="" class="hidden peer" name="timetable">
+                                <label for="4-pm"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    04:00 PM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="5-pm" value="" class="hidden peer" name="timetable">
+                                <label for="5-pm"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    05:00 PM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="6-pm" value="" class="hidden peer" name="timetable">
+                                <label for="6-pm"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    06:00 PM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="7-pm" value="" class="hidden peer" name="timetable">
+                                <label for="7-pm"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    07:00 PM
+                                </label>
+                            </li>
+                            <li>
+                                <input type="radio" id="8-pm" value="" class="hidden peer" name="timetable">
+                                <label for="8-pm"
+                                    class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
+                                    08:00 PM
+                                </label>
+                            </li>
+                        </ul>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="continue-button" type="button"
+                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Continue</button>
+                            <button type="button" data-modal-hide="timepicker-modal"
+                                class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Discard</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<script>
-    // Function to show the modal
-    function showModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.remove('hidden');
-        }
-    }
-
-    // Function to hide the modal
-    function hideModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.add('hidden');
-        }
-    }
-
-    // Event listener to show the modal when the button is clicked
-    document.querySelectorAll('[data-modal-toggle]').forEach(button => {
-        button.addEventListener('click', () => {
-            const modalId = button.getAttribute('data-modal-target');
-            showModal(modalId);
-        });
-    });
-
-    // Event listener to hide the modal when the close button is clicked
-    document.querySelectorAll('[data-modal-hide]').forEach(button => {
-        button.addEventListener('click', () => {
-            const modalId = button.getAttribute('data-modal-hide');
-            hideModal(modalId);
-        });
-    });
-</script>
-
-<!-- button to go to reservations -->
-<div class="w-full bg-gray-100 py-4">
-    <div class="flex justify-center items-center text-center">
-        <h2 class="text-2xl font-bold text-gray-800 mr-4">Reserve a court</h2>
-        <a href="/pickleball/reserve" class="bg-blue-600 text-white px-4 py-2 rounded-lg">Reserve</a>
     </div>
 </div>
 
@@ -231,5 +216,115 @@
         </div>
     </div>
 </section>
+
+<script>
+
+    // make the calender
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarContainer = document.getElementById('calendar-container');
+        const today = new Date();
+        let currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        function renderCalendar(date) {
+            calendarContainer.innerHTML = ''; // Clear previous month view
+
+            const year = date.getFullYear();
+            const month = date.getMonth();
+
+            // Create month header
+            const monthHeader = document.createElement('div');
+            monthHeader.className = 'flex justify-between items-center mb-4';
+            monthHeader.innerHTML = `
+                                        <button id="prev-month" class="text-gray-600 hover:text-gray-800">&lt;</button>
+                                        <span class="font-semibold text-lg">${date.toLocaleString('default', { month: 'long' })} ${year}</span>
+                                        <button id="next-month" class="text-gray-600 hover:text-gray-800">&gt;</button>
+                                    `;
+            calendarContainer.appendChild(monthHeader);
+
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const lastDateOfMonth = new Date(year, month + 1, 0).getDate();
+            const lastDayOfPrevMonth = new Date(year, month, 0).getDate();
+
+            const calendarGrid = document.createElement('div');
+            calendarGrid.className = 'grid grid-cols-7 gap-1';
+
+            // Days of the week
+            const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            daysOfWeek.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'text-center font-bold';
+                dayElement.textContent = day;
+                calendarGrid.appendChild(dayElement);
+            });
+
+            // Fill days of previous month
+            for (let i = firstDayOfMonth; i > 0; i--) {
+                const day = lastDayOfPrevMonth - i + 1;
+                const dayElement = document.createElement('div');
+                dayElement.className = 'text-center text-gray-400';
+                dayElement.textContent = day;
+                calendarGrid.appendChild(dayElement);
+            }
+
+            // Fill days of current month
+            for (let i = 1; i <= lastDateOfMonth; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'text-center p-2 hover:bg-blue-100 cursor-pointer';
+                dayElement.textContent = i;
+                dayElement.addEventListener('click', function () {
+                    alert(`Selected Date: ${year}-${month + 1}-${i}`);
+                });
+                calendarGrid.appendChild(dayElement);
+            }
+
+            calendarContainer.appendChild(calendarGrid);
+
+            // Add navigation event listeners
+            document.getElementById('prev-month').addEventListener('click', function () {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar(currentDate);
+            });
+
+            document.getElementById('next-month').addEventListener('click', function () {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar(currentDate);
+            });
+        }
+
+        renderCalendar(currentDate);
+    });
+
+    // Function to show the modal
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('hidden');
+        }
+    }
+
+    // Function to hide the modal
+    function hideModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    // Event listener to show the modal when the button is clicked
+    document.querySelectorAll('[data-modal-toggle]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-target');
+            showModal(modalId);
+        });
+    });
+
+    // Event listener to hide the modal when the close button is clicked
+    document.querySelectorAll('[data-modal-hide]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-hide');
+            hideModal(modalId);
+        });
+    });
+</script>
 
 {% endblock %}
