@@ -15,15 +15,15 @@
         <div class="flex justify-between items-center mt-8 mx-auto max-w-screen-lg">
             <div class="text-center">
                 <p class="text-sm font-medium text-gray-500">Member #</p>
-                <p id="member-number" class="text-lg font-bold">1030</p>
+                <p id="member-number" class="text-lg font-bold">{% if member_id %}{{ member_id }}{% else %}Guest{% endif %}</p>
             </div>
             <div class="text-center flex-1">
                 <p class="text-sm font-medium text-gray-500">Date</p>
-                <p class="text-lg font-bold">2021-09-01</p>
+                <p class="text-lg font-bold">{{ date }}</p>
             </div>
             <div class="text-center">
                 <p class="text-sm font-medium text-gray-500">Time</p>
-                <p class="text-lg font-bold">10:00 AM</p>
+                <p class="text-lg font-bold">{{ time }}</p>
             </div>
         </div>
     </div>

@@ -99,6 +99,17 @@ def events():
 
 @app.route('/pickleball')
 def pickleball():
+    if 'email' in session:
+        try:
+            member = members.get_membership_by_email(session['email'])
+            emp = emps.get_emp_by_email(session['email'])
+            if member:
+                if member.active:
+                    return render_template('pickleball.html', pickleball=True, access=True)
+            elif emp.active:
+                return render_template('pickleball.html', pickleball=True, access=True)
+        except:
+            pass
     return render_template('pickleball.html', pickleball=True)
 
 @app.route('/pickleball/reserve', methods=['GET', 'POST'])
@@ -128,7 +139,19 @@ This is a reservation request. We will contact you to confirm your reservation.
         '''
         send_email(os.getenv('DEFAULT_SENDER'), 'Pickleball Reservation Request', message)
         return render_template('confirmation.html', message='Thanks for your reservation request!', sub_message='We will contact you to confirm your reservation')
-    return render_template('reserve.html')
+    date = request.args.get('date')
+    time = request.args.get('time')
+    # convert time to 12 hour format
+    time = datetime.datetime.strptime(time, '%H:%M').strftime('%I:%M %p')
+    # remove leading 0
+    if time[0] == '0':
+        time = time[1:]
+    # if the user is logged in send the member number as well
+    if 'email' in session:
+        member = members.get_membership_by_email(session['email'])
+        if member:
+            return render_template('reserve.html', date=date, time=time, member=member[0].membership_id)
+    return render_template('reserve.html', date=date, time=time)
 
 @app.route('/pricing')
 def pricing():
