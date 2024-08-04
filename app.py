@@ -101,7 +101,7 @@ def events():
 def pickleball():
     if 'email' in session:
         try:
-            member = members.get_membership_by_email(session['email'])
+            member = memberships.get_membership_by_email(session['email'])
             emp = emps.get_emp_by_email(session['email'])
             if member:
                 if member.active:
@@ -111,47 +111,6 @@ def pickleball():
         except:
             pass
     return render_template('pickleball.html', pickleball=True)
-
-@app.route('/pickleball/reserve', methods=['GET', 'POST'])
-def reserve():
-    if request.method == 'POST':
-        date = request.form['date']
-        time = request.form['time']
-        court = request.form['court']
-        name = request.form['name']
-        phone = request.form['phone']
-        email = request.form['email']
-        if date == '' or time == '' or court == '' or name == '' or phone == '' or email == '':
-            flash('Please fill out all fields', 'error')
-            return render_template('reserve.html')
-        if not re.fullmatch(regex, email):
-            flash('Invalid email', 'error')
-            return render_template('reserve.html')
-        message = f'''
-Date: {date}
-Time: {time}
-Court: {court}
-Name: {name}
-Phone: {phone}
-Email: {email}
-
-This is a reservation request. We will contact you to confirm your reservation.
-        '''
-        send_email(os.getenv('DEFAULT_SENDER'), 'Pickleball Reservation Request', message)
-        return render_template('confirmation.html', message='Thanks for your reservation request!', sub_message='We will contact you to confirm your reservation')
-    date = request.args.get('date')
-    time = request.args.get('time')
-    # convert time to 12 hour format
-    time = datetime.datetime.strptime(time, '%H:%M').strftime('%I:%M %p')
-    # remove leading 0
-    if time[0] == '0':
-        time = time[1:]
-    # if the user is logged in send the member number as well
-    if 'email' in session:
-        member = members.get_membership_by_email(session['email'])
-        if member:
-            return render_template('reserve.html', date=date, time=time, member=member[0].membership_id)
-    return render_template('reserve.html', date=date, time=time)
 
 @app.route('/pricing')
 def pricing():
@@ -1046,6 +1005,42 @@ def delete_event_photo():
         get_images()        
         return 'nothing'
     return abort(404)
+
+
+# Pickleball routes
+@app.route('/pickleball/reserve', methods=['GET', 'POST'])
+def reserve():
+    if request.method == 'POST':
+        return render_template('confirmation.html', message='Court Reservation Sent', sub_message='You should receive an email confirmation shortly.')
+    date = request.args.get('date')
+    time = request.args.get('time')
+    # convert time to 12 hour format
+    time = datetime.datetime.strptime(time, '%H:%M').strftime('%I:%M %p')
+    # remove leading 0
+    if time[0] == '0':
+        time = time[1:]
+    # if the user is logged in send the member number as well
+    if 'email' in session:
+        member = memberships.get_membership_by_email(session['email'])
+        if member:
+            return render_template('reserve.html', date=date, time=time, membership_id=member.membership_id)
+    return render_template('reserve.html', date=date, time=time)
+
+@app.route('/getmember/<int:member_id>', methods=['GET'])
+def get_member(member_id):
+    # get member info
+    member = members.get_membership_by_id(member_id)
+    # if membership is active
+    if member and member[0].active:
+        # turn member into dictionary
+        member_info = {
+            'membership_id': member[0].membership_id,
+            'name': f'{member[0].first_name} {member[0].last_name}'
+        }
+        if member:
+            print(member_info)
+            return jsonify(member_info)
+    return {}
 
 # error page
 @app.errorhandler(404)
