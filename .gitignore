@@ -1,11 +1,13 @@
 /node_modules
-tailwind.config.js
 package.json
 package-lock.json
 /venv
 .DS_Store
 *.csv
 /static/images/events/*
+/static/images/pickleball/*
+/static/styles/output.css
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -97,6 +97,21 @@ def events():
             pass
     return render_template('events.html', events=True, images=images, admin=False)
 
+@app.route('/pickleball')
+def pickleball():
+    if 'email' in session:
+        try:
+            member = memberships.get_membership_by_email(session['email'])
+            emp = emps.get_emp_by_email(session['email'])
+            if member:
+                if member.active:
+                    return render_template('pickleball.html', pickleball=True, access=True)
+            elif emp.active:
+                return render_template('pickleball.html', pickleball=True, access=True)
+        except:
+            pass
+    return render_template('pickleball.html', pickleball=True)
+
 @app.route('/pricing')
 def pricing():
     return render_template('pricing.html', pricing=True)
@@ -877,6 +892,42 @@ def delete_event_photo():
         get_images()        
         return 'nothing'
     return abort(404)
+
+
+# Pickleball routes
+@app.route('/pickleball/reserve', methods=['GET', 'POST'])
+def reserve():
+    if request.method == 'POST':
+        return render_template('confirmation.html', message='Court Reservation Sent', sub_message='You should receive an email confirmation shortly.')
+    date = request.args.get('date')
+    time = request.args.get('time')
+    # convert time to 12 hour format
+    time = datetime.datetime.strptime(time, '%H:%M').strftime('%I:%M %p')
+    # remove leading 0
+    if time[0] == '0':
+        time = time[1:]
+    # if the user is logged in send the member number as well
+    if 'email' in session:
+        member = memberships.get_membership_by_email(session['email'])
+        if member:
+            return render_template('reserve.html', date=date, time=time, membership_id=member.membership_id)
+    return render_template('reserve.html', date=date, time=time)
+
+@app.route('/getmember/<int:member_id>', methods=['GET'])
+def get_member(member_id):
+    # get member info
+    member = members.get_membership_by_id(member_id)
+    # if membership is active
+    if member and member[0].active:
+        # turn member into dictionary
+        member_info = {
+            'membership_id': member[0].membership_id,
+            'name': f'{member[0].first_name} {member[0].last_name}'
+        }
+        if member:
+            print(member_info)
+            return jsonify(member_info)
+    return {}
 
 # error page
 @app.errorhandler(404)

@@ -1,0 +1,177 @@
+{% extends '_layout.html' %}
+
+{% block body %}
+<div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-lg text-center">
+        <h1 class="text-2xl font-bold sm:text-3xl">Reserve a Court</h1>
+
+        <p class="mt-4 text-gray-500">
+            Complete the form below to reserve a court. You will receive a confirmation email with the details of your
+            reservation.
+        </p>
+    </div>
+
+    <!-- Date and Time section -->
+    <div class="mt-8 mx-auto max-w-lg">
+        <div class="flex justify-between items-center mt-8 mx-auto max-w-screen-lg">
+            <div class="text-center">
+                <p class="text-sm font-medium text-gray-500">Member #</p>
+                <p id="member-number" class="text-lg font-bold">{% if membership_id %}{{ membership_id }}{% else
+                    %}Guest{% endif
+                    %}</p>
+            </div>
+            <div class="text-center flex-1">
+                <p class="text-sm font-medium text-gray-500">Date</p>
+                <p class="text-lg font-bold">{{ date }}</p>
+            </div>
+            <div class="text-center">
+                <p class="text-sm font-medium text-gray-500">Time</p>
+                <p class="text-lg font-bold">{{ time }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Members Section -->
+    <form id="reservation-form" class="mt-8 mx-auto max-w-md space-y-4">
+        {% if membership_id %}
+        <div>
+            <p class="text-sm font-medium text-gray-500">Add Other Members</p>
+            <div class="relative flex items-center">
+                <input type="text" id="member-input"
+                    class="w-full rounded-lg border border-gray-300 p-3 text-sm shadow-sm mr-3"
+                    placeholder="Enter member number" aria-label="Member number" />
+                <button type="button" id="add-member-btn"
+                    class="inline-block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white"
+                    onclick="addMember()">
+                    Add
+                </button>
+            </div>
+        </div>
+
+        <div id="member-list" class="mt-4">
+            <!-- Member list will be populated here -->
+        </div>
+        {% endif %}
+
+        <!-- enter number of guests -->
+        <div class="flex justify-center items-center w-full">
+            <div class="w-full max-w-md"> <!-- Adjusted to allow full width and added max-width -->
+                {% if membership_id %}
+                <label class="mt-2 not-italic">Number of guests</label><br>
+                {% else %}
+                <label class="mt-2 not-italic">Total size of party</label><br>
+                {% endif %}
+                <div class="flex items-center justify-between rounded-lg border border-gray-200 w-full px-4">
+                    <button type="button" class="size-10 leading-10 text-gray-600 transition hover:opacity-75"
+                        id="decrease">
+                        &minus;
+                    </button>
+                    <input type="number" id="Quantity" value="{% if membership_id %}0{% else %}1{% endif %}"
+                        name="size_of_family"
+                        class="h-10 w-16 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none" />
+                    <button type="button" class="size-10 leading-10 text-gray-600 transition hover:opacity-75"
+                        id="increase">
+                        &plus;
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center items-center w-full">
+            <button type="submit" class="mt-4 w-full rounded-lg bg-green-500 px-5 py-3 text-sm font-medium text-white">
+                Next
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const currentUserId = "{{ membership_id }}";
+
+    function addMember() {
+        const memberNumber = document.getElementById('member-input').value;
+        if (memberNumber) {
+            // Check if the member number is the same as the current user's ID
+            if (memberNumber === currentUserId) {
+                alert('You cannot add your own member number.');
+                return;
+            }
+
+            fetch(`/getmember/${memberNumber}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.membership_id && data.name) {
+                        const memberList = document.getElementById('member-list');
+
+                        // Check if the member number is already in the list
+                        const existingMembers = Array.from(memberList.getElementsByTagName('p'));
+                        const isMemberAlreadyInList = existingMembers.some(item => {
+                            return item.textContent.includes(`(Member ID: ${data.membership_id})`);
+                        });
+
+                        if (isMemberAlreadyInList) {
+                            alert('Member is already in the list.');
+                        } else {
+                            // Check if the list already has 3 members
+                            if (existingMembers.length >= 3) {
+                                alert('You can only add up to 3 members.');
+                            } else {
+                                const memberItem = document.createElement('p');
+                                memberItem.classList.add('flex', 'items-center', 'justify-between', 'p-2', 'border', 'border-gray-300', 'rounded-lg', 'mb-2', 'bg-gray-50');
+                                memberItem.textContent = `[Account owner]: ${data.name} (Member ID: ${data.membership_id}) `;
+
+                                // Create and style the "X" button
+                                const removeButton = document.createElement('button');
+                                removeButton.textContent = 'X';
+                                removeButton.classList.add('ml-4', 'text-red-500', 'hover:text-red-700', 'focus:outline-none');
+                                removeButton.onclick = function () {
+                                    memberItem.remove(); // Remove the member item from the list
+                                };
+
+                                memberItem.appendChild(removeButton);
+                                memberList.appendChild(memberItem);
+                                document.getElementById('member-input').value = ''; // Clear input
+                            }
+                        }
+                    } else {
+                        alert('Member not found');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching member data:', error);
+                    alert('An error occurred. Please try again.');
+                });
+        } else {
+            alert('Please enter a member number.');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const quantityInput = document.getElementById('Quantity');
+        const decreaseButton = document.getElementById('decrease');
+        const increaseButton = document.getElementById('increase');
+        // min val is 1 when guest and 0 when member
+        const minVal = "{{ '0' if membership_id is defined and membership_id != '' else '1' }}";
+        const maxVal = "{{ '3' if membership_id is defined and membership_id != '' else '4' }}";
+
+        decreaseButton.addEventListener('click', () => {
+            let currentValue = parseInt(quantityInput.value);
+            if (currentValue > minVal) {
+                quantityInput.value = currentValue - 1;
+            }
+        });
+
+        increaseButton.addEventListener('click', () => {
+            let currentValue = parseInt(quantityInput.value);
+            if (currentValue < maxVal) {
+                quantityInput.value = currentValue + 1;
+            }
+        });
+    });
+</script>
+{% endblock %}

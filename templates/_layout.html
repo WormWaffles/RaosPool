@@ -13,7 +13,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/output.css') }}">
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
 </head>
 
 {% with messages = get_flashed_messages() %}
@@ -77,6 +76,15 @@
                                 d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                         </svg>
                     </li>
+                    <li><a {% if pickleball %} class="text-sm text-blue-600 font-bold" {% else %}
+                        class="text-sm text-gray-400 hover:text-gray-500" {% endif %} href="/pickleball">Pickleball</a></li>
+                    <li class="text-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                            class="w-4 h-4 current-fill" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                        </svg>
+                    </li>
                     <li><a {% if events %} class="text-sm text-blue-600 font-bold" {% else %}
                             class="text-sm text-gray-400 hover:text-gray-500" {% endif %} href="/events">Events</a></li>
                     <li class="text-gray-300">
@@ -117,7 +125,7 @@
                 <nav
                     class="fixed top-0 left-0 bottom-0 flex flex-col w-5/6 max-w-sm py-6 px-6 bg-white border-r overflow-y-auto">
                     <div class="flex items-center mb-8">
-                        <a class="mr-auto text-3xl font-bold leading-none" href="#">
+                        <a class="mr-auto text-3xl font-bold leading-none" href="/">
                             <img src="/static/images/logo.png" alt="logo" class="h-10 w-10">
                         </a>
                         <button class="navbar-close">
@@ -134,6 +142,10 @@
                             <li class="mb-1">
                                 <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded"
                                     href="/">Home</a>
+                            </li>
+                            <li class="mb-1">
+                                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded"
+                                    href="/pickleball">Pickleball</a>
                             </li>
                             <li class="mb-1">
                                 <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded"
@@ -278,6 +290,7 @@
             </div>
         </div>
 
+
         <!-- Footer Bottom Section -->
         <div class="mt-12 border-t border-gray-300 pt-12">
             <div class="sm:flex sm:items-center sm:justify-between">
@@ -285,7 +298,7 @@
                     <li><a href="/policies" class="text-gray-300 transition hover:opacity-75">Policies</a></li>
                 </ul>
                 <p class="mt-8 text-xs text-gray-300 sm:mt-0">
-                    &copy; 2024. Rao's Pool Pickle Party. All rights reserved. V1.3.5
+                    &copy; 2024. Rao's Pool Pickle Party. All rights reserved. V2.1.0
                 </p>
             </div>
         </div>
