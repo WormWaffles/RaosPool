@@ -135,6 +135,7 @@
 {% include '_member_account.html' %}
 {% endif %}
 
+{% if admin and not my_account %}
 <script>
     // show popup oin click of delete button
     document.getElementById('delete').addEventListener('click', function (e) {
@@ -146,5 +147,6 @@
         }
     });
 </script>
+{% endif %}
 
 {% endblock %}

@@ -89,8 +89,10 @@ CREATE TABLE checkin (
 CREATE TABLE reservation (
     reservation_id INTEGER NOT NULL,
     member_id VARCHAR(80) NOT NULL,
-    reservation_date TIMESTAMP NOT NULL,
-    party_size INTEGER NOT NULL,
+    reservation_date DATE NOT NULL,
+    reservation_time TIMESTAMP NOT NULL,
+    guest_count INTEGER NOT NULL,
     court_number INTEGER NOT NULL,
+    order_id INTEGER DEFAULT NULL,
     PRIMARY KEY (reservation_id)
 );

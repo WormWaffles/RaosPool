@@ -7,6 +7,7 @@ from src.emps import emps
 from src.codes import codes
 from src.memberships import memberships
 from src.checkins import checkins
+from src.reservations import reservations
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
@@ -898,7 +899,44 @@ def delete_event_photo():
 @app.route('/pickleball/reserve', methods=['GET', 'POST'])
 def reserve():
     if request.method == 'POST':
-        return render_template('confirmation.html', message='Court Reservation Sent', sub_message='You should receive an email confirmation shortly.')
+        # get form info
+        member_id = request.form['membership_id']
+        date = request.form['date']
+        time = request.form['time']
+        guest_count = request.form['guest_count']
+
+        if not member_id:
+            member_id = 'Guest'
+        if not date or not time or not guest_count:
+            abort(404)
+        if guest_count.isdigit() == False:
+            flash('Invalid party size', 'error')
+            return render_template('reserve.html', date=date, time=time, membership_id=member_id)
+        if int(guest_count) < 0 or int(guest_count) > 4:
+            flash('Invalid party size', 'error')
+            return render_template('reserve.html', date=date, time=time, membership_id=member_id)
+        
+        # get the court number
+        court_number = reservations.get_available_court_number(date, time)
+
+        # turn date and time into timestamp
+        date = datetime.datetime.strptime(date, '%Y-%m-%d')
+        time = datetime.datetime.strptime(time, '%H:%M %p').time()
+        time = datetime.datetime.combine(date, time)
+
+        print(guest_count)
+        if member_id == 'Guest':
+            price = int(guest_count) * 8
+        else:
+            price = int(guest_count) * 5
+
+        print('price:', price)
+
+        # make new reservation
+        if reservations.create_reservation(member_id, date, time, guest_count, court_number) == None:
+            flash('Error creating reservations, try again.', 'error')
+            return render_template('reserve.html', date=date, time=time, membership_id=member_id)
+        return render_template('confirmation.html', message=f'Court #{court_number} Reserved', sub_message='You should receive an email confirmation shortly.')
     date = request.args.get('date')
     time = request.args.get('time')
     # convert time to 12 hour format
@@ -928,6 +966,24 @@ def get_member(member_id):
             print(member_info)
             return jsonify(member_info)
     return {}
+
+# api route to get open court times
+@app.route('/api/pickleball/times', methods=['GET'])
+def get_times():
+    # get the date
+    date = request.args.get('date')
+    # get the times that are reserved
+    available_times = reservations.check_availability(date)
+    # turn times into dict with true or false
+    times = {}
+    try:
+        for time in available_times:
+            times[time[0]] = True
+    except:
+        return jsonify({})
+    # return times as json
+    return jsonify(times)
+
 
 # error page
 @app.errorhandler(404)
