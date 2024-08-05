@@ -93,5 +93,6 @@ class Reservation(db.Model):
     reservation_id = db.Column(db.Integer, primary_key=True)
     member_id = db.Column(db.Integer, nullable=False)
     reservation_date = db.Column(db.Date, nullable=False)
-    party_size = db.Column(db.Integer, nullable=False)
+    reservation_time = db.Column(db.Time, nullable=False)
+    guest_count = db.Column(db.Integer, nullable=False)
     court_number = db.Column(db.Integer, nullable=False)

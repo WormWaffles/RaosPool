@@ -32,7 +32,12 @@
     </div>
 
     <!-- Add Members Section -->
-    <form id="reservation-form" class="mt-8 mx-auto max-w-md space-y-4">
+    <form id="reservation-form" action="/pickleball/reserve" method="post" class="mt-8 mx-auto max-w-md space-y-4">
+        <!-- hidden form inputs -->
+        <input type="hidden" name="date" value="{{ date }}" />
+        <input type="hidden" name="time" value="{{ time }}" />
+        <input type="hidden" name="membership_id" value="{{ membership_id }}" />
+
         {% if membership_id %}
         <div>
             <p class="text-sm font-medium text-gray-500">Add Other Members</p>
@@ -67,7 +72,7 @@
                         &minus;
                     </button>
                     <input type="number" id="Quantity" value="{% if membership_id %}0{% else %}1{% endif %}"
-                        name="size_of_family"
+                        name="guest_count"
                         class="h-10 w-16 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none" />
                     <button type="button" class="size-10 leading-10 text-gray-600 transition hover:opacity-75"
                         id="increase">
