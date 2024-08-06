@@ -1,0 +1,82 @@
+{% extends '_layout.html' %}
+
+{% block body %}
+<script>
+    function formatTime() {
+        // Select all <p> elements with the class "reservation-time"
+        const elements = document.querySelectorAll('.reservation-time');
+
+        elements.forEach(element => {
+            // Get the timestamp from the data-time attribute
+            const timestamp = element.getAttribute('data-time');
+
+            // Create a Date object from the timestamp
+            const date = new Date(timestamp);
+
+            // Extract hours and minutes
+            let hours = date.getHours();
+            const minutes = date.getMinutes();
+
+            // Convert hours to 12-hour format and determine AM/PM
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // Hour '0' should be '12'
+            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+            // Create the formatted time string
+            const formattedTime = `${hours}:${formattedMinutes} ${ampm}`;
+
+            // Update the text content of the <p> element
+            element.textContent = formattedTime;
+        });
+    }
+
+    // Call the function once the document is fully loaded
+    document.addEventListener('DOMContentLoaded', formatTime);
+
+</script>
+<!-- list given reservations -->
+<div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-lg text-center">
+        <h1 class="text-2xl font-bold sm:text-3xl">Reservations</h1>
+    </div>
+
+    <div class="mt-8 mx-auto max-w-lg">
+        <div class="flex justify-between items-center mt-8 mx-auto max-w-screen-lg">
+            <div class="text-center">
+                <p class="text-sm font-medium text-gray-500">Date</p>
+            </div>
+            <div class="text-center">
+                <p class="text-sm font-medium text-gray-500">Time</p>
+            </div>
+            <div class="text-center">
+                <p class="text-sm font-medium text-gray-500">Court</p>
+            </div>
+        </div>
+    </div>
+
+    {% if reservations %}
+    <div class="mt-8 mx-auto max-w-lg">
+        {% for reservation in reservations %}
+        <div class="flex justify-between items-center mt-8 mx-auto max-w-screen-lg">
+            <div class="text-center">
+                <p class="text-lg font-bold">{{ reservation.reservation_date }}</p>
+            </div>
+            <div class="text-center">
+                <!-- display reservation time, which is a timestamp, as 10:00 pm format -->
+                <p class="reservation-time text-lg font-bold"
+                    data-time="{{ reservation.reservation_time.isoformat() }}"></p>
+            </div>
+            <div class="text-center">
+                <p class="text-lg font-bold">Court: #{{ reservation.court_number }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="mt-8 mx-auto max-w-lg text-center">
+        <p class="text-lg font-bold">No reservations found</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

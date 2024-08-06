@@ -921,7 +921,7 @@ def reserve():
 
         # turn date and time into timestamp
         date = datetime.datetime.strptime(date, '%Y-%m-%d')
-        time = datetime.datetime.strptime(time, '%H:%M %p').time()
+        time = datetime.datetime.strptime(time, '%I:%M %p').time()
         time = datetime.datetime.combine(date, time)
 
         print(guest_count)
@@ -966,6 +966,33 @@ def get_member(member_id):
             print(member_info)
             return jsonify(member_info)
     return {}
+
+@app.route('/account/reservations', methods=['GET'])
+def account_reservations():
+    if 'email' in session:
+        member = members.get_membership_by_email(session['email'])
+        if member:
+            my_reservations = reservations.get_reservations_by_member_id(member[0].membership_id)
+            print(my_reservations)
+            return render_template('account_reservations.html', reservations=my_reservations)
+    return redirect(url_for('login'))
+
+@app.route('/reservations', methods=['GET'])
+def reservations_page():
+    if 'email' in session:
+        if emps.get_emp_by_email(session['email']).admin:
+            all_reservations = reservations.get_all_reservations()
+            return render_template('reservations.html', reservations=all_reservations)
+    return abort(404)
+
+@app.route('/reservations/cancel/<reservation_id>', methods=['POST'])
+def cancel_reservation(reservation_id):
+    if 'email' in session:
+        if emps.get_emp_by_email(session['email']).admin:
+            print(reservation_id)
+            reservations.cancel_reservation(reservation_id)
+            return 'nothing'
+    return abort(404)
 
 # api route to get open court times
 @app.route('/api/pickleball/times', methods=['GET'])

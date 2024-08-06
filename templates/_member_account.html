@@ -8,8 +8,15 @@
                 <p class="text-red-700">To complete your account, visit the club to pay and activate it. Also, add members at the bottom of this page.</p>
                 {% endif %}
             </div>
-            {% if admin %}
             <div class="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+                <a href="/account/reservations">
+                    <button
+                        class="block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
+                        type="button" action="/account/reservations">
+                        My Reservations
+                    </button>
+                </a>
+                {% if admin %}
                 {% if edit %}
                 <a href="/account/edit?user_id={{ members[0].emp_id }}{{ members[0].membership_id }}">
                     <button
@@ -26,8 +33,8 @@
                     Delete
                 </button>
                 {% endif %}
+                {% endif %}
             </div>
-            {% endif %}
         </div>
     </div>
 </header>
