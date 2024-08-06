@@ -18,6 +18,7 @@ import uuid
 import re
 import csv
 import json
+import stripe
 
 
 
@@ -40,6 +41,11 @@ app.config['SQLALCHEMY_ECHO'] = False # set to True to see SQL queries
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16MB max upload size
 
 db.init_app(app)
+
+# stripe connection
+app.config['STRIPE_PUBLIC_KEY'] = os.getenv('STRIPE_PUBLIC_KEY')
+app.config['STRIPE_SECRET_KEY'] = os.getenv('STRIPE_SECRET_KEY')
+stripe.api_key = app.config['STRIPE_SECRET_KEY']
 
 
 # variables
@@ -918,24 +924,50 @@ def reserve():
         
         # get the court number
         court_number = reservations.get_available_court_number(date, time)
+        if not court_number:
+            flash('No courts available at that time', 'error')
+            return render_template('pickleball.html')
 
         # turn date and time into timestamp
         date = datetime.datetime.strptime(date, '%Y-%m-%d')
         time = datetime.datetime.strptime(time, '%I:%M %p').time()
         time = datetime.datetime.combine(date, time)
 
-        print(guest_count)
-        if member_id == 'Guest':
-            price = int(guest_count) * 8
-        else:
-            price = int(guest_count) * 5
-
-        print('price:', price)
-
         # make new reservation
         if reservations.create_reservation(member_id, date, time, guest_count, court_number) == None:
             flash('Error creating reservations, try again.', 'error')
             return render_template('reserve.html', date=date, time=time, membership_id=member_id)
+        
+        # reservation created, now get payment if guest
+        if int(guest_count) > 0:
+            # if guest, change price_id
+            if member_id == 'Guest':
+                price_id = 'price_1PjnH7FWhayxBXWqXY9vRCJw'
+            else:
+                price_id = 'price_1PjnGFFWhayxBXWqpaw1bEry'
+            try:
+                checkout_session = stripe.checkout.Session.create(
+                    line_items=[
+                        {
+                            # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                            'price': price_id,
+                            'quantity': guest_count,
+                        },
+                    ],
+                    mode='payment',
+                    success_url=url_for('confirmation', _external=True, 
+                        message=f'Court #{court_number} Reserved', 
+                        sub_message='You should receive an email confirmation shortly.') + '&session_id={CHECKOUT_SESSION_ID}',
+                    cancel_url=url_for('pickleball', _external=True),
+                    automatic_tax={'enabled': True},
+                )
+            except Exception as e:
+                print(str(e))
+                return str(e)
+
+            print(checkout_session)
+            return redirect(checkout_session.url, code=303)
+
         return render_template('confirmation.html', message=f'Court #{court_number} Reserved', sub_message='You should receive an email confirmation shortly.')
     date = request.args.get('date')
     time = request.args.get('time')
@@ -950,6 +982,15 @@ def reserve():
         if member:
             return render_template('reserve.html', date=date, time=time, membership_id=member.membership_id)
     return render_template('reserve.html', date=date, time=time)
+
+@app.route('/confirmation')
+def confirmation():
+    session_id = request.args.get('session_id')
+    print(session_id)
+    message = request.args.get('message', 'Default Message')
+    sub_message = request.args.get('sub_message', 'Default Sub-Message')
+    return render_template('confirmation.html', message=message, sub_message=sub_message)
+
 
 @app.route('/getmember/<int:member_id>', methods=['GET'])
 def get_member(member_id):
@@ -1010,7 +1051,6 @@ def get_times():
         return jsonify({})
     # return times as json
     return jsonify(times)
-
 
 # error page
 @app.errorhandler(404)
