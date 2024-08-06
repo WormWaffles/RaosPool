@@ -1,0 +1,112 @@
+{% extends '_layout.html' %}
+
+{% block body %}
+<script>
+    function formatTime() {
+        // Select all <p> elements with the class "reservation-time"
+        const elements = document.querySelectorAll('.reservation-time');
+
+        elements.forEach(element => {
+            // Get the timestamp from the data-time attribute
+            const timestamp = element.getAttribute('data-time');
+
+            // Create a Date object from the timestamp
+            const date = new Date(timestamp);
+
+            // Extract hours and minutes
+            let hours = date.getHours();
+            const minutes = date.getMinutes();
+
+            // Convert hours to 12-hour format and determine AM/PM
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // Hour '0' should be '12'
+            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+            // Create the formatted time string
+            const formattedTime = `${hours}:${formattedMinutes} ${ampm}`;
+
+            // Update the text content of the <p> element
+            element.textContent = formattedTime;
+        });
+    }
+
+    // Call the function once the document is fully loaded
+    document.addEventListener('DOMContentLoaded', formatTime);
+
+</script>
+<!-- display all reservations -->
+<div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-lg text-center">
+        <h1 class="text-2xl font-bold sm:text-3xl">Reservations</h1>
+
+        <p class="mt-4 text-gray-500">
+            View all reservations made by customers.
+        </p>
+    </div>
+
+    <div class="mt-8 mx-auto max-w-full px-4 sm:px-6 lg:px-8">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse border border-gray-300 text-sm sm:text-base">
+                <thead>
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2 text-left">Member</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">Court</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">Date</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">Time</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                    <tr>
+                        {% if reservation.member_id == 'Guest' %}
+                        <td class="border border-gray-300 px-4 py-2">{{ reservation.member_id }}</td>
+                        {% else %}
+                        <td class="border border-gray-300 px-4 py-2">
+                            <a href="/account?user_id={{ reservation.member_id }}"
+                                class="text-blue-500 hover:text-blue-700 font-medium cursor-pointer">
+                                {{ reservation.member_id }}
+                            </a>
+                        </td>
+                        {% endif %}
+                        <td class="border border-gray-300 px-4 py-2">#{{ reservation.court_number }}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ reservation.reservation_date }}</td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <p class="reservation-time" data-time="{{ reservation.reservation_time.isoformat() }}"></p>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <button type="submit" id="{{ reservation.reservation_id }}"
+                                class="text-red-500 hover:text-red-700 font-medium cursor-pointer">
+                                Cancel
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    // when cancel button is clicked, show confirmation dialog
+    document.querySelectorAll('button').forEach(button => {
+        button.addEventListener('click', async (event) => {
+            const reservationId = event.target.id;
+            const confirmed = confirm('Are you sure you want to cancel this reservation?');
+
+            if (confirmed) {
+                const response = await fetch(`/reservations/cancel/${reservationId}`, {
+                    method: 'POST',
+                });
+
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Failed to cancel reservation');
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

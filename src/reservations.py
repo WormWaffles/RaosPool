@@ -1,22 +1,26 @@
 from src.models import db, Reservation
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from sqlalchemy import text
 from flask import jsonify
 
 
 class Reservations:
     def get_all_reservations(self):
-        '''Return all reservations'''
-        return Reservation.query.all()
-    
+        '''Return all reservations order by reservation_time then court and only return in the future'''
+        today = date.today()
+        reservations = Reservation.query.filter(Reservation.reservation_date >= datetime.combine(today, datetime.min.time())) \
+            .order_by(Reservation.reservation_date, Reservation.reservation_time, Reservation.court_number) \
+            .all() 
+        return reservations
+       
     def get_reservation_by_id(self, reservation_id):
         '''Returns reservation by id'''
         return Reservation.query.get(reservation_id)
     
-    def get_reservation_by_member_id(self, member_id):
-        '''Returns reservation by member_id'''
-        return Reservation.query.filter_by(member_id=member_id).first()
+    def get_reservations_by_member_id(self, member_id):
+        '''Returns reservations by member_id sort by reservation_time'''
+        return Reservation.query.filter_by(member_id=str(member_id)).order_by(Reservation.reservation_time).all()
     
     def create_reservation(self, member_id, reservation_date, reservation_time, guest_count, court_number):
         '''Create reservation'''
@@ -48,8 +52,8 @@ class Reservations:
         db.session.commit()
         return reservation
     
-    def delete_reservation(self, reservation_id):
-        '''Delete reservation'''
+    def cancel_reservation(self, reservation_id):
+        '''Cancel reservation'''
         reservation = Reservation.query.get(reservation_id)
         db.session.delete(reservation)
         db.session.commit()
