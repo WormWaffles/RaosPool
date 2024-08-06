@@ -432,7 +432,7 @@
             const monthHeader = document.createElement('div');
             monthHeader.className = 'flex justify-between items-center mb-4';
             monthHeader.innerHTML = `
-            <button id="prev-month" class="text-gray-600 hover:text-gray-800">&lt;</button>
+            <button id="prev-month" class="text-gray-600 hover:text-gray-800" ${isPastMonth(date) ? 'disabled' : ''}>&lt;</button>
             <span class="font-semibold text-lg">${date.toLocaleString('default', { month: 'long' })} ${year}</span>
             <button id="next-month" class="text-gray-600 hover:text-gray-800">&gt;</button>
         `;
@@ -463,35 +463,44 @@
                 calendarGrid.appendChild(dayElement);
             }
 
+            console.log('Today:', today);
             // Fill days of current month
             for (let i = 1; i <= lastDateOfMonth; i++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'text-center p-2 hover:bg-blue-100 cursor-pointer rounded-lg';
 
-                // Highlight current day
-                if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === i) {
-                    dayElement.classList.add('bg-blue-200');
+                const currentDay = new Date(year, month, i);
+                if (currentDay.getDate() < today.getDate()) {
+                    dayElement.classList.add('text-gray-400');
+                    dayElement.classList.add('disabled');
+                    dayElement.style.pointerEvents = 'none'; // Disable click events
+                } else {
+                    // Highlight current day
+                    if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === i) {
+                        dayElement.classList.add('bg-blue-200');
+                        selectedDate = dayElement; // Set today's date as selected by default
+                    }
+
+                    dayElement.addEventListener('click', function () {
+                        // Remove highlight from the previously selected date
+                        if (selectedDate) {
+                            selectedDate.classList.remove('bg-blue-400', 'selected');
+                            selectedDate.classList.add('hover:bg-blue-100');
+                        }
+                        // Highlight the clicked date
+                        dayElement.classList.add('bg-blue-400', 'selected');
+                        dayElement.classList.remove('hover:bg-blue-100');
+                        selectedDate = dayElement;
+
+                        // Fetch and update available times for the selected date
+                        const selectedDateFormatted = `${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`;
+                        getTimes(selectedDateFormatted);
+
+                        console.log(`Selected Date: ${year}-${month + 1}-${i}`);
+                    });
                 }
 
                 dayElement.textContent = i;
-
-                dayElement.addEventListener('click', function () {
-                    // Remove highlight from the previously selected date
-                    if (selectedDate) {
-                        selectedDate.classList.remove('bg-blue-400', 'selected');
-                        selectedDate.classList.add('hover:bg-blue-100');
-                    }
-                    // Highlight the clicked date
-                    dayElement.classList.add('bg-blue-400', 'selected');
-                    dayElement.classList.remove('hover:bg-blue-100');
-                    selectedDate = dayElement;
-
-                    // Fetch and update available times for the selected date
-                    const selectedDateFormatted = `${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`;
-                    getTimes(selectedDateFormatted);
-
-                    console.log(`Selected Date: ${year}-${month + 1}-${i}`);
-                });
                 calendarGrid.appendChild(dayElement);
             }
 
@@ -499,14 +508,20 @@
 
             // Add navigation event listeners
             document.getElementById('prev-month').addEventListener('click', function () {
-                currentDate.setMonth(currentDate.getMonth() - 1);
-                renderCalendar(currentDate);
+                if (!isPastMonth(currentDate)) {
+                    currentDate.setMonth(currentDate.getMonth() - 1);
+                    renderCalendar(currentDate);
+                }
             });
 
             document.getElementById('next-month').addEventListener('click', function () {
                 currentDate.setMonth(currentDate.getMonth() + 1);
                 renderCalendar(currentDate);
             });
+        }
+
+        function isPastMonth(date) {
+            return date < today;
         }
 
         renderCalendar(currentDate);

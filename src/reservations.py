@@ -19,8 +19,12 @@ class Reservations:
         return Reservation.query.get(reservation_id)
     
     def get_reservations_by_member_id(self, member_id):
-        '''Returns reservations by member_id sort by reservation_time'''
-        return Reservation.query.filter_by(member_id=str(member_id)).order_by(Reservation.reservation_time).all()
+        '''Returns reservations by member_id sort by reservation_time that are in the future'''
+        today = date.today()
+        reservations = Reservation.query.filter(Reservation.member_id == str(member_id), Reservation.reservation_date >= datetime.combine(today, datetime.min.time())) \
+            .order_by(Reservation.reservation_date, Reservation.reservation_time, Reservation.court_number) \
+            .all()
+        return reservations
     
     def create_reservation(self, member_id, reservation_date, reservation_time, guest_count, court_number):
         '''Create reservation'''
