@@ -33,16 +33,33 @@
 
     // Call the function once the document is fully loaded
     document.addEventListener('DOMContentLoaded', formatTime);
-
 </script>
 <!-- display all reservations -->
 <div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-    <div class="mx-auto max-w-lg text-center">
-        <h1 class="text-2xl font-bold sm:text-3xl">Reservations</h1>
+    <div class="mx-auto max-w-4xl p-4">
+        <div class="flex flex-wrap lg:flex-nowrap gap-4">
+            <!-- Left Section: Reservations and Description -->
+            <div class="w-full lg:w-1/2 text-center lg:text-left">
+                <h1 class="text-2xl font-bold sm:text-3xl">Reservations</h1>
+                <p class="mt-4 text-gray-500">
+                    View all reservations made by customers.
+                </p>
+            </div>
 
-        <p class="mt-4 text-gray-500">
-            View all reservations made by customers.
-        </p>
+            <!-- Right Section: Input Form -->
+            <div class="w-full lg:w-1/2">
+                <div class="mt-4 max-w-md mx-auto lg:mx-0">
+                    <label for="open-courts" class="text-gray-700 font-medium">Open Courts:</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="number" id="court_number" name="court_number" min="1"
+                            class="p-2 border border-gray-300 rounded" value="{{ open_courts }}" required>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+                            Update
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="mt-8 mx-auto max-w-full px-4 sm:px-6 lg:px-8">
@@ -76,7 +93,7 @@
                             <p class="reservation-time" data-time="{{ reservation.reservation_time.isoformat() }}"></p>
                         </td>
                         <td class="border border-gray-300 px-4 py-2">
-                            <button type="submit" id="{{ reservation.reservation_id }}"
+                            <button for="cancel" type="submit" id="{{ reservation.reservation_id }}"
                                 class="text-red-500 hover:text-red-700 font-medium cursor-pointer">
                                 Cancel
                             </button>
@@ -90,7 +107,8 @@
 </div>
 <script>
     // when cancel button is clicked, show confirmation dialog
-    document.querySelectorAll('button').forEach(button => {
+    // select all buttons with for="cancel"
+    document.querySelectorAll('button[for="cancel"]').forEach(button => {
         button.addEventListener('click', async (event) => {
             const reservationId = event.target.id;
             const confirmed = confirm('Are you sure you want to cancel this reservation?');
@@ -107,6 +125,19 @@
                 }
             }
         });
+    });
+    // when open courts button is clicked, update the number of open courts
+    document.querySelector('button[type="submit"]').addEventListener('click', async () => {
+        const courtNumber = document.querySelector('input[name="court_number"]').value;
+        const response = await fetch(`/api/pickleball/courts?court_number=${courtNumber}`, {
+            method: 'POST',
+        });
+
+        if (response.ok) {
+            alert('Open courts updated successfully');
+        } else {
+            alert('Failed to update open courts');
+        }
     });
 </script>
 {% endblock %}
