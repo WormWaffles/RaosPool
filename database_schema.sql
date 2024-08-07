@@ -96,3 +96,8 @@ CREATE TABLE reservation (
     order_id INTEGER DEFAULT NULL,
     PRIMARY KEY (reservation_id)
 );
+
+CREATE TABLE court (
+    count_id SERIAL PRIMARY KEY,
+    number INTEGER
+);

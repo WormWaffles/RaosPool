@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, g, abort, send_file
 import requests
 import os
-from src.models import db, Member, Emp, Code, Membership
+from src.models import db, Code
 from src.members import members
 from src.emps import emps
 from src.codes import codes
 from src.memberships import memberships
 from src.checkins import checkins
 from src.reservations import reservations
+from src.courts import courts
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
@@ -73,7 +74,6 @@ get_images()
 # check if the user is logged in
 @app.before_request
 def before_request():
-    get_images()
     g.user = None
     if 'email' in session:
         g.user = session['email']
@@ -90,6 +90,7 @@ def index():
 
 @app.route('/events')
 def events():
+    get_images()
     if 'email' in session:
         try:
             if emps.get_emp_by_email(session['email']).admin:
@@ -982,7 +983,8 @@ def reservations_page():
     if 'email' in session:
         if emps.get_emp_by_email(session['email']).admin:
             all_reservations = reservations.get_all_reservations()
-            return render_template('reservations.html', reservations=all_reservations)
+            court_number = courts.get_open_courts()
+            return render_template('reservations.html', reservations=all_reservations, open_courts=court_number)
     return abort(404)
 
 @app.route('/reservations/cancel/<reservation_id>', methods=['POST'])
@@ -1011,6 +1013,21 @@ def get_times():
     # return times as json
     return jsonify(times)
 
+# api route to get and set open courts
+@app.route('/api/pickleball/courts', methods=['GET', 'POST'])
+def get_courts():
+    # initialize the courts
+    if not courts.get_open_courts():
+        courts.initialize_courts()
+    if request.method == 'POST':
+        # get court number
+        court_number = request.args.get('court_number')
+        print(court_number)
+        courts.change_open_courts(court_number)
+        return 'nothing'
+    # get the open courts
+    open_courts = courts.get_open_courts()
+    return jsonify(open_courts)
 
 # error page
 @app.errorhandler(404)

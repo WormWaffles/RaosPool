@@ -1,7 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import URLSafeTimedSerializer as Serializer
-from dotenv import load_dotenv
-import os
 
 db = SQLAlchemy()
 secret_key = 'this_is_my_key'
@@ -96,3 +94,7 @@ class Reservation(db.Model):
     reservation_time = db.Column(db.Time, nullable=False)
     guest_count = db.Column(db.Integer, nullable=False)
     court_number = db.Column(db.Integer, nullable=False)
+
+class Court(db.Model):
+    count_id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.Integer, primary_key=False)
