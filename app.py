@@ -19,6 +19,8 @@ import uuid
 import re
 import csv
 import json
+import stripe
+import time
 
 
 
@@ -41,6 +43,11 @@ app.config['SQLALCHEMY_ECHO'] = False # set to True to see SQL queries
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16MB max upload size
 
 db.init_app(app)
+
+# stripe connection
+app.config['STRIPE_PUBLIC_KEY'] = os.getenv('STRIPE_PUBLIC_KEY')
+app.config['STRIPE_SECRET_KEY'] = os.getenv('STRIPE_SECRET_KEY')
+stripe.api_key = app.config['STRIPE_SECRET_KEY']
 
 
 # variables
@@ -919,24 +926,80 @@ def reserve():
         
         # get the court number
         court_number = reservations.get_available_court_number(date, time)
-
+        if not court_number:
+            flash('No courts available at that time', 'error')
+            return redirect(url_for('pickleball'))
+        
         # turn date and time into timestamp
         date = datetime.datetime.strptime(date, '%Y-%m-%d')
         time = datetime.datetime.strptime(time, '%I:%M %p').time()
         time = datetime.datetime.combine(date, time)
 
-        print(guest_count)
-        if member_id == 'Guest':
-            price = int(guest_count) * 8
-        else:
-            price = int(guest_count) * 5
-
-        print('price:', price)
-
         # make new reservation
-        if reservations.create_reservation(member_id, date, time, guest_count, court_number) == None:
+        code = reservations.create_reservation(member_id, date, time, guest_count, court_number)
+        if code == None:
             flash('Error creating reservations, try again.', 'error')
-            return render_template('reserve.html', date=date, time=time, membership_id=member_id)
+            return redirect(url_for('pickleball'))
+        
+        if not code:
+            flash('You can only reserve one court per day.', 'error')
+            return redirect(url_for('pickleball'))
+        
+        # check if emp is admin, if so do not charge
+        try:
+            is_emp = emps.get_emp_by_email(session['email']).admin
+        except:
+            is_emp = False
+
+        # reservation created, now get payment if guest
+        if int(guest_count) > 0 and not is_emp:
+            # if guest, change price_id
+            if member_id == 'Guest':
+                price_id = 'price_1PjnH7FWhayxBXWqXY9vRCJw'
+            else:
+                price_id = 'price_1PjnGFFWhayxBXWqpaw1bEry'
+            try:
+                user_email = session.get('email')  # Get the email if it exists, otherwise it will be None
+
+                metadata = {
+                    'reservation_id': code
+                }
+
+                # Add email to metadata only if it's available
+                if user_email:
+                    metadata['email'] = user_email
+
+                checkout_session = stripe.checkout.Session.create(
+                    line_items=[
+                        {
+                            # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                            'price': price_id,
+                            'quantity': guest_count,
+                        },
+                    ],
+                    mode='payment',
+                    success_url=url_for('confirmation', _external=True, 
+                        message=f'Processing Payment for Court #{court_number}', 
+                        sub_message='You will receive a confirmation email.') + '&session_id={CHECKOUT_SESSION_ID}',
+                    cancel_url=url_for('pickleball', _external=True),
+                    automatic_tax={'enabled': True},
+                    metadata=metadata
+                )
+
+            except Exception as e:
+                print(str(e))
+                return abort(400)
+
+            print(checkout_session)
+            return redirect(checkout_session.url, code=303)
+        else:
+            success = reservations.confirm_reservation(code)
+            if not success:
+                flash('Error confirming reservation', 'error')
+                return redirect(url_for('pickleball'))
+            else:
+                send_email(session['email'], 'Reservation Confirmed', 'Your reservation has been confirmed. We look forward to seeing you!')
+
         return render_template('confirmation.html', message=f'Court #{court_number} Reserved', sub_message='You should receive an email confirmation shortly.')
     date = request.args.get('date')
     time = request.args.get('time')
@@ -951,6 +1014,15 @@ def reserve():
         if member:
             return render_template('reserve.html', date=date, time=time, membership_id=member.membership_id)
     return render_template('reserve.html', date=date, time=time)
+
+@app.route('/confirmation')
+def confirmation():
+    session_id = request.args.get('session_id')
+    print(session_id)
+    message = request.args.get('message', 'Default Message')
+    sub_message = request.args.get('sub_message', 'Default Sub-Message')
+    return render_template('confirmation.html', message=message, sub_message=sub_message)
+
 
 @app.route('/getmember/<int:member_id>', methods=['GET'])
 def get_member(member_id):
@@ -1012,6 +1084,79 @@ def get_times():
         return jsonify({})
     # return times as json
     return jsonify(times)
+
+@app.route('/stripe_webhook', methods=['POST'])
+def stripe_webhook():
+    payload = request.get_data(as_text=True)
+    if request.content_length > 1024 * 1024:
+        print('Request too large')
+        abort(400)
+
+    sig_header = request.environ.get('HTTP_STRIPE_SIGNATURE')
+    endpoint_secret = os.getenv('STRIPE_ENDPOINT_SECRET')
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        print('Invalid payload')
+        return {}, 400
+    except stripe.error.SignatureVerificationError as e:
+        print('Invalid signature')
+        return {}, 400
+    
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        reservation_id = session['metadata']['reservation_id']
+        try:
+            user_email = session['metadata']['email']
+        except:
+            user_email = None
+        
+        # Attempt to confirm the reservation
+        success = reservations.confirm_reservation(reservation_id)
+        
+        if not success:
+            print('Error confirming reservation')
+            # 1. Log the failure for investigation
+            app.logger.error(f"Failed to confirm reservation {reservation_id}")
+            
+            # 2. Optionally, retry confirmation a few times
+            retry_count = 0
+            max_retries = 3
+            while retry_count < max_retries and not success:
+                retry_count += 1
+                time.sleep(2)  # delay between retries
+                success = reservations.confirm_reservation(reservation_id)
+            
+            if not success:
+                # 3. Attempt to process a refund
+                try:
+                    refund = stripe.Refund.create(payment_intent=session['payment_intent'])
+                    if refund.status != 'succeeded':
+                        app.logger.error(f"Refund for payment_intent {session['payment_intent']} failed")
+                        # Optionally retry refund or flag for manual intervention
+                except Exception as e:
+                    app.logger.error(f"Error creating refund: {e}")
+                    # Notify admin or take further action
+                    send_email(os.getenv('DEFAULT_SENDER'), "Error processing refund", f"Error processing refund for reservation {reservation_id}: {e}")
+                    
+                # 4. Update internal reservation status
+                reservation = reservations.get_reservation_by_id(reservation_id)
+                if reservation:
+                    # remove the reservation
+                    db.session.delete(reservation)
+                    db.session.commit()
+
+                # Send an email or notification to the user about the failed reservation
+                if user_email:
+                    send_email(user_email, 'Reservation Failed', 'Your reservation could not be confirmed. Please contact support for assistance.')
+        else:
+            if user_email:
+                send_email(user_email, 'Reservation Confirmed', 'Your reservation has been confirmed. We look forward to seeing you!')
+    return {}
 
 # api route to get and set open courts
 @app.route('/api/pickleball/courts', methods=['GET', 'POST'])
