@@ -96,3 +96,4 @@ class Reservation(db.Model):
     reservation_time = db.Column(db.Time, nullable=False)
     guest_count = db.Column(db.Integer, nullable=False)
     court_number = db.Column(db.Integer, nullable=False)
+    confirmed = db.Column(db.Boolean, nullable=False)

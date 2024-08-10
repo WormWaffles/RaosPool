@@ -94,5 +94,6 @@ CREATE TABLE reservation (
     guest_count INTEGER NOT NULL,
     court_number INTEGER NOT NULL,
     order_id INTEGER DEFAULT NULL,
+    confirmed BOOLEAN NOT NULL,
     PRIMARY KEY (reservation_id)
 );
