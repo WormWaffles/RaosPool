@@ -58,7 +58,7 @@
                         </div>
                         {% if not access %}
                         <div class="text-center text-gray-700 dark:text-gray-400">
-                            <p class="mb-2">You must be a member to reserve in advance.</p>
+                            <p>Only members can reserve in advance.</p>
                             <a href="/login"
                                 class="text-blue-600 hover:underline dark:text-blue-400 dark:hover:text-blue-300">Sign
                                 in</a>
@@ -159,7 +159,7 @@
                                     06:00 PM
                                 </label>
                             </li>
-                            <li class="opacity-50 cursor-not-allowed">
+                            <!-- <li class="opacity-50 cursor-not-allowed">
                                 <input type="radio" id="7-pm" value="" class="hidden peer" name="timetable" disabled>
                                 <label for="7-pm"
                                     class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
@@ -172,7 +172,7 @@
                                     class="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-200 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900">
                                     08:00 PM
                                 </label>
-                            </li>
+                            </li> -->
                         </ul>
                         <div class="grid grid-cols-2 gap-2">
                             <button id="continue-button" type="button"
@@ -426,6 +426,7 @@
         const calendarContainer = document.getElementById('calendar-container');
         const continueButton = document.getElementById('continue-button');
         const today = new Date();
+        const daysInAdvance = parseInt(`{{ days_in_advance }}`);
         let currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
         let selectedDate = null;
         let selectedTime = null;
@@ -471,14 +472,17 @@
                 calendarGrid.appendChild(dayElement);
             }
 
-            console.log('Today:', today);
             // Fill days of current month
             for (let i = 1; i <= lastDateOfMonth; i++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'text-center p-2 hover:bg-blue-100 cursor-pointer rounded-lg';
 
                 const currentDay = new Date(year, month, i);
-                if (currentDay.getDate() < today.getDate()) {
+                // if in the same month and the day is less than today or more than today + daysInAdvance
+                const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + daysInAdvance);
+
+                today_f = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                if (currentDay < today_f || currentDay > endDate) {
                     dayElement.classList.add('text-gray-400');
                     dayElement.classList.add('disabled');
                     dayElement.style.pointerEvents = 'none'; // Disable click events
@@ -503,8 +507,6 @@
                         // Fetch and update available times for the selected date
                         const selectedDateFormatted = `${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`;
                         getTimes(selectedDateFormatted);
-
-                        console.log(`Selected Date: ${year}-${month + 1}-${i}`);
                     });
                 }
 

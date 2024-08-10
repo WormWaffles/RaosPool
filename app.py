@@ -114,7 +114,7 @@ def pickleball():
             emp = emps.get_emp_by_email(session['email'])
             if member:
                 if member.active:
-                    return render_template('pickleball.html', pickleball=True, access=True)
+                    return render_template('pickleball.html', pickleball=True, access=True, days_in_advance=3)
             elif emp.active:
                 return render_template('pickleball.html', pickleball=True, access=True)
         except:
