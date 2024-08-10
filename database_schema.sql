@@ -97,3 +97,8 @@ CREATE TABLE reservation (
     confirmed BOOLEAN NOT NULL,
     PRIMARY KEY (reservation_id)
 );
+
+CREATE TABLE court (
+    count_id SERIAL PRIMARY KEY,
+    number INTEGER
+);

@@ -1,4 +1,5 @@
 from src.models import db, Reservation
+from src.courts import courts
 import uuid
 from datetime import datetime, timedelta, date
 from sqlalchemy import text, and_
@@ -106,7 +107,7 @@ class Reservations:
         reservation_date = datetime.strptime(reservation_date_str, '%Y-%m-%d').date()
 
         # Get the number of available courts
-        court_count = 2
+        court_count = courts.get_open_courts()
 
         # Retrieve all confirmed reservations for the given date
         reservations = db.session.query(Reservation).filter(
@@ -155,7 +156,7 @@ class Reservations:
     
     def get_available_court_number(self, date, time):
         '''Returns available court number'''
-        court_count = 2
+        court_count = courts.get_open_courts()
 
         reservation_date_str = date
         reservation_time_str = time
